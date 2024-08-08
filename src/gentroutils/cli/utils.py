@@ -7,6 +7,7 @@ import time
 from functools import wraps
 from pathlib import Path
 from urllib.parse import urlparse
+from google.cloud import storage
 
 import click
 
@@ -14,27 +15,43 @@ logger = logging.getLogger("gentroutils")
 logger.setLevel(logging.DEBUG)
 
 
-def set_log_file(ctx: click.Context, param: click.Option, file: str) -> str:
+def set_log_file(ctx: click.Context, param: click.Option, log_file: str) -> str:
     """Set logging file based on provided `log-file` flag.
 
     This is a callback function called by the click.Option [--log-file] flag.
+    In case of the `log_file` being path to the GCP bucket the returned value
+    will be the local temporary file path. both log file paths (remote and local)
+    will be stored in the click context object for further reference at the end of the CLI run.
+
+
+    Args:
+        ctx (click.Context): click context
+        param (click.Option): click option
+        log_file (str): log file path
+
+    Raises:
+        click.BadParameter: If the log file is a directory or the URI scheme is not GCS.
+
+    Returns:
+        str: log file path
     """
-    if not file:
-        return ""
     ctx.ensure_object(dict)
+    if not log_file:
+        return ""
+    logger.info("Extracting log file from the %s", param)
     upload_to_gcp = False
-    if "://" in file:
+    if "://" in log_file:
         upload_to_gcp = True
     if upload_to_gcp:
-        parsed_uri = urlparse(file)
-        ctx.obj["gcp_log_file"] = file
+        parsed_uri = urlparse(log_file)
+        ctx.obj["gcp_log_file"] = log_file
         if parsed_uri.scheme != "gs":
             raise click.BadParameter("Only GCS is supported for logging upload")
-        file = parsed_uri.path.strip("/")
-        ctx.obj["local_log_file"] = file
+        log_file = parsed_uri.path.strip("/")
+        ctx.obj["local_log_file"] = log_file
     ctx.obj["upload_to_gcp"] = upload_to_gcp
 
-    local_file = Path(file)
+    local_file = Path(log_file)
     if local_file.exists() and local_file.is_dir():
         raise click.BadParameter("Log file is a directory")
     if local_file.exists() and local_file.is_file():
@@ -55,12 +72,13 @@ def set_log_file(ctx: click.Context, param: click.Option, file: str) -> str:
 def teardown_cli(ctx: click.Context) -> None:
     """Teardown the gentropy cli.
 
-    This function is used to upload the log file to GCP bucket once
-    the CLI has finished running.
+    This function is used to as a teardown function for the CLI.
+    This will upload the log file to the GCP bucket if the `upload_to_gcp` flag is set in the context object.
+
+    Args:
+        ctx (click.Context): click context
     """
     if "uplaod_to_gcp" in ctx.obj and ctx.obj["upload_to_gcp"]:
-        from google.cloud import storage
-
         gcp_file = ctx.obj["gcp_log_file"]
         local_file = ctx.obj["local_log_file"]
         client = storage.Client()
@@ -74,7 +92,7 @@ def teardown_cli(ctx: click.Context) -> None:
     )
 
 
-def set_log_lvl(ctx: click.Context, param: click.Option, value: int) -> int:
+def set_log_lvl(_: click.Context, param: click.Option, value: int) -> int:
     """Set logging level based on the number of provided `v` flags.
 
     This is a callback function called by the click.Option [-v] flag.
@@ -83,9 +101,14 @@ def set_log_lvl(ctx: click.Context, param: click.Option, value: int) -> int:
     `-v`  - INFO
     `no flag - ERROR
 
+    Args:
+        param (click.Option): click option
+        value (int): logging level
+
     Returns:
         int: logging level
     """
+    logging.info("Extracting log level from the %s", param)
     log_lvls = {0: logging.ERROR, 1: logging.INFO, 2: logging.DEBUG}
     log_lvl = log_lvls.get(value, logging.DEBUG)
     logger = logging.getLogger("gentropy")

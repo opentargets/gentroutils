@@ -15,6 +15,9 @@ test: ## run unit tests
 
 lint: ## run linting and formatting tools
 	@rye run ruff check src/gentroutils
+	@rye run pydoclint --config=pyproject.toml src
+	@rye run pydoclint --config=pyproject.toml --skip-checking-short-docstrings=true tests
+
 
 help: ## This is help
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)

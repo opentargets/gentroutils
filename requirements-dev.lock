@@ -12,14 +12,19 @@
 -e file:.
 attrs==24.2.0
     # via interrogate
-beautifulsoup4==4.12.3
-    # via google
+cachetools==5.4.0
+    # via google-auth
+certifi==2024.7.4
+    # via requests
 cfgv==3.4.0
     # via pre-commit
+charset-normalizer==3.3.2
+    # via requests
 click==8.1.7
     # via deptry
     # via gentroutils
     # via interrogate
+    # via pydoclint
 colorama==0.4.6
     # via interrogate
 coverage==7.6.1
@@ -27,16 +32,36 @@ coverage==7.6.1
 deptry==0.19.0
 distlib==0.3.8
     # via virtualenv
+docstring-parser-fork==0.0.9
+    # via pydoclint
 exceptiongroup==1.2.2
     # via pytest
 execnet==2.1.1
     # via pytest-xdist
 filelock==3.15.4
     # via virtualenv
-google==3.0.0
+google-api-core==2.19.1
+    # via google-cloud-core
+    # via google-cloud-storage
+google-auth==2.33.0
+    # via google-api-core
+    # via google-cloud-core
+    # via google-cloud-storage
+google-cloud-core==2.4.1
+    # via google-cloud-storage
+google-cloud-storage==2.18.1
     # via gentroutils
+google-crc32c==1.5.0
+    # via google-cloud-storage
+    # via google-resumable-media
+google-resumable-media==2.7.2
+    # via google-cloud-storage
+googleapis-common-protos==1.63.2
+    # via google-api-core
 identify==2.6.0
     # via pre-commit
+idna==3.7
+    # via requests
 iniconfig==2.0.0
     # via pytest
 interrogate==1.7.0
@@ -54,8 +79,20 @@ platformdirs==4.2.2
 pluggy==1.5.0
     # via pytest
 pre-commit==3.8.0
+proto-plus==1.24.0
+    # via google-api-core
+protobuf==5.27.3
+    # via google-api-core
+    # via googleapis-common-protos
+    # via proto-plus
 py==1.11.0
     # via interrogate
+pyasn1==0.6.0
+    # via pyasn1-modules
+    # via rsa
+pyasn1-modules==0.4.0
+    # via google-auth
+pydoclint==0.5.6
 pytest==8.3.2
     # via pytest-cov
     # via pytest-sugar
@@ -65,9 +102,12 @@ pytest-sugar==1.0.0
 pytest-xdist==3.6.1
 pyyaml==6.0.2
     # via pre-commit
+requests==2.32.3
+    # via google-api-core
+    # via google-cloud-storage
+rsa==4.9
+    # via google-auth
 ruff==0.5.6
-soupsieve==2.5
-    # via beautifulsoup4
 tabulate==0.9.0
     # via interrogate
 termcolor==2.4.0
@@ -77,8 +117,11 @@ tomli==2.0.1
     # via deptry
     # via interrogate
     # via mypy
+    # via pydoclint
     # via pytest
 typing-extensions==4.12.2
     # via mypy
+urllib3==2.2.2
+    # via requests
 virtualenv==20.26.3
     # via pre-commit
