@@ -8,7 +8,11 @@ TBA
 
 ## Available commands
 
-TBA
+To see all available commands after installation run
+
+```{bash}
+gentroutils --help
+```
 
 ## Contribute
 
@@ -38,5 +42,12 @@ Run following command to see all available dev commands
 
 ```{bash}
 make help
+```
 
+### Manual testing of CLI module
+
+To check CLI execution manually you need to run
+
+```{bash}
+rye run gentroutils
 ```
