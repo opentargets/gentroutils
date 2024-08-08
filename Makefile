@@ -25,6 +25,9 @@ check-types: ## run mypy and check types
 format: ## run formatting
 	@rye run python -m ruff check --fix src/$(APP_NAME) tests
 
+dep-check: ## check for outdated dependencies
+	@rye run deptry . --known-first-party $(APP_NAME)
+
 check: lint test check-types ## run all checks
 
 help: ## This is help

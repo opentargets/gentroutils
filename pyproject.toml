@@ -8,7 +8,6 @@ authors = [
 dependencies = [
     "click>=8.1.7",
     "google-cloud-storage>=2.18.1",
-    "returns>=0.23.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.10"
