@@ -2,22 +2,35 @@
 
 from __future__ import annotations
 
+import logging
 import time
 
 import click
+import pyfiglet
 
-from gentroutils.cli.utils import set_log_file, set_log_lvl, teardown_cli
+from gentroutils.commands.update_gwas_curation_metadata import (
+    update_gwas_curation_metadata_command,
+)
+from gentroutils.commands.utils import set_log_file, set_log_lvl, teardown_cli
 
-ascii_art = "GENTROUTILS"
+logger = logging.getLogger("gentroutils")
+logger.setLevel(logging.DEBUG)
 
 
 @click.group()
 @click.option("-d", "--dry-run", is_flag=True, default=False)
-@click.option("-v", "--verbose", count=True, default=0, callback=set_log_lvl)
+@click.option(
+    "-v",
+    count=True,
+    default=0,
+    callback=set_log_lvl,
+    help="Increase verbosity of the logging. Can be used multiple times. The default log level is ERROR, -v is INFO, -vv is DEBUG",
+)
 @click.option("-q", "--log-file", callback=set_log_file, required=False)
 @click.pass_context
 def cli(ctx: click.Context, **kwargs: dict[str, str]) -> None:
     r"""Gentroutils Command Line Interface."""
+    ascii_art = pyfiglet.Figlet(font="serifcap").renderText("Gentroutils")
     click.echo(click.style(ascii_art, fg="blue"))
     ctx.max_content_width = 200
     ctx.ensure_object(dict)
@@ -25,5 +38,7 @@ def cli(ctx: click.Context, **kwargs: dict[str, str]) -> None:
     ctx.obj["execution_start"] = time.time()
     ctx.call_on_close(lambda: teardown_cli(ctx))
 
+
+cli.add_command(update_gwas_curation_metadata_command)
 
 __all__ = ["cli"]

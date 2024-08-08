@@ -19,5 +19,4 @@ def test_run_without_command():
     """Test run without flags and commands."""
     runner = CliRunner()
     result = runner.invoke(cli)
-    print(result.output)
     assert "Gentroutils Command Line Interface." in result.output

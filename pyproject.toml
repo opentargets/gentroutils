@@ -5,7 +5,12 @@ description = "Add your description here"
 authors = [
     { name = "Szymon Szyszkowski", email = "ss60@mib117351s.internal.sanger.ac.uk" },
 ]
-dependencies = ["click>=8.1.7", "google-cloud-storage>=2.18.1"]
+dependencies = [
+    "click>=8.1.7",
+    "google-cloud-storage>=2.18.1",
+    "pyfiglet>=1.0.2",
+    "requests>=2.32.3",
+]
 readme = "README.md"
 requires-python = ">= 3.10"
 
@@ -31,6 +36,8 @@ dev-dependencies = [
     "pytest-xdist>=3.6.1",
     "pytest-sugar>=1.0.0",
     "pydoclint>=0.5.6",
+    "gcloud-storage-emulator>=0.5.0",
+    "types-requests>=2.32.0.20240712",
 ]
 
 [tool.hatch.metadata]
@@ -42,7 +49,7 @@ packages = ["src/gentroutils"]
 # test configuration
 [tool.pytest.ini_options]
 markers = ["integration_test", "unit_test"]
-addopts = "-n auto --doctest-modules --cov=gentroutils --cov-report=xml -s -p no:warnings --cov-report term"
+addopts = "-n0 --doctest-modules --cov=gentroutils --cov-report=xml -s -p no:warnings --cov-report term-missing --cov-fail-under=80"
 pythonpath = ["src/"]
 testpaths = ["tests/"]
 
@@ -117,5 +124,5 @@ warn_unused_ignores = true
 # plugins = ["returns.contrib.mypy.returns_plugin"]
 
 [[tool.mypy.overrides]]
-module = ["google.cloud"]
+module = ["google.cloud", "pyfiglet", "click", "google.cloud.storage"]
 ignore_missing_imports = true

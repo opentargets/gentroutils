@@ -49,7 +49,10 @@ pyasn1==0.6.0
     # via rsa
 pyasn1-modules==0.4.0
     # via google-auth
+pyfiglet==1.0.2
+    # via gentroutils
 requests==2.32.3
+    # via gentroutils
     # via google-api-core
     # via google-cloud-storage
 rsa==4.9

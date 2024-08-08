@@ -12,7 +12,6 @@ import click
 from google.cloud import storage
 
 logger = logging.getLogger("gentroutils")
-logger.setLevel(logging.DEBUG)
 
 
 def set_log_file(ctx: click.Context, param: click.Option, log_file: str) -> str:
@@ -70,7 +69,7 @@ def set_log_file(ctx: click.Context, param: click.Option, log_file: str) -> str:
 
 
 def teardown_cli(ctx: click.Context) -> None:
-    """Teardown the gentropy cli.
+    """Teardown the gentroutils cli.
 
     This function is used to as a teardown function for the CLI.
     This will upload the log file to the GCP bucket if the `upload_to_gcp` flag is set in the context object.
@@ -87,6 +86,7 @@ def teardown_cli(ctx: click.Context) -> None:
         blob = bucket.blob(Path(local_file).name)
         logger.info("Uploading %s to %s", local_file, gcp_file)
         blob.upload_from_filename(local_file)
+        Path(local_file).unlink()
     logger.info(
         "Finished, elapsed time %s seconds", time.time() - ctx.obj["execution_start"]
     )
@@ -108,10 +108,9 @@ def set_log_lvl(_: click.Context, param: click.Option, value: int) -> int:
     Returns:
         int: logging level
     """
-    logging.info("Extracting log level from the %s", param)
+    logger.info("Extracting log level from the %s", param)
     log_lvls = {0: logging.ERROR, 1: logging.INFO, 2: logging.DEBUG}
     log_lvl = log_lvls.get(value, logging.DEBUG)
-    logger = logging.getLogger("gentropy")
     handler = logging.StreamHandler(sys.stdout)
     formatter = logging.Formatter(
         "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
