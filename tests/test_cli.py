@@ -1,8 +1,8 @@
 """CLI tests."""
 
+import pytest
 from click.testing import CliRunner
 from gentroutils import cli
-import pytest
 
 
 @pytest.mark.integration_test

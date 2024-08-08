@@ -12,23 +12,28 @@ dev: ## setup development environment
 	./setup.sh
 
 test: ## run unit tests
+	@echo "Running tests..."
 	@rye run pytest
 
-lint: ## run linting and formatting tools
-	@rye run ruff check src/$(APP_NAME)
-	@rye run pydoclint --config=pyproject.toml src
-	@rye run pydoclint --config=pyproject.toml --skip-checking-short-docstrings=true tests
+lint: ## run linting
+	@echo "Running linting tools..."
+	@rye run ruff check --fix --select I src/$(APP_NAME) tests
+	@rye run pydoclint --config=pyproject.toml src tests
+	@rye run interrogate -vvg src/$(APP_NAME) tests
 
-check-types: ## run mypy and check types
-	@rye run python -m mypy --install-types --non-interactive src/$(APP_NAME)
+type-check: ## run mypy and check types
+	@echo "Running type checks..."
+	@rye run mypy --install-types --non-interactive src/$(APP_NAME)
 
 format: ## run formatting
-	@rye run python -m ruff check --fix src/$(APP_NAME) tests
+	@echo "Running formatting tools..."
+	@rye run ruff format src/$(APP_NAME) tests
 
 dep-check: ## check for outdated dependencies
+	@echo "Running dependencies checks..."
 	@rye run deptry . --known-first-party $(APP_NAME)
 
-check: lint test check-types ## run all checks
+check: lint format test type-check dep-check ## run all checks
 
 help: ## This is help
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)

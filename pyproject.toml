@@ -5,10 +5,7 @@ description = "Add your description here"
 authors = [
     { name = "Szymon Szyszkowski", email = "ss60@mib117351s.internal.sanger.ac.uk" },
 ]
-dependencies = [
-    "click>=8.1.7",
-    "google-cloud-storage>=2.18.1",
-]
+dependencies = ["click>=8.1.7", "google-cloud-storage>=2.18.1"]
 readme = "README.md"
 requires-python = ">= 3.10"
 
@@ -51,7 +48,6 @@ testpaths = ["tests/"]
 
 
 # linting configuration
-
 [tool.ruff.lint]
 ignore = [
     "E501", # line too long
@@ -99,6 +95,12 @@ arg-type-hints-in-docstring = true
 skip-checking-short-docstrings = true
 check-class-attributes = false
 
+[tool.interrogate]
+fail-under = 95
+color = true
+exclude = ["dist"]
+ignore-init-method = true
+
 
 # type checking configuration
 [tool.mypy]
@@ -110,7 +112,7 @@ warn_no_return = false
 strict_equality = true
 warn_redundant_casts = true
 warn_unused_ignores = true
-plugins = ["returns.contrib.mypy.returns_plugin"]
+# plugins = ["returns.contrib.mypy.returns_plugin"]
 
 [[tool.mypy.overrides]]
 module = ["google.cloud"]

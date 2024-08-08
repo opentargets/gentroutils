@@ -7,9 +7,9 @@ import time
 from functools import wraps
 from pathlib import Path
 from urllib.parse import urlparse
-from google.cloud import storage
 
 import click
+from google.cloud import storage
 
 logger = logging.getLogger("gentroutils")
 logger.setLevel(logging.DEBUG)
@@ -127,6 +127,7 @@ def coro(f):
 
     @wraps(f)
     def wrapper(*args, **kwargs):
+        """Wrapper around the synchronous function."""
         return asyncio.run(f(*args, **kwargs))
 
     return wrapper
