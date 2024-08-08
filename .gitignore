@@ -8,3 +8,7 @@ wheels/
 
 # venv
 .venv
+
+# covarage
+.coverage
+coverage.xml
