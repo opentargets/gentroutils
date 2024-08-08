@@ -8,6 +8,7 @@ authors = [
 dependencies = [
     "click>=8.1.7",
     "google-cloud-storage>=2.18.1",
+    "returns>=0.23.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.10"
@@ -98,3 +99,20 @@ allow-init-docstring = true
 arg-type-hints-in-docstring = true
 skip-checking-short-docstrings = true
 check-class-attributes = false
+
+
+# type checking configuration
+[tool.mypy]
+disallow_any_generics = true
+disallow_incomplete_defs = true
+no_implicit_optional = true
+no_implicit_reexport = true
+warn_no_return = false
+strict_equality = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+plugins = ["returns.contrib.mypy.returns_plugin"]
+
+[[tool.mypy.overrides]]
+module = ["google.cloud"]
+ignore_missing_imports = true

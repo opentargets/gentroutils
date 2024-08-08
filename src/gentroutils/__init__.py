@@ -16,7 +16,7 @@ ascii_art = "GENTROUTILS"
 @click.option("-v", "--verbose", count=True, default=0, callback=set_log_lvl)
 @click.option("-q", "--log-file", callback=set_log_file, required=False)
 @click.pass_context
-def cli(ctx: click.Context, **kwargs) -> None:
+def cli(ctx: click.Context, **kwargs: dict[str, str]) -> None:
     r"""Gentroutils Command Line Interface."""
     click.echo(click.style(ascii_art, fg="blue"))
     ctx.max_content_width = 200

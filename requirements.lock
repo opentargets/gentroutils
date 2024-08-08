@@ -52,7 +52,11 @@ pyasn1-modules==0.4.0
 requests==2.32.3
     # via google-api-core
     # via google-cloud-storage
+returns==0.23.0
+    # via gentroutils
 rsa==4.9
     # via google-auth
+typing-extensions==4.12.2
+    # via returns
 urllib3==2.2.2
     # via requests
