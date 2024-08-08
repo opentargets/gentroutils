@@ -19,7 +19,7 @@ lint: ## run linting
 	@echo "Running linting tools..."
 	@rye run ruff check --fix --select I src/$(APP_NAME) tests
 	@rye run pydoclint --config=pyproject.toml src tests
-	@rye run interrogate -vvg src/$(APP_NAME) tests
+	@rye run interrogate -vv src/$(APP_NAME) tests
 
 type-check: ## run mypy and check types
 	@echo "Running type checks..."

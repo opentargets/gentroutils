@@ -100,6 +100,8 @@ fail-under = 95
 color = true
 exclude = ["dist"]
 ignore-init-method = true
+generate-badge = "."
+badge-format = "svg"
 
 
 # type checking configuration

@@ -12,3 +12,6 @@ wheels/
 # covarage
 .coverage
 coverage.xml
+
+# interrogate
+interrogate_badge.svg

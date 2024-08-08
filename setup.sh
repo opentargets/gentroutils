@@ -9,19 +9,21 @@
 export SHELL_ZSH=$(echo "$HOME/.${SHELL##*/}rc")
 
 if ! command -v rye &> /dev/null; then
-	echo "Rye is not installed. Installing..."
-	curl -sSf https://rye.astral.sh/get | bash
-	echo "Updating $SHELL_ZSH"
-	echo "source $HOME/.rye/env" >> $SHELL_ZSH
+    echo "Rye is not installed. Installing..."
+    curl -sSf https://rye.astral.sh/get | bash
+    echo "Updating $SHELL_ZSH"
+    echo "source $HOME/.rye/env" >> $SHELL_ZSH
 else
-	echo "Rye is already installed."
+    echo "Rye is already installed."
 fi
 
 if ! command -v uv &> /dev/null; then
-	echo "uv is not installed. Installing..."
-	curl -LsSf https://astral.sh/uv/install.sh | sh
+    echo "uv is not installed. Installing..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
 else
-	echo "uv is already installed."
+    echo "uv is already installed."
 fi
 rye sync
+rye run pre-commit install --hook-type commit-msg --hook-type pre-commit
+
 echo "Done"
