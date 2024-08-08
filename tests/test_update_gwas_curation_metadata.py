@@ -26,7 +26,7 @@ def gwas_catalog_ftp_heartbeet() -> bool:
 def test_run_update_gwas_curation_metadata_help():
     """Test command with --help flag."""
     runner = CliRunner()
-    result = runner.invoke(cli, ["update-gwas-catalog-metadata", "--help"])
+    result = runner.invoke(cli, ["update-gwas-curation-metadata", "--help"])
     assert result.exit_code == 0
 
 
@@ -41,7 +41,7 @@ def test_run_update_gwas_curation_metadata_exceed_connection(
         0,
     )
     runner = CliRunner()
-    result = runner.invoke(cli, ["--dry-run", "update-gwas-catalog-metadata"])
+    result = runner.invoke(cli, ["--dry-run", "update-gwas-curation-metadata"])
     for record in caplog.records:
         if record.levelname == "ERROR":
             assert (
@@ -63,7 +63,7 @@ def test_run_update_gwas_curation_metadata_no_dry_run(caplog: pytest.LogCaptureF
         "ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/harmonised_list.txt"
     )
     _out = "gs://staging/harmonised_list.txt"
-    result = runner.invoke(cli, ["update-gwas-catalog-metadata", "-f", _in, _out])
+    result = runner.invoke(cli, ["update-gwas-curation-metadata", "-f", _in, _out])
     assert result.exit_code == 0
     client = storage.Client()
     blobs = client.bucket("staging").list_blobs()
@@ -89,7 +89,7 @@ def test_run_update_gwas_curation_metadata_fail_to_fetch_release_info(
     result = runner.invoke(
         cli,
         [
-            "update-gwas-catalog-metadata",
+            "update-gwas-curation-metadata",
             "-f",
             "ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/harmonised_list.txt",
             "gs://staging/harmonised_list.txt",
@@ -130,7 +130,7 @@ def test_run_update_gwas_curation_metadata_with_dry_run_does_not_produce_blob(
         cli,
         [
             "--dry-run",
-            "update-gwas-catalog-metadata",
+            "update-gwas-curation-metadata",
             "-f",
             link,
             "gs://staging/harmonised_list.txt",
@@ -153,7 +153,7 @@ def test_run_update_gwas_curation_metadata_transfer_from_http_to_gcp():
     result = runner.invoke(
         cli,
         [
-            "update-gwas-catalog-metadata",
+            "update-gwas-curation-metadata",
             "-f",
             "https://raw.githubusercontent.com/opentargets/curation/master/genetics/GWAS_Catalog_study_curation.tsv",
             "gs://staging/curation-metadata.tsv",
@@ -178,7 +178,7 @@ def test_run_update_gwas_curation_metadata_preserve_logs_locally(tmp_path: Path)
         [
             "--log-file",
             str(tmp_path / "gentroutils.log"),
-            "update-gwas-catalog-metadata",
+            "update-gwas-curation-metadata",
             "-f",
             "ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/harmonised_list.txt",
             "gs://staging/harmonised_list.txt",
@@ -189,6 +189,7 @@ def test_run_update_gwas_curation_metadata_preserve_logs_locally(tmp_path: Path)
     blobs = client.bucket("staging").list_blobs()
     assert next(blobs).name == "harmonised_list.txt"
     assert (tmp_path / "gentroutils.log").exists()
+    Path(tmp_path / "gentroutils.log").unlink()
 
 
 @pytest.mark.usefixtures("google_cloud_storage", "staging_bucket")
@@ -204,7 +205,7 @@ def test_run_update_gwas_curation_metadata_preserve_logs_in_gcs():
         [
             "--log-file",
             "gs://staging/gentroutils.log",
-            "update-gwas-catalog-metadata",
+            "update-gwas-curation-metadata",
             "-f",
             "ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/harmonised_list.txt",
             "gs://staging/harmonised_list.txt",

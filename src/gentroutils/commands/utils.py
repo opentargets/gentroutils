@@ -77,7 +77,7 @@ def teardown_cli(ctx: click.Context) -> None:
     Args:
         ctx (click.Context): click context
     """
-    if "uplaod_to_gcp" in ctx.obj and ctx.obj["upload_to_gcp"]:
+    if "upload_to_gcp" in ctx.obj and ctx.obj["upload_to_gcp"]:
         gcp_file = ctx.obj["gcp_log_file"]
         local_file = ctx.obj["local_log_file"]
         client = storage.Client()

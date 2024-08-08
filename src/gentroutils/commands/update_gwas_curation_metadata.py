@@ -21,32 +21,32 @@ MAX_CONCURRENT_CONNECTIONS = 10
 CURATED_INPUTS = (
     (
         "ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-associations_ontology-annotated.tsv",
-        "gs://ot_orchestration/curated_inputs/gwas_catalog_associations_ontology_annotated.tsv",
+        "gs://gwas_catalog_data/curated_inputs/gwas_catalog_associations_ontology_annotated.tsv",
     ),
     (
         "ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-download-studies-v1.0.3.1.txt",
-        "gs://ot_orchestration/curated_inputs/gwas_catalog_download_studies.tsv",
+        "gs://gwas_catalog_data/curated_inputs/gwas_catalog_download_studies.tsv",
     ),
     (
         "ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-unpublished-studies-v1.0.3.1.tsv",
-        "gs://ot_orchestration/curated_inputs/gwas_catalog_unpublished_studies.tsv",
+        "gs://gwas_catalog_data/curated_inputs/gwas_catalog_unpublished_studies.tsv",
     ),
     (
         "ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-download-ancestries-v1.0.3.1.txt",
-        "gs://ot_orchestration/curated_inputs/gwas_catalog_download_ancestries.tsv",
+        "gs://gwas_catalog_data/curated_inputs/gwas_catalog_download_ancestries.tsv",
     ),
     (
         "ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-unpublished-ancestries-v1.0.3.1.tsv",
-        "gs://ot_orchestration/curated_inputs/gwas_catalog_unpublished_ancestries.tsv",
+        "gs://gwas_catalog_data/curated_inputs/gwas_catalog_unpublished_ancestries.tsv",
     ),
     (
         "ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/harmonised_list.txt",
-        "gs://ot_orchestration/curated_inputs/harmonised_list.txt",
+        "gs://gwas_catalog_data/curated_inputs/harmonised_list.txt",
     ),
 )
 
 
-@click.command(name="update-gwas-catalog-metadata")
+@click.command(name="update-gwas-curation-metadata")
 @click.option(
     "--file-to-transfer",
     "-f",
@@ -78,25 +78,21 @@ async def update_gwas_curation_metadata_command(
     - [x] gwas-catalog-unpublished-studies-v1.0.3.1.tsv - list of unpublished studies by GWAS Catalog
     - [x] gwas-catalog-download-ancestries-v1.0.3.1.txt - list of published studies by GWAS Catalog
     - [x] gwas-catalog-unpublished-ancestries-v1.0.3.1.tsv - list of unpublished studies by GWAS Catalog
-    - harmonised_list.txt - list of harmonised sumstats by GWAS Catalog
 
     \b
-    and latest Open Targets curation on GWAS Catalog sumstats:
-    - [x] GWAS_Catalog_study_curation.tsv
-
     By default all GWAS Catalog data files are uploaded from GWAS Catalog FTP server to Open Targets GCP bucket.
     The script also captures the latest release metadata from GWAS Catalog release info url.
     One can overwrite this script to sync data files from FTP or HTTP(s) to GCP bucket. The example usage is as follows:
 
     \b
-    gentroutils --log-file gs://ot_orchestration/curated_inputs/log.txt update-gwas-catalog-metadata \\
-    -f ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-associations_ontology-annotated.tsv gs://ot_orchestration/curated_inputs/gwas_catalog_associations_ontology_annotated.tsv \\
-    -f ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-download-studies-v1.0.3.1.txt gs://ot_orchestration/curated_inputs/gwas_catalog_download_studies.tsv \\
-    -f ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-unpublished-studies-v1.0.3.1.tsv gs://ot_orchestration/curated_inputs/gwas_catalog_unpublished_studies.tsv \\
-    -f ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-download-ancestries-v1.0.3.1.txt gs://ot_orchestration/curated_inputs/gwas_catalog_download_ancestries.tsv \\
-    -f ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-unpublished-ancestries-v1.0.3.1.tsv gs://ot_orchestration/curated_inputs/gwas_catalog_unpublished_ancestries.tsv \\
-    -f ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/harmonised_list.txt gs://ot_orchestration/curated_inputs/harmonised_list.txt \\
-    -f https://raw.githubusercontent.com/opentargets/curation/master/genetics/GWAS_Catalog_study_curation.tsv gs://ot_orchestration/manifests/gwas_catalog_study_curation.tsv \\
+    gentroutils --log-file gs://gwas_catalog_data/curated_inputs/log.txt update-gwas-curation-metadata \\
+    -f ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-associations_ontology-annotated.tsv gs://gwas_catalog_data/curated_inputs/gwas_catalog_associations_ontology_annotated.tsv \\
+    -f ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-download-studies-v1.0.3.1.txt gs://gwas_catalog_data/curated_inputs/gwas_catalog_download_studies.tsv \\
+    -f ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-unpublished-studies-v1.0.3.1.tsv gs://gwas_catalog_data/curated_inputs/gwas_catalog_unpublished_studies.tsv \\
+    -f ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-download-ancestries-v1.0.3.1.txt gs://gwas_catalog_data/curated_inputs/gwas_catalog_download_ancestries.tsv \\
+    -f ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-unpublished-ancestries-v1.0.3.1.tsv gs://gwas_catalog_data/curated_inputs/gwas_catalog_unpublished_ancestries.tsv \\
+    -f ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/harmonised_list.txt gs://gwas_catalog_data/curated_inputs/harmonised_list.txt \\
+    -f https://raw.githubusercontent.com/opentargets/curation/master/genetics/GWAS_Catalog_study_curation.tsv gs://gwas_catalog_data/manifests/gwas_catalog_study_curation.tsv \\
     -g https://www.ebi.ac.uk/gwas/api/search/stats
 
 

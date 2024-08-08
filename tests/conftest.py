@@ -21,11 +21,21 @@ def google_cloud_storage():
         emulator.stop()
 
 
+@pytest.mark.usefixtures("google_cloud_storage")
 @pytest.fixture(scope="function")
-def staging_bucket(google_cloud_storage: GCloudStorageMockServer):
+def staging_bucket():
     """Fixture to create a staging bucket."""
     bucket_name = "staging"
     client = storage.Client()
     client.create_bucket(bucket_name)
-    yield bucket_name
-    google_cloud_storage.wipe
+    return bucket_name
+
+
+@pytest.mark.usefixtures("google_cloud_storage")
+@pytest.fixture(scope="function")
+def gwas_catalog_bucket():
+    """Fixture to create a gwas catalog bucket."""
+    bucket_name = "gwas_catalog"
+    client = storage.Client()
+    client.create_bucket(bucket_name)
+    return bucket_name
