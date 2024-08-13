@@ -2,6 +2,19 @@
 
 
 
+## v0.1.4 (2024-08-13)
+
+### Ci
+
+* ci: fix link to testpypi ([`aa19be5`](https://github.com/opentargets/gentroutils/commit/aa19be588dcf2e93e862efc9e3ab54e06c3e762e))
+
+### Unknown
+
+* Merge pull request #14 from opentargets/dev
+
+chore: trigger release process ([`bd68b60`](https://github.com/opentargets/gentroutils/commit/bd68b60c81230afe0fbbe49010ef2e130a12353b))
+
+
 ## v0.1.3 (2024-08-13)
 
 ### Ci
