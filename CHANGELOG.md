@@ -2,6 +2,21 @@
 
 
 
+## v0.1.5 (2024-08-13)
+
+### Ci
+
+* ci: added needs flags to release jobs ([`3b84cdd`](https://github.com/opentargets/gentroutils/commit/3b84cdd3d4e158f172d29ccc27d033facd56e244))
+
+* ci: add pypi release ([`271abbf`](https://github.com/opentargets/gentroutils/commit/271abbfe125f44db11c078f6b3ff91e7748551de))
+
+### Unknown
+
+* Merge pull request #15 from opentargets/dev
+
+chore: trigger release process ([`5740867`](https://github.com/opentargets/gentroutils/commit/57408679669c3e2427df680478baecc7e2873aec))
+
+
 ## v0.1.4 (2024-08-13)
 
 ### Ci
