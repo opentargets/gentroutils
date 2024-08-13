@@ -5,7 +5,7 @@ on:
 
 env:
   PYTHON_VERSION_DEFAULT: "3.10.8"
-
+  SKIP: "don't commit to branch" # skip this hook on dev branch run
 jobs:
   test:
     runs-on: ubuntu-latest
