@@ -15,7 +15,7 @@ env:
 jobs:
   tag:
     # NOTE: only trigger the workflow when the commit is not from the GitHubActions bot (prevent self-triggering)
-    if: github.event.commits[0].author.name != 'GitHubActions'
+    if: github.event.commits[0].author.name != 'github-actions'
     runs-on: ubuntu-latest
     concurrency: release
     environment: DEV
