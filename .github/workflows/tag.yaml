@@ -32,6 +32,7 @@ jobs:
           repository: opentargets/gentropy
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
+          ref: main
 
       - name: Python Semantic Release
         id: semrelease
