@@ -1,6 +1,6 @@
 [project]
 name = "gentroutils"
-version = "0.1.2"
+version = "0.1.3"
 description = "Add your description here"
 authors = [
     { name = "Szymon Szyszkowski", email = "ss60@mib117351s.internal.sanger.ac.uk" },
