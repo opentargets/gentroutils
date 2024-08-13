@@ -25,5 +25,7 @@ jobs:
           version: "latest"
       - name: Sync dependencies
         run: rye sync
+      - name: ensure pip
+        run: python -m ensurepip # required as pre-commit requires pip to install
       - name: Run checks
         uses: pre-commit/action@v3.0.1
