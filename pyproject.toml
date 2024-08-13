@@ -1,7 +1,8 @@
 [project]
+authors = [{ name = "Szymon Szyszkowski", email = "ss60@sanger.ac.uk" }]
 name = "gentroutils"
 version = "0.1.5"
-description = "Add your description here"
+description = "Open Targets python genetics utility CLI tools"
 authors = [
     { name = "Szymon Szyszkowski", email = "ss60@mib117351s.internal.sanger.ac.uk" },
 ]
@@ -13,6 +14,19 @@ dependencies = [
 ]
 readme = "README.md"
 requires-python = ">= 3.10"
+license = "Apache-2.0"
+documentation = "https://github.com/opentargets/gentroutils"
+repository = "https://github.com/opentargets/gentroutils"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Healthcare Industry",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Operating System :: Unix",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "License :: OSI Approved :: Apache Software License",
+]
 
 [build-system]
 requires = ["hatchling"]
@@ -79,6 +93,8 @@ ignore = [
     "UP038", # Use `X | Y` in `isinstance` call instead of `(X, Y)`
 
 ]
+
+# add classifiers
 
 
 [tool.ruff.lint.per-file-ignores]
