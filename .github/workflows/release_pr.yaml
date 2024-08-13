@@ -8,7 +8,7 @@ name: Trigger Release
 jobs:
   pull-request:
     runs-on: ubuntu-latest
-    environment: PyPI
+    environment: DEV
     steps:
       - uses: actions/create-github-app-token@v1
         id: trigger-token

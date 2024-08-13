@@ -15,7 +15,7 @@ jobs:
   tag:
     runs-on: ubuntu-latest
     concurrency: release
-    environment: PyPI
+    environment: DEV
     permissions:
       contents: write
 
