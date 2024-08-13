@@ -20,4 +20,4 @@ jobs:
       - name: Install the latest version of rye
         run: make dev
       - name: Run checks
-      - uses: pre-commit/action@v3.0.1
+        uses: pre-commit/action@v3.0.1
