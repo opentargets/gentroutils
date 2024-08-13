@@ -2,6 +2,19 @@
 
 
 
+## v0.1.2 (2024-08-13)
+
+### Ci
+
+* ci: use original github token for testpypi ([`1e2e5af`](https://github.com/opentargets/gentroutils/commit/1e2e5af0aba88c4decf8a471d042b3f8c0487414))
+
+### Unknown
+
+* Merge pull request #12 from opentargets/dev
+
+chore: trigger release process ([`48c63ba`](https://github.com/opentargets/gentroutils/commit/48c63ba7ab4753ce8bd2767d53ba32d41257a087))
+
+
 ## v0.1.1 (2024-08-13)
 
 ### Ci
