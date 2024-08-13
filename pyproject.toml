@@ -1,8 +1,11 @@
 [project]
 authors = [{ name = "Szymon Szyszkowski", email = "ss60@sanger.ac.uk" }]
 name = "gentroutils"
-version = "0.0.0"
+version = "0.1.5"
 description = "Open Targets python genetics utility CLI tools"
+authors = [
+    { name = "Szymon Szyszkowski", email = "ss60@mib117351s.internal.sanger.ac.uk" },
+]
 dependencies = [
     "click>=8.1.7",
     "google-cloud-storage>=2.18.1",
