@@ -7,7 +7,9 @@ Set of Command Line Interface tools to process Open Targets Genetics GWAS data.
 
 ## Installation
 
-TBA
+```
+pip install gentroutils
+```
 
 ## Available commands
 
