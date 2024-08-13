@@ -2,6 +2,19 @@
 
 
 
+## v0.1.1 (2024-08-13)
+
+### Ci
+
+* ci: prevent second job run and fix build ([`422b3fc`](https://github.com/opentargets/gentroutils/commit/422b3fc78dcc869c464e0e722be6619dc444de05))
+
+### Unknown
+
+* Merge pull request #11 from opentargets/dev
+
+chore: trigger release process ([`bf30b0d`](https://github.com/opentargets/gentroutils/commit/bf30b0d95b065166620e67c866bb99b067fc7538))
+
+
 ## v0.1.0 (2024-08-13)
 
 ### Build
