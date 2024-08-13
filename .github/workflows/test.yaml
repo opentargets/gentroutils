@@ -1,10 +1,13 @@
-name: Dev tests
+name: Tests
 
 on:
-  pull_request:
+  push:
+    branches: ["dev"]
 
 env:
   PYTHON_VERSION_DEFAULT: "3.10.8"
+  SKIP: no-commit-to-branch
+
 jobs:
   test:
     runs-on: ubuntu-latest
