@@ -26,4 +26,4 @@ jobs:
       - name: Sync dependencies
         run: rye sync
       - name: Run checks
-        run: pre-commit run --all-files
+        run: rye run pre-commit run --all-files
