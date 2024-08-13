@@ -2,7 +2,7 @@ name: PR to trigger release
 
 "on":
   schedule:
-    - cron: "15 16 * * 4"
+    - cron: "11 05 * * 2"
 
 jobs:
   pull-request:
