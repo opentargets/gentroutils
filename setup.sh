@@ -24,6 +24,7 @@ else
     echo "uv is already installed."
 fi
 source $SHELL_RC
+cat $SHELL_RC
 rye sync
 rye run pre-commit install --hook-type commit-msg --hook-type pre-commit
 
