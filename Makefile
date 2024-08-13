@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 .PHONY: $(shell sed -n -e '/^$$/ { n ; /^[^ .\#][^ ]*:/ { s/:.*$$// ; p ; } ; }' $(MAKEFILE_LIST))
 VERSION := $$(grep '^version' pyproject.toml | sed 's%version = "\(.*\)"%\1%')
-APP_NAME := $$(grep '^name' pyproject.toml | sed 's%name = "\(.*\)"%\1%')
+APP_NAME := $$(grep '^name' pyproject.toml | head -1 | sed 's%name = "\(.*\)"%\1%')
 
 .DEFAULT_GOAL := help
 
