@@ -33,6 +33,10 @@ dep-check: ## check for outdated dependencies
 	@echo "Running dependencies checks..."
 	@rye run deptry . --known-first-party $(APP_NAME)
 
+build: ## build distributions
+	@echo "Building distributions..."
+	@rye build
+
 check: lint format test type-check dep-check ## run all checks
 
 help: ## This is help

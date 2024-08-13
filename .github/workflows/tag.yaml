@@ -6,13 +6,16 @@ name: Tag
 
 concurrency:
   group: deploy
-  cancel-in-progress: false # prevent hickups with semantic-release
+  # NOTE: prevent hickups with semantic-release
+  cancel-in-progress: false
 
 env:
   PYTHON_VERSION_DEFAULT: "3.10.8"
 
 jobs:
   tag:
+    # NOTE: only trigger the workflow when the commit is not from the GitHubActions bot (prevent self-triggering)
+    if: github.event.commits[0].author.name != 'GitHubActions'
     runs-on: ubuntu-latest
     concurrency: release
     environment: DEV
@@ -20,7 +23,7 @@ jobs:
       contents: write
 
     steps:
-      # NOTE: commits using GITHUB_TOKEN does not trigger workflows
+      # NOTE: commits using GITHUB_TOKEN does not trigger workflows and we want to trigger PiPY from tag
       - uses: actions/create-github-app-token@v1
         id: trigger-token
         with:
@@ -33,7 +36,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
           ref: main
-
       - name: Python Semantic Release
         id: semrelease
         # v9.6.0 is required due to the python v3.12 in the newer version of semantic release action which
