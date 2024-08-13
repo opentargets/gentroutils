@@ -7,12 +7,21 @@
 
 export SHELL_RC=$(echo "$HOME/.${SHELL##*/}rc")
 
+if ! command -v cargo &>/dev/null; then
+    echo "Cargo is not installed. Installing..."
+    curl https://sh.rustup.rs -sSf | sh
+    echo "Updating $SHELL_RC"
+    echo "source $HOME/.cargo/bin" >>$SHELL_RC
+else
+    echo "Cargo is installed."
+fi
+source $SHELL_RC
+
 if ! command -v rye &>/dev/null; then
     echo "Rye is not installed. Installing..."
-    curl -sSf https://rye.astral.sh/get | bash
+    cargo install --git https://github.com/astral-sh/rye --tag 0.38.0 rye
     echo "Updating $SHELL_RC"
     echo "source $HOME/.rye/env" >>$SHELL_RC
-    echo "source $HOME/.cargo/bin" >>$SHELL_RC
 else
     echo "Rye is already installed."
 fi
