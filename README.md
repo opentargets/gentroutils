@@ -1,6 +1,7 @@
 # gentroutils
 
 [![Tests](https://github.com/opentargets/gentroutils/actions/workflows/test.yaml/badge.svg?event=push)](https://github.com/opentargets/gentroutils/actions/workflows/test.yaml)
+![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
 
 Set of Command Line Interface tools to process Open Targets Genetics GWAS data.
 
