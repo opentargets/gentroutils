@@ -6,6 +6,7 @@ on:
 
 env:
   PYTHON_VERSION_DEFAULT: "3.10.8"
+  SKIP: no-commit-to-branch
 
 jobs:
   test:
