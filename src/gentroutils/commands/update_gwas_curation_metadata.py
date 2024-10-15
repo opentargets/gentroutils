@@ -21,27 +21,15 @@ MAX_CONCURRENT_CONNECTIONS = 10
 CURATED_INPUTS = (
     (
         "ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-associations_ontology-annotated.tsv",
-        "gs://gwas_catalog_data/curated_inputs/gwas_catalog_associations_ontology_annotated.tsv",
+        "gs://gwas_catalog_inputs/gwas_catalog_associations_ontology_annotated.tsv",
     ),
     (
         "ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-download-studies-v1.0.3.1.txt",
-        "gs://gwas_catalog_data/curated_inputs/gwas_catalog_download_studies.tsv",
-    ),
-    (
-        "ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-unpublished-studies-v1.0.3.1.tsv",
-        "gs://gwas_catalog_data/curated_inputs/gwas_catalog_unpublished_studies.tsv",
+        "gs://gwas_catalog_inputs/gwas_catalog_download_studies.tsv",
     ),
     (
         "ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-download-ancestries-v1.0.3.1.txt",
-        "gs://gwas_catalog_data/curated_inputs/gwas_catalog_download_ancestries.tsv",
-    ),
-    (
-        "ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-unpublished-ancestries-v1.0.3.1.tsv",
-        "gs://gwas_catalog_data/curated_inputs/gwas_catalog_unpublished_ancestries.tsv",
-    ),
-    (
-        "ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/harmonised_list.txt",
-        "gs://gwas_catalog_data/curated_inputs/harmonised_list.txt",
+        "gs://gwas_catalog_inputs/gwas_catalog_download_ancestries.tsv",
     ),
 )
 
