@@ -9,7 +9,7 @@ version: ## display version and exit
 	@echo $(VERSION)
 
 dev: ## setup development environment
-	./setup.sh
+	$(shell echo $$SHELL) ./setup.sh
 
 test: ## run unit tests
 	@echo "Running tests..."

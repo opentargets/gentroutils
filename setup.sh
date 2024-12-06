@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # This script installs Rye and updates the shell configuration file.
 # It also initializes current project and syncs the dependencies.
 # It is intended to be run on a new system to quickly set up Rye.
