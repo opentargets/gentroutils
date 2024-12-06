@@ -6,6 +6,7 @@ import sys
 import time
 from functools import wraps
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 from urllib.parse import urlparse
 
 import click
@@ -39,33 +40,47 @@ def set_log_file(ctx: click.Context, param: click.Option, log_file: str) -> str:
         return ""
     logger.info("Extracting log file from the %s", param)
     upload_to_gcp = False
+
     if "://" in log_file:
         upload_to_gcp = True
-    if upload_to_gcp:
-        parsed_uri = urlparse(log_file)
-        ctx.obj["gcp_log_file"] = log_file
-        if parsed_uri.scheme != "gs":
-            raise click.BadParameter("Only GCS is supported for logging upload")
-        log_file = parsed_uri.path.strip("/")
-        ctx.obj["local_log_file"] = log_file
     ctx.obj["upload_to_gcp"] = upload_to_gcp
 
-    local_file = Path(log_file)
-    if local_file.exists() and local_file.is_dir():
-        raise click.BadParameter("Log file is a directory")
-    if local_file.exists() and local_file.is_file():
-        local_file.unlink()
-    if not local_file.exists():
-        local_file.touch()
-    logger.info("Logging to %s", local_file)
-    handler = logging.FileHandler(local_file)
-    formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
-    handler.setFormatter(formatter)
-    handler.setLevel(logging.DEBUG)
-    logger.addHandler(handler)
-    return str(local_file)
+    if upload_to_gcp:
+        parsed_uri = urlparse(log_file)
+        if parsed_uri.scheme != "gs":
+            raise click.BadParameter("Only GCS is supported for logging upload")
+        tmp_file = NamedTemporaryFile(delete=False)
+        logger.info("Logging to temporary file %s", tmp_file.name)
+        handler = logging.FileHandler(tmp_file.name)
+        formatter = logging.Formatter(
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        )
+        handler.setFormatter(formatter)
+        handler.setLevel(logging.DEBUG)
+        logger.addHandler(handler)
+        ctx.obj["local_log_file"] = tmp_file.name
+        ctx.obj["local_log_file_obj"] = tmp_file
+        ctx.obj["gcp_log_file"] = log_file
+        return tmp_file.name
+
+    else:
+        local_file = Path(log_file)
+        if local_file.exists() and local_file.is_dir():
+            raise click.BadParameter("Log file is a directory")
+        if local_file.exists() and local_file.is_file():
+            local_file.unlink()
+        if not local_file.exists():
+            local_file.parent.mkdir(parents=True, exist_ok=True)
+            local_file.touch()
+        logger.info("Logging to %s", local_file)
+        handler = logging.FileHandler(local_file)
+        formatter = logging.Formatter(
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        )
+        handler.setFormatter(formatter)
+        handler.setLevel(logging.DEBUG)
+        logger.addHandler(handler)
+        return str(local_file)
 
 
 def teardown_cli(ctx: click.Context) -> None:
@@ -80,13 +95,23 @@ def teardown_cli(ctx: click.Context) -> None:
     if "upload_to_gcp" in ctx.obj and ctx.obj["upload_to_gcp"]:
         gcp_file = ctx.obj["gcp_log_file"]
         local_file = ctx.obj["local_log_file"]
-        client = storage.Client()
-        bucket_name = urlparse(gcp_file).netloc
-        bucket = client.bucket(bucket_name=bucket_name)
-        blob = bucket.blob(Path(local_file).name)
-        logger.info("Uploading %s to %s", local_file, gcp_file)
-        blob.upload_from_filename(local_file)
-        Path(local_file).unlink()
+        with open(local_file, "r") as f:
+            content = f.read()
+        try:
+            client = storage.Client()
+            bucket_name = urlparse(gcp_file).netloc
+            bucket = client.bucket(bucket_name=bucket_name)
+            file_name = urlparse(gcp_file).path.lstrip("/")
+            blob = bucket.blob(file_name)
+            logger.info("Uploading %s to %s", local_file, gcp_file)
+            if ctx.obj["dry_run"]:
+                logger.info("Dry run, skipping the upload of the log file")
+            else:
+                blob.upload_from_string(content)
+                ctx.obj["local_log_file_obj"].close()
+        except Exception as e:
+            msg = f"Failed to upload log file to GCP {e}"
+            logger.error(click.style(msg, fg="red"))
     logger.info(
         "Finished, elapsed time %s seconds", time.time() - ctx.obj["execution_start"]
     )
