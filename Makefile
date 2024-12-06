@@ -1,4 +1,4 @@
-SHELL := $(shell echo $$SHELL)
+SHELL := /bin/bash
 .PHONY: $(shell sed -n -e '/^$$/ { n ; /^[^ .\#][^ ]*:/ { s/:.*$$// ; p ; } ; }' $(MAKEFILE_LIST))
 VERSION := $$(grep '^version' pyproject.toml | sed 's%version = "\(.*\)"%\1%')
 APP_NAME := $$(grep '^name' pyproject.toml | head -1 | sed 's%name = "\(.*\)"%\1%')
@@ -9,7 +9,7 @@ version: ## display version and exit
 	@echo $(VERSION)
 
 dev: ## setup development environment
-	$(SHELL) ./setup.sh
+	$(shell echo $$SHELL) ./setup.sh
 
 test: ## run unit tests
 	@echo "Running tests..."
