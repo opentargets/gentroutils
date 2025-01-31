@@ -271,7 +271,8 @@ async def sync_from_ftp_to_gcp(
             gcp_file,
         )
         return
-    with FTP(ftp_server) as ftp:
+    with FTP() as ftp:
+        ftp.connect(ftp_server)
         ftp.login()
         bucket = storage.Client().bucket(gcp_bucket)
         gcp_path = f"{gcp_prefix}/{gcp_file}" if gcp_prefix else gcp_file
