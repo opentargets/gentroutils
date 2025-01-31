@@ -14,7 +14,9 @@ from google.cloud import storage
 def gwas_catalog_ftp_heartbeet() -> bool:
     """Check if GWAS Catalog FTP server is up and running."""
     try:
-        with FTP("ftp.ebi.ac.uka") as ftp:
+        ftp_server = "ftp.ebi.ac.uk"
+        with FTP() as ftp:
+            ftp.connect(ftp_server)
             ftp.login()
             ftp.voidcmd("NOOP")
             return True
@@ -33,7 +35,7 @@ def test_run_update_gwas_curation_metadata_help():
 @pytest.mark.integration_test
 def test_run_update_gwas_curation_metadata_exceed_connection(
     monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
-):
+) -> None:
     """Test command with --dry-run flag when connection limit is exceeded."""
     monkeypatch.setattr(
         gentroutils.commands.update_gwas_curation_metadata,
@@ -55,7 +57,9 @@ def test_run_update_gwas_curation_metadata_exceed_connection(
     gwas_catalog_ftp_heartbeet(), reason="GWAS Catalog FTP not accessible"
 )
 @pytest.mark.integration_test
-def test_run_update_gwas_curation_metadata_no_dry_run(caplog: pytest.LogCaptureFixture):
+def test_run_update_gwas_curation_metadata_no_dry_run(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
     """Test command save from gwas catalog ftp to local gcs mock server."""
     caplog.set_level(logging.DEBUG)
     runner = CliRunner()
@@ -83,7 +87,7 @@ def test_run_update_gwas_curation_metadata_no_dry_run(caplog: pytest.LogCaptureF
 @pytest.mark.integration_test
 def test_run_update_gwas_curation_metadata_fail_to_fetch_release_info(
     caplog: pytest.LogCaptureFixture,
-):
+) -> None:
     """Test command to see if the release info is correctly fetched."""
     runner = CliRunner()
     result = runner.invoke(
@@ -123,7 +127,7 @@ def test_run_update_gwas_curation_metadata_fail_to_fetch_release_info(
 @pytest.mark.integration_test
 def test_run_update_gwas_curation_metadata_with_dry_run_does_not_produce_blob(
     link: str,
-):
+) -> None:
     """Test command to see if the release info is correctly fetched."""
     runner = CliRunner()
     result = runner.invoke(
@@ -170,7 +174,9 @@ def test_run_update_gwas_curation_metadata_transfer_from_http_to_gcp():
     gwas_catalog_ftp_heartbeet(), reason="GWAS Catalog FTP not accessible"
 )
 @pytest.mark.integration_test
-def test_run_update_gwas_curation_metadata_preserve_logs_locally(tmp_path: Path):
+def test_run_update_gwas_curation_metadata_preserve_logs_locally(
+    tmp_path: Path,
+) -> None:
     """Test command dumps logs to a local file."""
     runner = CliRunner()
     result = runner.invoke(
