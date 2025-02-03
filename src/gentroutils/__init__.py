@@ -9,8 +9,8 @@ import click
 import pyfiglet
 
 from gentroutils.commands import (
-    update_gwas_curation_metadata_command,
     generate_clumping_manifest,
+    update_gwas_curation_metadata_command,
     validate_gwas_curation,
 )
 from gentroutils.commands.utils import set_log_file, set_log_lvl, teardown_cli

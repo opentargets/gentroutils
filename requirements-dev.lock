@@ -109,8 +109,9 @@ mypy-extensions==1.0.0
     # via mypy
 nodeenv==1.9.1
     # via pre-commit
-numpy==2.2.2
+numpy==1.26.4
     # via altair
+    # via gentroutils
     # via great-expectations
     # via pandas
     # via scipy
@@ -187,6 +188,8 @@ requests==2.32.3
     # via posthog
 requirements-parser==0.11.0
     # via deptry
+returns==0.24.0
+    # via gentroutils
 rpds-py==0.22.3
     # via jsonschema
     # via referencing
@@ -230,6 +233,7 @@ typing-extensions==4.12.2
     # via pydantic
     # via pydantic-core
     # via referencing
+    # via returns
 tzdata==2025.1
     # via pandas
 tzlocal==5.2

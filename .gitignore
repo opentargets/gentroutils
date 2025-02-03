@@ -15,3 +15,5 @@ coverage.xml
 
 # interrogate
 interrogate_badge.svg
+
+.idea

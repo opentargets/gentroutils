@@ -1,5 +1,6 @@
-import pytest
 from ftplib import FTP
+
+import pytest
 
 
 @pytest.mark.usefixtures("mock_ftp")
