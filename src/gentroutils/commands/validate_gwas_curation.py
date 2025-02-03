@@ -1,14 +1,165 @@
 """Validate gwas catalog manual curation file."""
 
 from __future__ import annotations
+
+import logging
+import re
+import sys
+from enum import Enum
+from pathlib import Path
+from typing import TypeVar
+
 import click
 import great_expectations as gx
+from click import Argument, BadParameter
+from great_expectations import expectations as gxe
+
+T = TypeVar("T")
+
+
+logger = logging.getLogger("gentroutils")
+DATASOURCE_NAME = "GWAS Catalog curation"
+
+
+class Lnum(Enum):
+    """List & set convertable enum."""
+
+    @classmethod
+    def as_list(cls) -> list[T]:
+        """Convert enum to list of strings."""
+        return list(map(lambda c: c.value, cls))
+
+    @classmethod
+    def as_set(cls) -> set[T]:
+        """Convert enum to set of strings."""
+        return set(map(lambda c: c.value, cls))
+
+
+class ColumnSet(Lnum):
+    """Expected column names for curation file."""
+
+    PUBMED = "PUBMED ID"
+    STUDY = "STUDY"
+    TRAIT = "DISEASE/TRAIT"
+    ACCESSION = "STUDY ACCESSION"
+    HAS_SUMSTAT = "FULL SUMMARY STATISTICS"
+    STUDY_TYPE = "studyType"
+    FLAG = "analysisFlag"
+    IS_CURATED = "isCurated"
+
+
+class StudyType(Lnum):
+    """Expected studyType column values."""
+
+    NO_LICENCE = "no_licence"
+    PQTL = "pQTL"
+
+
+class AnalysisFlag(Lnum):
+    """Expected analysisFlag column values."""
+
+    CC = "Case-case study"
+    EXWAS = "ExWAS"
+    GXE = "GxE"
+    GXG = "GxG"
+    METABOLITE = "Metabolite"
+    MULTIVARIATE = "Multivariate analysis"
+    NON_ADDITIVE = "Non-additive model"
+
+
+class HasSumstat(Lnum):
+    """Expected FULL SUMMARY STATISTICS column values."""
+
+    YES = "yes"
+
+
+class IsCurated(Lnum):
+    """Expected isCurated column values."""
+
+    YES = True
+
+
+def _validate_input_file_name(_: click.Context, param: Argument, value: str) -> str:
+    """Assert file comes from local fs and exists"""
+    logger.debug("Validating %s variable with %s value", param, value)
+    pattern = re.compile(r"^[\w*/.-]*$")
+    _match = pattern.fullmatch(value)
+    if not _match:
+        logger.error("%s is not a local file.", value)
+        raise BadParameter("Provided path is not local.")
+    p = Path(value)
+    if p.is_dir():
+        logger.error("%s is a directory.", value)
+        raise BadParameter("Provided path is a directory.")
+    if not p.exists():
+        logger.error("%s does not exit.", value)
+        raise BadParameter("Provided path does not exist.")
+    return str(p)
+
+
+def split_source_path(source_path: str) -> tuple[Path, str]:
+    """Split the source path into directory name and filename"""
+    p = Path(source_path)
+    return p.parent, p.name
 
 
 @click.command(name="validate-gwas-curation")
-@click.argument("input_file", type=click.Path(exists=True, dir_okay=False))
-def validate_gwas_curation(input_file: str) -> None:
+@click.argument("source_path", type=click.UNPROCESSED, callback=_validate_input_file_name)
+def validate_gwas_curation(source_path: str) -> None:
     """Validate GWAS catalog manual curation file."""
-
+    logger.info("Using %s as curation input.", source_path)
     context = gx.get_context(mode="ephemeral")
-    print(context)
+    directory, file = split_source_path(source_path)
+    data_source = context.data_sources.add_pandas_filesystem(name=DATASOURCE_NAME, base_directory=directory)
+    logger.info("Using %s datasource.", DATASOURCE_NAME)
+    file_tsv_asset = data_source.add_csv_asset(name=file, sep="\t", header=0)
+    batch_definition = file_tsv_asset.add_batch_definition_path(name=file, path=source_path)
+
+    logger.info("Building expectation suite...")
+
+    suite = gx.ExpectationSuite(name="Curation Validation")
+    context.suites.add(suite)
+    suite.add_expectation(gxe.ExpectTableColumnsToMatchSet(column_set=ColumnSet.as_list(), exact_match=True))
+    suite.add_expectation(gxe.ExpectColumnValuesToBeOfType(column=ColumnSet.PUBMED.value, type_="int"))
+    suite.add_expectation(gxe.ExpectColumnValuesToBeOfType(column=ColumnSet.STUDY.value, type_="str"))
+    suite.add_expectation(gxe.ExpectColumnValuesToBeOfType(column=ColumnSet.TRAIT.value, type_="str"))
+    suite.add_expectation(gxe.ExpectColumnValuesToBeOfType(column=ColumnSet.ACCESSION.value, type_="str"))
+    suite.add_expectation(gxe.ExpectColumnValuesToBeOfType(column=ColumnSet.HAS_SUMSTAT.value, type_="str"))
+    suite.add_expectation(gxe.ExpectColumnValuesToBeOfType(column=ColumnSet.STUDY_TYPE.value, type_="str"))
+    suite.add_expectation(gxe.ExpectColumnValuesToBeOfType(column=ColumnSet.FLAG.value, type_="str"))
+    suite.add_expectation(gxe.ExpectColumnValuesToBeOfType(column=ColumnSet.IS_CURATED.value, type_="bool"))
+    suite.add_expectation(
+        gxe.ExpectColumnDistinctValuesToEqualSet(column=ColumnSet.HAS_SUMSTAT.value, value_set=HasSumstat.as_list())
+    )
+    suite.add_expectation(
+        gxe.ExpectColumnDistinctValuesToEqualSet(column=ColumnSet.STUDY_TYPE.value, value_set=StudyType.as_list())
+    )
+    suite.add_expectation(gxe.ExpectColumnDistinctValuesToEqualSet(column=ColumnSet.FLAG.value, value_set=AnalysisFlag.as_list()))
+    suite.add_expectation(
+        gxe.ExpectColumnDistinctValuesToEqualSet(column=ColumnSet.IS_CURATED.value, value_set=IsCurated.as_list())
+    )
+    suite.add_expectation(gxe.ExpectColumnValueLengthsToEqual(column=ColumnSet.PUBMED.value, value=8))
+    suite.add_expectation(gxe.ExpectColumnValuesToMatchRegex(column=ColumnSet.ACCESSION.value, regex=r"^GCST\d+$"))
+    suite.add_expectation(gxe.ExpectColumnValuesToNotBeNull(column=ColumnSet.ACCESSION.value))
+    suite.add_expectation(gxe.ExpectColumnValuesToBeUnique(column=ColumnSet.ACCESSION.value))
+    suite.save()
+    logger.info("Building validation definition...")
+    validation_definition = gx.ValidationDefinition(data=batch_definition, suite=suite, name="Curation Validation")
+    result = validation_definition.run()
+
+    logger.info(
+        click.style("Validation succeded" if result["success"] else "Validation failed", "green" if result["success"] else "red")
+    )
+    if not result["success"]:
+        for res in result["results"]:
+            if not res["success"]:
+                logger.error(
+                    "Expectation %s for column %s run with %s ",
+                    res["expectation_config"]["type"],
+                    res["expectation_config"]["kwargs"]["column"]
+                    if "column" in res["expectation_config"]["kwargs"]
+                    else res["expectation_config"]["kwargs"]["column_set"],
+                    "succeded" if res["success"] else "failed",
+                )
+            logger.error(res)
+        sys.exit(1)

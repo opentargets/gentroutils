@@ -71,8 +71,9 @@ mistune==3.1.1
     # via great-expectations
 monotonic==1.6
     # via posthog
-numpy==2.2.2
+numpy==1.26.4
     # via altair
+    # via gentroutils
     # via great-expectations
     # via pandas
     # via scipy
@@ -120,6 +121,8 @@ requests==2.32.3
     # via google-cloud-storage
     # via great-expectations
     # via posthog
+returns==0.24.0
+    # via gentroutils
 rpds-py==0.22.3
     # via jsonschema
     # via referencing
@@ -144,6 +147,7 @@ typing-extensions==4.12.2
     # via pydantic
     # via pydantic-core
     # via referencing
+    # via returns
 tzdata==2025.1
     # via pandas
 tzlocal==5.2
