@@ -38,14 +38,14 @@ class Lnum(Enum):
 class ColumnSet(Lnum):
     """Expected column names for curation file."""
 
-    PUBMED = "PUBMED ID"
-    STUDY = "STUDY"
-    TRAIT = "DISEASE/TRAIT"
-    ACCESSION = "STUDY ACCESSION"
-    HAS_SUMSTAT = "FULL SUMMARY STATISTICS"
+    STUDY_ID = "studyId"
     STUDY_TYPE = "studyType"
     FLAG = "analysisFlag"
+    QUALITY_CONTROL = "qualityControl"
     IS_CURATED = "isCurated"
+    PUBMED = "pubmedId"
+    PUBLICATION_TITLE = "publicationTitle"
+    TRAIT = "traitFromSource"
 
 
 class StudyType(Lnum):
@@ -67,12 +67,6 @@ class AnalysisFlag(Lnum):
     NON_ADDITIVE = "Non-additive model"
 
 
-class HasSumstat(Lnum):
-    """Expected FULL SUMMARY STATISTICS column values."""
-
-    YES = "yes"
-
-
 class IsCurated(Lnum):
     """Expected isCurated column values."""
 
@@ -80,7 +74,7 @@ class IsCurated(Lnum):
 
 
 def _validate_input_file_name(_: click.Context, param: Argument, value: str) -> str:
-    """Assert file comes from local fs and exists"""
+    """Assert file comes from local fs and exists."""
     logger.debug("Validating %s variable with %s value", param, value)
     pattern = re.compile(r"^[\w*/.-]*$")
     _match = pattern.fullmatch(value)
@@ -121,16 +115,12 @@ def validate_gwas_curation(source_path: str) -> None:
     context.suites.add(suite)
     suite.add_expectation(gxe.ExpectTableColumnsToMatchSet(column_set=ColumnSet.as_list(), exact_match=True))
     suite.add_expectation(gxe.ExpectColumnValuesToBeOfType(column=ColumnSet.PUBMED.value, type_="int"))
-    suite.add_expectation(gxe.ExpectColumnValuesToBeOfType(column=ColumnSet.STUDY.value, type_="str"))
+    suite.add_expectation(gxe.ExpectColumnValuesToBeOfType(column=ColumnSet.PUBLICATION_TITLE.value, type_="str"))
     suite.add_expectation(gxe.ExpectColumnValuesToBeOfType(column=ColumnSet.TRAIT.value, type_="str"))
-    suite.add_expectation(gxe.ExpectColumnValuesToBeOfType(column=ColumnSet.ACCESSION.value, type_="str"))
-    suite.add_expectation(gxe.ExpectColumnValuesToBeOfType(column=ColumnSet.HAS_SUMSTAT.value, type_="str"))
+    suite.add_expectation(gxe.ExpectColumnValuesToBeOfType(column=ColumnSet.STUDY_ID.value, type_="str"))
     suite.add_expectation(gxe.ExpectColumnValuesToBeOfType(column=ColumnSet.STUDY_TYPE.value, type_="str"))
     suite.add_expectation(gxe.ExpectColumnValuesToBeOfType(column=ColumnSet.FLAG.value, type_="str"))
     suite.add_expectation(gxe.ExpectColumnValuesToBeOfType(column=ColumnSet.IS_CURATED.value, type_="bool"))
-    suite.add_expectation(
-        gxe.ExpectColumnDistinctValuesToEqualSet(column=ColumnSet.HAS_SUMSTAT.value, value_set=HasSumstat.as_list())
-    )
     suite.add_expectation(
         gxe.ExpectColumnDistinctValuesToEqualSet(column=ColumnSet.STUDY_TYPE.value, value_set=StudyType.as_list())
     )
@@ -139,9 +129,9 @@ def validate_gwas_curation(source_path: str) -> None:
         gxe.ExpectColumnDistinctValuesToEqualSet(column=ColumnSet.IS_CURATED.value, value_set=IsCurated.as_list())
     )
     suite.add_expectation(gxe.ExpectColumnValueLengthsToEqual(column=ColumnSet.PUBMED.value, value=8))
-    suite.add_expectation(gxe.ExpectColumnValuesToMatchRegex(column=ColumnSet.ACCESSION.value, regex=r"^GCST\d+$"))
-    suite.add_expectation(gxe.ExpectColumnValuesToNotBeNull(column=ColumnSet.ACCESSION.value))
-    suite.add_expectation(gxe.ExpectColumnValuesToBeUnique(column=ColumnSet.ACCESSION.value))
+    suite.add_expectation(gxe.ExpectColumnValuesToMatchRegex(column=ColumnSet.STUDY_ID.value, regex=r"^GCST\d+$"))
+    suite.add_expectation(gxe.ExpectColumnValuesToNotBeNull(column=ColumnSet.STUDY_ID.value))
+    suite.add_expectation(gxe.ExpectColumnValuesToBeUnique(column=ColumnSet.STUDY_ID.value))
     suite.save()
     logger.info("Building validation definition...")
     validation_definition = gx.ValidationDefinition(data=batch_definition, suite=suite, name="Curation Validation")
