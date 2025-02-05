@@ -9,7 +9,6 @@ import click
 import pyfiglet
 
 from gentroutils.commands import (
-    generate_clumping_manifest,
     update_gwas_curation_metadata_command,
     validate_gwas_curation,
 )
@@ -42,7 +41,6 @@ def cli(ctx: click.Context, **kwargs: dict[str, str]) -> None:
 
 
 cli.add_command(update_gwas_curation_metadata_command)
-cli.add_command(generate_clumping_manifest)
 cli.add_command(validate_gwas_curation)
 
 __all__ = ["cli"]

@@ -43,6 +43,3 @@ jobs:
           # see https://github.com/actions/create-github-app-token
           github_token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.semrelease.outputs.tag }}
-
-
-
