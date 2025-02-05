@@ -44,7 +44,7 @@ def test_run_validate_curation_help():
 def test_run_validate_curation(
     curation_file: str,
     exit_code: int,
-):
+) -> None:
     """Test curation command."""
     runner = CliRunner()
     result = runner.invoke(cli, ["validate-gwas-curation", curation_file])
