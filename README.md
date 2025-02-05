@@ -44,6 +44,16 @@ gentroutils -vvv validate-gwas-curation GWAS_Catalog_study_curation.tsv
 validation is only allowed on the local file, the curation should follow format requirements defined in [OT curation](https://github.com/opentargets/curation/blob/master/genetics/GWAS_Catalog_study_curation.tsv)
 
 
+### Validate manual curation
+
+To validate the manually curated file, run the following command
+
+```bash
+gentroutils -vvv validate-gwas-curation tests/data/manual_curation/correct_curation.tsv
+```
+
+The command will validate the file and return the results of the validation if the issues are found.
+
 ## Read before running
 
 The logs from the command are saved under the `-q` log file, if specified `gcp` log file, then the file will be uploaded after the command has run.
