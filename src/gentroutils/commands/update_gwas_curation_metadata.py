@@ -90,10 +90,7 @@ async def update_gwas_curation_metadata_command(
             MAX_CONCURRENT_CONNECTIONS,
         )
         sys.exit(1)
-    uri_map = [
-        {"input": urlparse(ftp_file), "output": urlparse(gcp_file)}
-        for ftp_file, gcp_file in file_to_transfer
-    ]
+    uri_map = [{"input": urlparse(ftp_file), "output": urlparse(gcp_file)} for ftp_file, gcp_file in file_to_transfer]
     transfer_tasks = generate_transfer_tasks(uri_map, dry_run)
 
     # capture latest release metadata
@@ -117,9 +114,7 @@ async def update_gwas_curation_metadata_command(
     logger.info("gwas_curation_update step completed.")
 
 
-def generate_transfer_tasks(
-    uri_map: list[dict[str, ParseResult]], dry_run: bool
-) -> list[asyncio.Task[None]]:
+def generate_transfer_tasks(uri_map: list[dict[str, ParseResult]], dry_run: bool) -> list[asyncio.Task[None]]:
     """Generate transfer tasks.
 
     Args:
@@ -196,9 +191,7 @@ def generate_transfer_tasks(
     return transfer_tasks
 
 
-async def sync_from_http_to_gcp(
-    url: str, gcp_bucket: str, gcp_prefix: str, gcp_file: str, *, dry_run: bool = True
-) -> None:
+async def sync_from_http_to_gcp(url: str, gcp_bucket: str, gcp_prefix: str, gcp_file: str, *, dry_run: bool = True) -> None:
     """Sync file from HTTP and upload to GCP.
 
     This function fetches the data from the provided HTTP URL and uploads the content
@@ -283,9 +276,7 @@ async def sync_from_ftp_to_gcp(
         if dir_match:
             logger.info("Found release date!: %s", dir_match.group("release_date"))
         buffer = io.BytesIO()
-        logger.info(
-            "Retrieving data from: ftp://%s/%s/%s.", ftp_server, ftp_prefix, ftp_file
-        )
+        logger.info("Retrieving data from: ftp://%s/%s/%s.", ftp_server, ftp_prefix, ftp_file)
         ftp.retrbinary(f"RETR {ftp_file}", lambda x: buffer.write(x))
         content = buffer.getvalue().decode("utf-8")
         buffer.close()
