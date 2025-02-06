@@ -38,7 +38,6 @@ class FTPServerWrapper(threading.Thread):
         try:
             while not self._stop_flag:
                 with self.lock:
-                    print("running")
                     self.server.serve_forever(timeout=1e-6, blocking=False)
 
         finally:

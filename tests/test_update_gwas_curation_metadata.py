@@ -4,12 +4,11 @@ import logging
 from ftplib import FTP
 from pathlib import Path
 
+import gentroutils
 import pytest
 from click.testing import CliRunner
-from google.cloud import storage
-
-import gentroutils
 from gentroutils import cli
+from google.cloud import storage
 
 
 def gwas_catalog_ftp_heartbeet() -> bool:
