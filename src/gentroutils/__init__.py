@@ -8,8 +8,9 @@ import time
 import click
 import pyfiglet
 
-from gentroutils.commands.update_gwas_curation_metadata import (
+from gentroutils.commands import (
     update_gwas_curation_metadata_command,
+    validate_gwas_curation,
 )
 from gentroutils.commands.utils import set_log_file, set_log_lvl, teardown_cli
 
@@ -40,5 +41,6 @@ def cli(ctx: click.Context, **kwargs: dict[str, str]) -> None:
 
 
 cli.add_command(update_gwas_curation_metadata_command)
+cli.add_command(validate_gwas_curation)
 
 __all__ = ["cli"]

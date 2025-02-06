@@ -52,9 +52,7 @@ def set_log_file(ctx: click.Context, param: click.Option, log_file: str) -> str:
         tmp_file = NamedTemporaryFile(delete=False)
         logger.info("Logging to temporary file %s", tmp_file.name)
         handler = logging.FileHandler(tmp_file.name)
-        formatter = logging.Formatter(
-            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        )
+        formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
         handler.setFormatter(formatter)
         handler.setLevel(logging.DEBUG)
         logger.addHandler(handler)
@@ -74,9 +72,7 @@ def set_log_file(ctx: click.Context, param: click.Option, log_file: str) -> str:
             local_file.touch()
         logger.info("Logging to %s", local_file)
         handler = logging.FileHandler(local_file)
-        formatter = logging.Formatter(
-            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        )
+        formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
         handler.setFormatter(formatter)
         handler.setLevel(logging.DEBUG)
         logger.addHandler(handler)
@@ -112,9 +108,7 @@ def teardown_cli(ctx: click.Context) -> None:
         except Exception as e:
             msg = f"Failed to upload log file to GCP {e}"
             logger.error(click.style(msg, fg="red"))
-    logger.info(
-        "Finished, elapsed time %s seconds", time.time() - ctx.obj["execution_start"]
-    )
+    logger.info("Finished, elapsed time %s seconds", time.time() - ctx.obj["execution_start"])
 
 
 def set_log_lvl(_: click.Context, param: click.Option, value: int) -> int:
@@ -137,9 +131,7 @@ def set_log_lvl(_: click.Context, param: click.Option, value: int) -> int:
     log_lvls = {0: logging.ERROR, 1: logging.INFO, 2: logging.DEBUG}
     log_lvl = log_lvls.get(value, logging.DEBUG)
     handler = logging.StreamHandler(sys.stdout)
-    formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
+    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
     handler.setFormatter(formatter)
     handler.setLevel(log_lvl)
     logger.addHandler(handler)

@@ -4,17 +4,20 @@ import logging
 from ftplib import FTP
 from pathlib import Path
 
-import gentroutils
 import pytest
 from click.testing import CliRunner
-from gentroutils import cli
 from google.cloud import storage
+
+import gentroutils
+from gentroutils import cli
 
 
 def gwas_catalog_ftp_heartbeet() -> bool:
     """Check if GWAS Catalog FTP server is up and running."""
     try:
-        with FTP("ftp.ebi.ac.uka") as ftp:
+        ftp_server = "ftp.ebi.ac.uk"
+        with FTP() as ftp:
+            ftp.connect(ftp_server)
             ftp.login()
             ftp.voidcmd("NOOP")
             return True
@@ -44,9 +47,7 @@ def test_run_update_gwas_curation_metadata_exceed_connection(
     result = runner.invoke(cli, ["--dry-run", "update-gwas-curation-metadata"])
     for record in caplog.records:
         if record.levelname == "ERROR":
-            assert (
-                "File transfer limit exceeded! Max 0 connections allowed" in caplog.text
-            )
+            assert "File transfer limit exceeded! Max 0 connections allowed" in caplog.text
     assert result.exit_code == 1
 
 
@@ -58,9 +59,7 @@ def test_run_update_gwas_curation_metadata_no_dry_run(
     """Test command save from gwas catalog ftp to local gcs mock server."""
     caplog.set_level(logging.DEBUG)
     runner = CliRunner()
-    _in = (
-        "ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/harmonised_list.txt"
-    )
+    _in = "ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/harmonised_list.txt"
     _out = "gs://staging/harmonised_list.txt"
     result = runner.invoke(cli, ["update-gwas-curation-metadata", "-f", _in, _out])
     assert result.exit_code == 0

@@ -118,9 +118,7 @@ def ftp_server_mock() -> Generator[ConnectionData, None, None]:
 
 
 @pytest.fixture(scope="function")
-def ebi_mock_server(
-    monkeypatch: pytest.MonkeyPatch, ftp_server_mock: ConnectionData
-) -> None:
+def ebi_mock_server(monkeypatch: pytest.MonkeyPatch, ftp_server_mock: ConnectionData) -> None:
     """Fixture to mock FTP client to always redirect FTP.connect to mocked server"""
 
     class MockFTP(FTP):
@@ -128,9 +126,7 @@ def ebi_mock_server(
 
         def connect(self, host, port, timeout, source_address):
             """Connect to the FTP server mock."""
-            return super().connect(
-                ftp_server_mock.host, ftp_server_mock.port, timeout, source_address
-            )
+            return super().connect(ftp_server_mock.host, ftp_server_mock.port, timeout, source_address)
 
     with monkeypatch.context() as m:
         m.setattr("ftplib.FTP", MockFTP)

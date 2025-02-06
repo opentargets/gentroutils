@@ -33,6 +33,29 @@ gentroutils  -vvv -q gs://ot_orchestration/tests/gentroutils/log.txt  update-gwa
 
 The command `update-gwas-curation-metadata` fetches the data from the ftp server and transfers them to the gcp without intermediate temporary files. The download(s) and upload(s) are made asyncronously.
 
+### Validate gwas catalog curation file
+
+To validate gwas catalog curation file after manual curation to see if all expectation tests are passing.
+
+```bash
+gentroutils -vvv validate-gwas-curation GWAS_Catalog_study_curation.tsv
+```
+
+validation is only allowed on the local file, the curation should follow format requirements defined in [OT curation](https://github.com/opentargets/curation/blob/master/genetics/GWAS_Catalog_study_curation.tsv)
+
+
+### Validate manual curation
+
+To validate the manually curated file, run the following command
+
+```bash
+gentroutils -vvv validate-gwas-curation tests/data/manual_curation/correct_curation.tsv
+```
+
+The command will validate the file and return the results of the validation if the issues are found.
+
+## Read before running
+
 The logs from the command are saved under the `-q` log file, if specified `gcp` log file, then the file will be uploaded after the command has run.
 
 To test the command run it with `-d` == `--dry-run`, this will just mark the input and output destinations.
@@ -46,6 +69,8 @@ To allow for full logs to be transmitted to the log file, use `-vvv` to increase
 >
 > * The above command has some default values set for the input and output files, make sure you test them in `--dry-run` so the existing files will not get overwritten!
 > * Make sure to run `gcloud auth application-default login` to allow to use Google Cloud Python SDK before running the command
+
+
 
 ## Contribute
 
