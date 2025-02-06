@@ -101,6 +101,7 @@ pyasn1-modules==0.4.0
 pydoclint==0.5.6
 pyfiglet==1.0.2
     # via gentroutils
+pyftpdlib==2.0.1
 pytest==8.3.2
     # via pytest-cov
     # via pytest-sugar
