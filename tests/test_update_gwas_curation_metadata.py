@@ -4,11 +4,12 @@ import logging
 from ftplib import FTP
 from pathlib import Path
 
-import gentroutils
 import pytest
 from click.testing import CliRunner
-from gentroutils import cli
 from google.cloud import storage
+
+import gentroutils
+from gentroutils import cli
 
 
 def gwas_catalog_ftp_heartbeet() -> bool:
@@ -33,7 +34,7 @@ def test_run_update_gwas_curation_metadata_help():
 @pytest.mark.integration_test
 def test_run_update_gwas_curation_metadata_exceed_connection(
     monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
-):
+) -> None:
     """Test command with --dry-run flag when connection limit is exceeded."""
     monkeypatch.setattr(
         gentroutils.commands.update_gwas_curation_metadata,
@@ -50,12 +51,11 @@ def test_run_update_gwas_curation_metadata_exceed_connection(
     assert result.exit_code == 1
 
 
-@pytest.mark.usefixtures("google_cloud_storage", "staging_bucket")
-@pytest.mark.skipif(
-    gwas_catalog_ftp_heartbeet(), reason="GWAS Catalog FTP not accessible"
-)
+@pytest.mark.usefixtures("google_cloud_storage", "staging_bucket", "ebi_mock_server")
 @pytest.mark.integration_test
-def test_run_update_gwas_curation_metadata_no_dry_run(caplog: pytest.LogCaptureFixture):
+def test_run_update_gwas_curation_metadata_no_dry_run(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
     """Test command save from gwas catalog ftp to local gcs mock server."""
     caplog.set_level(logging.DEBUG)
     runner = CliRunner()
@@ -79,11 +79,11 @@ def test_run_update_gwas_curation_metadata_no_dry_run(caplog: pytest.LogCaptureF
             assert "EFO version: v" in record.message
 
 
-@pytest.mark.usefixtures("google_cloud_storage", "staging_bucket")
+@pytest.mark.usefixtures("google_cloud_storage", "staging_bucket", "ebi_mock_server")
 @pytest.mark.integration_test
 def test_run_update_gwas_curation_metadata_fail_to_fetch_release_info(
     caplog: pytest.LogCaptureFixture,
-):
+) -> None:
     """Test command to see if the release info is correctly fetched."""
     runner = CliRunner()
     result = runner.invoke(
@@ -93,8 +93,7 @@ def test_run_update_gwas_curation_metadata_fail_to_fetch_release_info(
             "-f",
             "ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/harmonised_list.txt",
             "gs://staging/harmonised_list.txt",
-            "-g"
-            "http://localhost:4443",  # incorrect link to the gwas catalog api stats
+            "-ghttp://localhost:4443",  # incorrect link to the gwas catalog api stats
         ],
     )
     assert result.exit_code == 1
@@ -103,7 +102,7 @@ def test_run_update_gwas_curation_metadata_fail_to_fetch_release_info(
             assert "Failed to fetch release info" in record.message
 
 
-@pytest.mark.usefixtures("google_cloud_storage", "staging_bucket")
+@pytest.mark.usefixtures("google_cloud_storage", "staging_bucket", "ebi_mock_server")
 @pytest.mark.parametrize(
     "link",
     [
@@ -117,13 +116,10 @@ def test_run_update_gwas_curation_metadata_fail_to_fetch_release_info(
         ),
     ],
 )
-@pytest.mark.skipif(
-    gwas_catalog_ftp_heartbeet(), reason="GWAS Catalog FTP not accessible"
-)
 @pytest.mark.integration_test
 def test_run_update_gwas_curation_metadata_with_dry_run_does_not_produce_blob(
     link: str,
-):
+) -> None:
     """Test command to see if the release info is correctly fetched."""
     runner = CliRunner()
     result = runner.invoke(
@@ -142,10 +138,7 @@ def test_run_update_gwas_curation_metadata_with_dry_run_does_not_produce_blob(
     assert not list(blobs)
 
 
-@pytest.mark.usefixtures("google_cloud_storage", "staging_bucket")
-@pytest.mark.skipif(
-    gwas_catalog_ftp_heartbeet(), reason="GWAS Catalog FTP not accessible"
-)
+@pytest.mark.usefixtures("google_cloud_storage", "staging_bucket", "ebi_mock_server")
 @pytest.mark.integration_test
 def test_run_update_gwas_curation_metadata_transfer_from_http_to_gcp():
     """Test command to see if the release info is correctly fetched."""
@@ -155,7 +148,7 @@ def test_run_update_gwas_curation_metadata_transfer_from_http_to_gcp():
         [
             "update-gwas-curation-metadata",
             "-f",
-            "https://raw.githubusercontent.com/opentargets/curation/master/genetics/GWAS_Catalog_study_curation.tsv",
+            "https://raw.githubusercontent.com/opentargets/curation/25.01/genetics/GWAS_Catalog_study_curation.tsv",
             "gs://staging/curation-metadata.tsv",
         ],
     )
@@ -165,12 +158,11 @@ def test_run_update_gwas_curation_metadata_transfer_from_http_to_gcp():
     assert next(blobs).name == "curation-metadata.tsv"
 
 
-@pytest.mark.usefixtures("google_cloud_storage", "staging_bucket")
-@pytest.mark.skipif(
-    gwas_catalog_ftp_heartbeet(), reason="GWAS Catalog FTP not accessible"
-)
+@pytest.mark.usefixtures("google_cloud_storage", "staging_bucket", "ebi_mock_server")
 @pytest.mark.integration_test
-def test_run_update_gwas_curation_metadata_preserve_logs_locally(tmp_path: Path):
+def test_run_update_gwas_curation_metadata_preserve_logs_locally(
+    tmp_path: Path,
+) -> None:
     """Test command dumps logs to a local file."""
     runner = CliRunner()
     result = runner.invoke(
@@ -192,10 +184,7 @@ def test_run_update_gwas_curation_metadata_preserve_logs_locally(tmp_path: Path)
     Path(tmp_path / "gentroutils.log").unlink()
 
 
-@pytest.mark.usefixtures("google_cloud_storage", "staging_bucket")
-@pytest.mark.skipif(
-    gwas_catalog_ftp_heartbeet(), reason="GWAS Catalog FTP not accessible"
-)
+@pytest.mark.usefixtures("google_cloud_storage", "staging_bucket", "ebi_mock_server")
 @pytest.mark.integration_test
 def test_run_update_gwas_curation_metadata_preserve_logs_in_gcs():
     """Test command dumps logs to a gcs file."""
