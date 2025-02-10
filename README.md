@@ -78,7 +78,6 @@ To be able to contribute to the project you need to set it up. This project
 runs on:
 
 - [x] python 3.10.8
-- [x] rye (package manager)
 - [x] uv (dependency manager)
 
 To set up the project run
@@ -92,7 +91,7 @@ install all python dependencies listed in `pyproject.toml`. Finally the command 
 requred to be run before the commit is created.
 
 The project has additional `dev` dependencies that include the list of packages used for testing purposes.
-All of the `dev` depnendencies are automatically installed by `rye`.
+All of the `dev` depnendencies are automatically installed by `uv`.
 
 To see all available dev commands
 
@@ -107,5 +106,5 @@ make help
 To check CLI execution manually you need to run
 
 ```{bash}
-rye run gentroutils
+uv run gentroutils
 ```
