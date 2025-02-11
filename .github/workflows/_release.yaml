@@ -10,9 +10,6 @@ on:
 
 jobs:
   build:
-    permissions:
-      id-token: write
-      contents: write
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -32,6 +29,9 @@ jobs:
 
   release:
     needs: build
+    permissions:
+      id-token: write
+      contents: write
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     permissions:
