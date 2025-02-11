@@ -13,29 +13,29 @@ dev: ## setup development environment
 
 test: ## run unit tests
 	@echo "Running tests..."
-	@rye run pytest
+	@uv run --frozen pytest
 
 lint: ## run linting
 	@echo "Running linting tools..."
-	@rye run ruff check --fix --select I src/$(APP_NAME) tests
-	@rye run pydoclint --config=pyproject.toml src tests
-	@rye run interrogate -vv src/$(APP_NAME) tests
+	@uv run --frozen ruff check --fix --select I src/$(APP_NAME) tests
+	@uv run --frozen pydoclint --config=pyproject.toml src tests
+	@uv run --frozen interrogate -vv src/$(APP_NAME) tests
 
 type-check: ## run mypy and check types
 	@echo "Running type checks..."
-	@rye run mypy --install-types --non-interactive src/$(APP_NAME)
+	@uv run --frozen mypy --install-types --non-interactive src/$(APP_NAME)
 
 format: ## run formatting
 	@echo "Running formatting tools..."
-	@rye run ruff format src/$(APP_NAME) tests
+	@uv run --frozen ruff format src/$(APP_NAME) tests
 
 dep-check: ## check for outdated dependencies
 	@echo "Running dependencies checks..."
-	@rye run deptry . --known-first-party $(APP_NAME)
+	@uv run --frozen deptry . --known-first-party $(APP_NAME)
 
 build: ## build distributions
 	@echo "Building distributions..."
-	@rye build
+	@uv build
 
 check: lint format test type-check dep-check ## run all checks
 
