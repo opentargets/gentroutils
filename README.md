@@ -2,6 +2,7 @@
 [![checks](https://github.com/opentargets/gentroutils/actions/workflows/pr.yaml/badge.svg?branch=dev)](https://github.com/opentargets/gentroutils/actions/workflows/pr.yaml)
 [![dev-release](https://github.com/opentargets/gentroutils/actions/workflows/dev-release.yaml/badge.svg?branch=dev)](https://github.com/opentargets/gentroutils/actions/workflows/dev-release.yaml)
 ![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
+[![release](https://github.com/opentargets/gentroutils/actions/workflows/release.yaml/badge.svg)](https://github.com/opentargets/gentroutils/actions/workflows/release.yaml)
 
 Set of Command Line Interface tools to process Open Targets Genetics GWAS data.
 
