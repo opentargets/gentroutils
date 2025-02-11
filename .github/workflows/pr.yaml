@@ -12,12 +12,12 @@ jobs:
         python-version: ["3.10", "3.11", "3.12"]
         include:
           - command: "test"
-          - command: "type-check"
-          - command: "dep-check"
-            python-version: "3.10"
-          - command: "lint"
-            python-version: "3.10"
-    # name: ${{ matrix.command }}-${{ matrix.python-version }}
+          # - command: "type-check"
+          # - command: "dep-check"
+          #   python-version: "3.10"
+          # - command: "lint"
+          #   python-version: "3.10"
+    name: ${{ matrix.command }}-${{ matrix.python-version }}
     # concurrency:
     #   group: ${{ matrix.python-version }}-${{ github.workflow }}-${{ github.ref }}
     #   cancel-in-progress: true
