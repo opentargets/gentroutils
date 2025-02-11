@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v1.0.0-rc.3 (2025-02-11)
+
+### Bug Fixes
+
+- Incorrect python version in gha
+  ([`ec2f701`](https://github.com/opentargets/gentroutils/commit/ec2f7013dc52102a1a25ac59b400ee6fb2c7b888))
+
+### Chores
+
+- Add name to tag action
+  ([`d93d8a3`](https://github.com/opentargets/gentroutils/commit/d93d8a3c65812a6ee7064a8a2d676363167f3ade))
+
+
 ## v1.0.0-rc.2 (2025-02-11)
 
 ### Features
