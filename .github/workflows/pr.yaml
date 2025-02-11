@@ -18,9 +18,9 @@ jobs:
           - command: "lint"
             python-version: "3.10"
     name: ${{ matrix.command }}-${{ matrix.python-version }}
-    concurrency:
-      group: ${{ matrix.python-version }}-${{ github.workflow }}-${{ github.ref }}
-      cancel-in-progress: true
+    # concurrency:
+    #   group: ${{ matrix.python-version }}-${{ github.workflow }}-${{ github.ref }}
+    #   cancel-in-progress: true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
