@@ -23,7 +23,7 @@ jobs:
     name: ${{ matrix.command }}-${{ matrix.python-version }}
     concurrency:
       group: ${{ matrix.python-version }}-${{ github.workflow }}-${{ github.ref }}
-      cancel-in-progress: true
+      # cancel-in-progress: true
     runs-on: ubuntu-latest
     steps:
       - run: |
