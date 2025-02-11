@@ -1,5 +1,7 @@
 name: Checks
-
+concurrency:
+  group:  ${{ github.ref }}
+  cancel-in-progress: true
 on:
   pull_request:
     branches:
@@ -8,7 +10,7 @@ on:
 jobs:
   check:
     strategy:
-      max-parallel: 4
+      max-parallel: 2
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
         command: ["test", "type-check", "dep-check", "lint"]
@@ -22,9 +24,6 @@ jobs:
           - command: "dep-check"
             python-version: "3.12"
     name: ${{ matrix.command }}-${{ matrix.python-version }}
-    concurrency:
-      group:  ${{ github.ref }}
-      cancel-in-progress: true
     runs-on: ubuntu-latest
     steps:
       - run: |
