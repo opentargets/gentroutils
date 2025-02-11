@@ -13,7 +13,7 @@ dependencies = [
     "returns>=0.24.0",
 ]
 readme = "README.md"
-requires-python = ">= 3.10"
+requires-python = ">=3.10,<3.13"
 license = "Apache-2.0"
 documentation = "https://github.com/opentargets/gentroutils"
 repository = "https://github.com/opentargets/gentroutils"
