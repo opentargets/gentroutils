@@ -10,6 +10,9 @@ on:
 
 jobs:
   build:
+    permissions:
+      id-token: write
+      contents: write
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -27,7 +30,7 @@ jobs:
           name: python-package-distributions
           path: dist/
 
-  test-release:
+  release:
     needs: build
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
