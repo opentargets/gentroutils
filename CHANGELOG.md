@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.0.0-rc.6 (2025-02-11)
+
+### Features
+
+- Allow trusted publisher in pypi actions
+  ([`3179d8c`](https://github.com/opentargets/gentroutils/commit/3179d8cd650cc1f4953b05cd7df02fe7d790a3fd))
+
+
 ## v1.0.0-rc.5 (2025-02-11)
 
 ### Features
