@@ -1,11 +1,11 @@
-name: release
+name: dev-release
 on:
   push:
-    tags: ['v[0-9]+.[0-9]+.[0-9]']
+    tags: ['v[0-9]+.[0-9]+.[0-9]+-*']
   workflow_dispatch:
 
 concurrency:
-  group: prod
+  group: test
   cancel-in-progress: true
 
 jobs:
@@ -29,20 +29,19 @@ jobs:
           name: python-package-distributions
           path: dist/
 
-  release:
+  test-release:
     needs: build
     runs-on: ubuntu-latest
-    environment: PyPI
+    environment: TEST
     permissions:
-      id-token: write # IMPORTANT: mandatory for trusted publishing
+      id-token: write
     steps:
-      - name: Download all the dists
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           name: python-package-distributions
           path: dist/
-      - name: Publish distribution 📦 to PyPI
+      - name: Publish distribution 📦 to TestPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          repository-url: https://upload.pypi.org/legacy/
+          repository-url: https://test.pypi.org/legacy/
           packages-dir: dist/
