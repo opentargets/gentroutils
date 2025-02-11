@@ -1,19 +1,24 @@
-name: Checks
-concurrency:
-  group:  ${{ github.ref }}
-  cancel-in-progress: true
+name: checks
+
 on:
   pull_request:
     branches:
       - dev
+      - main
+
+concurrency:
+  group:  ${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   check:
+    name: ${{ matrix.command }}-${{ matrix.python-version }}
     strategy:
       max-parallel: 2
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
         command: ["test", "type-check", "dep-check", "lint"]
+        # Skip redundant checks.
         exclude:
           - command: "lint"
             python-version: "3.11"
@@ -23,97 +28,18 @@ jobs:
             python-version: "3.11"
           - command: "dep-check"
             python-version: "3.12"
-    name: ${{ matrix.command }}-${{ matrix.python-version }}
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          echo ${{matrix.python-version}}
-          echo ${{matrix.command}}
-      # - uses: actions/checkout@v4
-      # - uses: actions/setup-python@v5
-      #   with:
-      #     python-version: ${{ matrix.python-version }}
-      # - name: Install uv
-      #   uses: astral-sh/setup-uv@v5
-      #   with:
-      #     enable-cache: true
-      #     cache-dependency-glob: "uv.lock"
-      #     python-version:  ${{ matrix.python-version }}
-      # - name: Install project
-      #   run: uv sync --all-extras
-      # - name: Run test
-      #   run: make ${{ matrix.command }}
-
-  # types:
-  #   strategy:
-  #     matrix:
-  #       python-version: ["3.10", "3.11", "3.12", "3.13"]
-  #   concurrency:
-  #     group: ${{ matrix.python-version }}-${{ github.workflow }}-${{ github.ref }}
-  #     cancel-in-progress: true
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-python@v5
-  #       with:
-  #         python-version: ${{ matrix.python-version }}
-  #     - name: Install uv
-  #       uses: astral-sh/setup-uv@v5
-  #       with:
-  #         enable-cache: true
-  #         cache-dependency-glob: "uv.lock"
-  #         python-version:  ${{ matrix.python-version }}
-  #     - name: Install project
-  #       run: uv sync --all-extras
-  #     - name: Run test
-  #       run: make type-check
-
-
-  # lint:
-  #   strategy:
-  #     matrix:
-  #       python-version: ["3.10"]
-  #   concurrency:
-  #     group: ${{ matrix.python-version }}-${{ github.workflow }}-${{ github.ref }}
-  #     cancel-in-progress: true
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-python@v5
-  #       with:
-  #         python-version: ${{ matrix.python-version }}
-  #     - name: Install uv
-  #       uses: astral-sh/setup-uv@v5
-  #       with:
-  #         enable-cache: true
-  #         cache-dependency-glob: "uv.lock"
-  #         python-version:  ${{ matrix.python-version }}
-  #     - name: Install project
-  #       run: uv sync --all-extras
-  #     - name: Run test
-  #       run: make lint
-
-
-  # dependencies:
-  #   strategy:
-  #     matrix:
-  #       python-version: ["3.10"]
-  #   concurrency:
-  #     group: ${{ matrix.python-version }}-${{ github.workflow }}-${{ github.ref }}
-  #     cancel-in-progress: true
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-python@v5
-  #       with:
-  #         python-version: ${{ matrix.python-version }}
-  #     - name: Install uv
-  #       uses: astral-sh/setup-uv@v5
-  #       with:
-  #         enable-cache: true
-  #         cache-dependency-glob: "uv.lock"
-  #         python-version:  ${{ matrix.python-version }}
-  #     - name: Install project
-  #       run: uv sync --all-extras
-  #     - name: Run test
-  #       run: make dep-check
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+          python-version:  ${{ matrix.python-version }}
+      - name: Install project
+        run: uv sync --all-extras
+      - name: Run test
+        run: make ${{ matrix.command }}
