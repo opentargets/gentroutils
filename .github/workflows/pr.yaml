@@ -23,7 +23,7 @@ jobs:
             python-version: "3.12"
     name: ${{ matrix.command }}-${{ matrix.python-version }}
     concurrency:
-      group: ${{ github.ref }}
+      group:  ${{ matrix.python-version }}-${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
     runs-on: ubuntu-latest
     steps:
