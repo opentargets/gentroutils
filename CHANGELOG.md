@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v1.0.0-rc.4 (2025-02-11)
+
+### Features
+
+- Add release badge
+  ([`cfb39e2`](https://github.com/opentargets/gentroutils/commit/cfb39e26fb54b83b4760d324c58a89d337d87402))
+
+- Preparation for dev release
+  ([`daca0aa`](https://github.com/opentargets/gentroutils/commit/daca0aa86ace460a5c74b4943c187e874d6d6fad))
+
+* fix workflow names * fix workflow badges in README * update uv lock
+
+
 ## v1.0.0-rc.3 (2025-02-11)
 
 ### Bug Fixes
