@@ -8,6 +8,7 @@ on:
 jobs:
   check:
     strategy:
+      max-parallel: 4
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
         command: ["test", "type-check", "dep-check", "lint"]
@@ -22,8 +23,7 @@ jobs:
             python-version: "3.12"
     name: ${{ matrix.command }}-${{ matrix.python-version }}
     concurrency:
-      group: ${{ matrix.python-version }}-${{ github.workflow }}-${{ github.ref }}
-      # cancel-in-progress: true
+      group: ${{ matrix.python-version }}
     runs-on: ubuntu-latest
     steps:
       - run: |
