@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.0.0-rc.2 (2025-02-11)
+
+### Features
+
+- Reusable workflow for release
+  ([`67eb06b`](https://github.com/opentargets/gentroutils/commit/67eb06b253cb850a7300cd59849bbd2c0571ae9e))
+
+
 ## v1.0.0-rc.1 (2025-02-11)
 
 ### Bug Fixes
