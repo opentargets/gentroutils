@@ -1,12 +1,12 @@
 name: Trigger Release
 
-"on":
+on:
   schedule:
     - cron: "0 11 * * 2"
   workflow_dispatch:
 
 jobs:
-  pull-request:
+  prepare-release-pr:
     runs-on: ubuntu-latest
     environment: DEV
     steps:
