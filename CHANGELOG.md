@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.0.0-rc.8 (2025-02-11)
+
+### Features
+
+- Change to test env for test pypi release
+  ([`0f4bfd4`](https://github.com/opentargets/gentroutils/commit/0f4bfd4aed78f8a7ccb6173005323249342204ed))
+
+
 ## v1.0.0-rc.7 (2025-02-11)
 
 ### Features
