@@ -1,28 +1,18 @@
-# This script installs Rye and updates the shell configuration file.
-# It also initializes current project and syncs the dependencies.
-# It is intended to be run on a new system to quickly set up Rye.
-# It is recommended to review the script before running it.
-
-export SHELL_RC=$(echo "$HOME/.${SHELL##*/}rc")
-
-if ! command -v rye &>/dev/null; then
-    echo "Rye is not installed. Installing..."
-    curl -sSf https://rye.astral.sh/get | bash
-    echo "Updating $SHELL_RC"
-    echo "source $HOME/.rye/env" >>$SHELL_RC
-    echo "source $HOME/.cargo/bin" >>$SHELL_RC
-else
-    echo "Rye is already installed."
-fi
+readonly SHELL_RC="$HOME/.${SHELL##*/}rc"
+readonly PYTHON_VERSION=$(cat .python-version >&/dev/null || echo "3.11.11")
 
 if ! command -v uv &>/dev/null; then
-    echo "uv is not installed. Installing..."
+    echo "uv was not found, installing uv..."
     curl -LsSf https://astral.sh/uv/install.sh | sh
-else
-    echo "uv is already installed."
+    source "$SHELL_RC"
 fi
-source $SHELL_RC
-rye sync
-rye run pre-commit install --hook-type commit-msg --hook-type pre-commit
 
-echo "Done"
+echo "Installing python version from .python-version..."
+uv python install "$PYTHON_VERSION"
+
+echo "Installing dependencies with UV..."
+uv sync --all-groups --frozen
+
+echo "Setting up pre-commit..."
+uv run --no-sync pre-commit install
+uv run --no-sync pre-commit install --hook-type commit-msg

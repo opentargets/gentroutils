@@ -1,28 +1,42 @@
-name: Dev tests
+name: checks
 
 on:
   pull_request:
+    branches:
+      - dev
+      - main
 
-env:
-  PYTHON_VERSION_DEFAULT: "3.10.8"
+
 jobs:
-  test:
+  check:
+    name: ${{ matrix.command }}-${{ matrix.python-version }}
+    strategy:
+      max-parallel: 2
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+        command: ["test", "type-check", "dep-check", "lint"]
+        # Skip redundant checks.
+        exclude:
+          - command: "lint"
+            python-version: "3.11"
+          - command: "lint"
+            python-version: "3.12"
+          - command: "dep-check"
+            python-version: "3.11"
+          - command: "dep-check"
+            python-version: "3.12"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          fetch-depth: 1
-      - name: Set up Python
-        uses: actions/setup-python@v5
+          python-version: ${{ matrix.python-version }}
+      - uses: astral-sh/setup-uv@v5
         with:
-          python-version: 3.10.8
-      - name: Install uv
-        uses: yezz123/setup-uv@v4
-      - name: Install rye
-        uses: eifinger/setup-rye@v4
-        with:
-          version: "latest"
-      - name: Sync dependencies
-        run: rye sync
-      - name: Run checks
-        run: rye run pre-commit run --all-files
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+          python-version:  ${{ matrix.python-version }}
+      - name: Install project
+        run: uv sync --all-extras
+      - name: Run test
+        run: make ${{ matrix.command }}

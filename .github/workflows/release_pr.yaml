@@ -1,19 +1,19 @@
-name: Trigger Release
+name: trigger-release
 
-"on":
+on:
   schedule:
     - cron: "0 11 * * 2"
   workflow_dispatch:
 
 jobs:
-  pull-request:
+  prepare-release-pr:
     runs-on: ubuntu-latest
     environment: DEV
     steps:
       - uses: actions/create-github-app-token@v1
         id: trigger-token
         with:
-          app-id: ${{ vars.TRIGGER_WORKFLOW_GH_APP_ID}}
+          app-id: ${{ vars.TRIGGER_WORKFLOW_GH_APP_ID }}
           private-key: ${{ secrets.TRIGGER_WORKFLOW_GH_APP_KEY }}
       - uses: actions/checkout@v4
         with:
