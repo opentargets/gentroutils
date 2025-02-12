@@ -173,7 +173,7 @@ prerelease = false
 
 [tool.semantic_release.branches.dev]
 match = "dev"
-prerelease_token = "rc"
+prerelease_token = "dev"
 prerelease = true
 
 [tool.semantic-release.changelog.default_templates]
