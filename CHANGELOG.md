@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.3.0-dev.3 (2025-02-12)
+
+### Features
+
+- Ensure proper username
+  ([`fe2e490`](https://github.com/opentargets/gentroutils/commit/fe2e49068cf51613907d2979ee88fd35dfeb4ec9))
+
+
 ## v1.3.0-dev.2 (2025-02-12)
 
 ### Features
