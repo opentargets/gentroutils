@@ -186,6 +186,49 @@ BREAKING CHANGE: swap rye with uv feat: update github actions workflows
 - **dev_process**: Swap rye with uv feat: update github actions workflows
 
 
+## v0.2.0 (2024-12-06)
+
+### Chore
+
+* chore: update README file ([`afe6932`](https://github.com/opentargets/gentroutils/commit/afe6932d14266d9d266276c1ff9c0458f6b9712a))
+
+* chore: fix author ([`108ea30`](https://github.com/opentargets/gentroutils/commit/108ea3092221f565f3983d44604d3046e761660b))
+
+* chore: added project description and classifiers ([`8ef35fa`](https://github.com/opentargets/gentroutils/commit/8ef35fa58842c5ccac7d69fb5dfb20849d7cdc86))
+
+### Feature
+
+* feat: update default command help ([`c8b2c3a`](https://github.com/opentargets/gentroutils/commit/c8b2c3a390d56bcc07406926ba45080a4b4dd74c))
+
+* feat: remove redundant files from curation update command ([`f3fb1e8`](https://github.com/opentargets/gentroutils/commit/f3fb1e8baed554d6f257ae6f051115ad8e92602f))
+
+### Fix
+
+* fix: use user shell only for installation ([`40129e5`](https://github.com/opentargets/gentroutils/commit/40129e5b6ed88cd21eaa8b0666c1988ae0ef2290))
+
+* fix: upload log file only when not dry-run ([`57c8a8e`](https://github.com/opentargets/gentroutils/commit/57c8a8eafd0deb37221fb990c72e77d9f1c9bf6c))
+
+* fix: use user defined shell ([`0fa2cff`](https://github.com/opentargets/gentroutils/commit/0fa2cff0300cad96f22efdc1584fb68817ed2ac6))
+
+### Unknown
+
+* Merge pull request #19 from opentargets/dev
+
+chore: trigger release process ([`e7bc28c`](https://github.com/opentargets/gentroutils/commit/e7bc28c2fb2464350b46b1f73b11805243421172))
+
+* Merge branch &#39;main&#39; into dev ([`318d141`](https://github.com/opentargets/gentroutils/commit/318d1413f6fc280f6ff727fde3f112bd7f673882))
+
+* Merge pull request #17 from opentargets/dev
+
+chore: trigger release process ([`519aa86`](https://github.com/opentargets/gentroutils/commit/519aa86b8d5de9a93e343d7b93425969439ae7e7))
+
+* Merge pull request #16 from opentargets/dev
+
+chore: trigger release process ([`550b6e8`](https://github.com/opentargets/gentroutils/commit/550b6e8967efa0eac988c1dba7d3c5667439c39b))
+
+* Merge branch &#39;main&#39; into dev ([`e948830`](https://github.com/opentargets/gentroutils/commit/e948830b638032e5da72674ec7298aef42befece))
+
+
 ## v0.1.5 (2024-08-13)
 
 
