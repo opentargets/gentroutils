@@ -1,7 +1,7 @@
 [project]
 authors = [{ name = "Szymon Szyszkowski", email = "ss60@sanger.ac.uk" }]
 name = "gentroutils"
-version = "1.2.0-dev.1"
+version = "1.2.0-dev.2"
 description = "Open Targets python genetics utility CLI tools"
 dependencies = [
     "click>=8.1.7",

@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.2.0-dev.2 (2025-02-12)
+
+### Features
+
+- Merge dev to main when tag is commited
+  ([`8f8f462`](https://github.com/opentargets/gentroutils/commit/8f8f462820110ca40a4079f444baf40b8afaf19d))
+
+
 ## v1.2.0-dev.1 (2025-02-12)
 
 
