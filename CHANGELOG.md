@@ -1,12 +1,20 @@
 # CHANGELOG
 
 
+## v1.1.0 (2025-02-12)
+
+
 ## v1.0.0 (2025-02-12)
 
 ### Chores
 
 - Update readme
   ([`61e962a`](https://github.com/opentargets/gentroutils/commit/61e962a37d8b919fdadea3500a9381a71be0783b))
+
+### Features
+
+- Debug pypi upload process
+  ([`0ac7131`](https://github.com/opentargets/gentroutils/commit/0ac7131bf9d2fc5d8b68e5f45710e34247ffbf23))
 
 
 ## v1.0.0-dev.5 (2025-02-12)
