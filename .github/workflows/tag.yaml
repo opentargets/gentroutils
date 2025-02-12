@@ -51,4 +51,9 @@ jobs:
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           git checkout dev
           git merge main
-          git push
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ steps.trigger-token.outcome.token }}
+          branch: dev
