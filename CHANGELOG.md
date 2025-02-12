@@ -1,7 +1,29 @@
 # CHANGELOG
 
 
+## v1.2.0-dev.2 (2025-02-12)
+
+### Features
+
+- Merge dev to main when tag is commited
+  ([`8f8f462`](https://github.com/opentargets/gentroutils/commit/8f8f462820110ca40a4079f444baf40b8afaf19d))
+
+
+## v1.2.0-dev.1 (2025-02-12)
+
+
 ## v1.1.0 (2025-02-12)
+
+
+## v1.1.0-dev.2 (2025-02-12)
+
+### Features
+
+- Drop reusable workflow
+  ([`cc982d9`](https://github.com/opentargets/gentroutils/commit/cc982d961b016846c2d406e7fc214593130ceebd))
+
+
+## v1.1.0-dev.1 (2025-02-12)
 
 
 ## v1.0.0 (2025-02-12)

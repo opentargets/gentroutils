@@ -9,17 +9,65 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: pyproject.toml
+      - uses: astral-sh/setup-uv@v5
+      - name: Install project
+        run: uv sync --all-extras
+      - name: Build package
+        run: make build
+      - name: Store the distribution packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+
   release:
     name: test-pypi-release
-    uses: ./.github/workflows/_release.yaml
-    with:
-      environment: DEV
-      url: https://test.pypi.org/p/gentroutils
+    needs: build
+    environment:
+      name: DEV
+      url:  https://test.pypi.org/p/gentroutils
+    permissions:
+      id-token: write
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+      - name: Publish distribution 📦 to  ${{ vars.PYPI_NAME }}
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: ${{ vars.PYPI_URL }}
+          packages-dir: dist/
+          verbose: true
+
 
   dev-release:
-    needs: release
-    name: pypi-release
-    uses: ./.github/workflows/_release.yaml
-    with:
-      environment: PyPI
+    needs:
+      - build
+    permissions:
+      id-token: write
+      contents: write
+    runs-on: ubuntu-latest
+    environment:
+      name: PyPI
       url: https://pypi.org/p/gentroutils
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+      - name: Publish distribution 📦 to  ${{ vars.PYPI_NAME }}
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: ${{ vars.PYPI_URL }}
+          packages-dir: dist/
+          verbose: true
