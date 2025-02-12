@@ -13,4 +13,4 @@ jobs:
     name: dev-release
     uses: ./.github/workflows/_release.yaml
     with:
-      environment: TEST
+      environment: DEV
