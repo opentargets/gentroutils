@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.1.0-dev.2 (2025-02-12)
+
+### Features
+
+- Drop reusable workflow
+  ([`cc982d9`](https://github.com/opentargets/gentroutils/commit/cc982d961b016846c2d406e7fc214593130ceebd))
+
+
 ## v1.1.0-dev.1 (2025-02-12)
 
 
