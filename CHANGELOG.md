@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.3.0-dev.1 (2025-02-12)
+
+### Features
+
+- Push with github token
+  ([`3d78465`](https://github.com/opentargets/gentroutils/commit/3d784653d005844a4f458f0d96a430cb5eb40eca))
+
+
 ## v1.2.0 (2025-02-12)
 
 
