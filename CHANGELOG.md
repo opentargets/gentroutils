@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.3.0-dev.2 (2025-02-12)
+
+### Features
+
+- Ensure push is run on main branch only
+  ([`1e27c7b`](https://github.com/opentargets/gentroutils/commit/1e27c7bb2dcf9fc1be3067b60d28e98c3945a44f))
+
+
 ## v1.3.0-dev.1 (2025-02-12)
 
 ### Features
