@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.0.0-rc.10 (2025-02-12)
+
+### Features
+
+- Drop workflow name
+  ([`ff382dc`](https://github.com/opentargets/gentroutils/commit/ff382dc6e29f89d985df35631556e07759d22548))
+
+
 ## v1.0.0-rc.9 (2025-02-12)
 
 ### Features
