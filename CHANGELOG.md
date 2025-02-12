@@ -1,6 +1,53 @@
 # CHANGELOG
 
 
+## v1.0.0-dev.3 (2025-02-12)
+
+
+## v0.2.0 (2024-12-06)
+
+### Chores
+
+- Cleanup
+  ([`32f8b8d`](https://github.com/opentargets/gentroutils/commit/32f8b8d1f5d1505569a44ed6ae0ff81e1a9c80de))
+
+- Delete coverage file
+  ([`c720041`](https://github.com/opentargets/gentroutils/commit/c720041d699d9dd6fcbd4e4feb621400ffc5703d))
+
+- Fix conflicts
+  ([`5fcc649`](https://github.com/opentargets/gentroutils/commit/5fcc649266047fe65caa2b33d125a10c550e1ade))
+
+- Linting
+  ([`429102c`](https://github.com/opentargets/gentroutils/commit/429102c3195c09933b57775051b404fad933dda3))
+
+### Documentation
+
+- **validate_curation**: Added example command to readme
+  ([`e6c38d0`](https://github.com/opentargets/gentroutils/commit/e6c38d0eddae66fd8825f235837bdc7cb9758e1c))
+
+### Features
+
+- Curation
+  ([`bb1f7ea`](https://github.com/opentargets/gentroutils/commit/bb1f7eaf82a7d669129f20cedba0429091d16300))
+
+- Curation validator
+  ([`3b8e269`](https://github.com/opentargets/gentroutils/commit/3b8e2697636abade55f68088a840dabea7011c4f))
+
+- Pyftpdlib
+  ([`3f5a554`](https://github.com/opentargets/gentroutils/commit/3f5a55420fd30c768d1ce437b87e5296b09a98ea))
+
+### Testing
+
+- Curation validation
+  ([`53b571e`](https://github.com/opentargets/gentroutils/commit/53b571ed6849da709f3b2b6c897469f428d8048b))
+
+- Mock ebi ftp server
+  ([`3b5d4b7`](https://github.com/opentargets/gentroutils/commit/3b5d4b74825a951c5f0be12759c6051e21a0ff9d))
+
+- **curation validation**: Add test cases for expectations
+  ([`85e6a25`](https://github.com/opentargets/gentroutils/commit/85e6a2566751d90ec9ceb5272e0eec3f408119e1))
+
+
 ## v1.0.0-dev.2 (2025-02-12)
 
 ### Features
@@ -184,49 +231,6 @@ BREAKING CHANGE: swap rye with uv feat: update github actions workflows
 ### Breaking Changes
 
 - **dev_process**: Swap rye with uv feat: update github actions workflows
-
-
-## v0.2.0 (2024-12-06)
-
-### Chore
-
-* chore: update README file ([`afe6932`](https://github.com/opentargets/gentroutils/commit/afe6932d14266d9d266276c1ff9c0458f6b9712a))
-
-* chore: fix author ([`108ea30`](https://github.com/opentargets/gentroutils/commit/108ea3092221f565f3983d44604d3046e761660b))
-
-* chore: added project description and classifiers ([`8ef35fa`](https://github.com/opentargets/gentroutils/commit/8ef35fa58842c5ccac7d69fb5dfb20849d7cdc86))
-
-### Feature
-
-* feat: update default command help ([`c8b2c3a`](https://github.com/opentargets/gentroutils/commit/c8b2c3a390d56bcc07406926ba45080a4b4dd74c))
-
-* feat: remove redundant files from curation update command ([`f3fb1e8`](https://github.com/opentargets/gentroutils/commit/f3fb1e8baed554d6f257ae6f051115ad8e92602f))
-
-### Fix
-
-* fix: use user shell only for installation ([`40129e5`](https://github.com/opentargets/gentroutils/commit/40129e5b6ed88cd21eaa8b0666c1988ae0ef2290))
-
-* fix: upload log file only when not dry-run ([`57c8a8e`](https://github.com/opentargets/gentroutils/commit/57c8a8eafd0deb37221fb990c72e77d9f1c9bf6c))
-
-* fix: use user defined shell ([`0fa2cff`](https://github.com/opentargets/gentroutils/commit/0fa2cff0300cad96f22efdc1584fb68817ed2ac6))
-
-### Unknown
-
-* Merge pull request #19 from opentargets/dev
-
-chore: trigger release process ([`e7bc28c`](https://github.com/opentargets/gentroutils/commit/e7bc28c2fb2464350b46b1f73b11805243421172))
-
-* Merge branch &#39;main&#39; into dev ([`318d141`](https://github.com/opentargets/gentroutils/commit/318d1413f6fc280f6ff727fde3f112bd7f673882))
-
-* Merge pull request #17 from opentargets/dev
-
-chore: trigger release process ([`519aa86`](https://github.com/opentargets/gentroutils/commit/519aa86b8d5de9a93e343d7b93425969439ae7e7))
-
-* Merge pull request #16 from opentargets/dev
-
-chore: trigger release process ([`550b6e8`](https://github.com/opentargets/gentroutils/commit/550b6e8967efa0eac988c1dba7d3c5667439c39b))
-
-* Merge branch &#39;main&#39; into dev ([`e948830`](https://github.com/opentargets/gentroutils/commit/e948830b638032e5da72674ec7298aef42befece))
 
 
 ## v0.1.5 (2024-08-13)
