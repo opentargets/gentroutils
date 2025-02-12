@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.0.0-rc.9 (2025-02-12)
+
+### Features
+
+- Dev environment deployment trigger
+  ([`5401de5`](https://github.com/opentargets/gentroutils/commit/5401de5c7d38057776d81bd7722db5c7b1aa8d15))
+
+
 ## v1.0.0-rc.8 (2025-02-11)
 
 ### Features
