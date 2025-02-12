@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.0.0-dev.4 (2025-02-12)
+
+### Features
+
+- Remove development release
+  ([`f98fdf8`](https://github.com/opentargets/gentroutils/commit/f98fdf8cd6819ba60113a9d716afd322e3da5234))
+
+
 ## v1.0.0-dev.3 (2025-02-12)
 
 
