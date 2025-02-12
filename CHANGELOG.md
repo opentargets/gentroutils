@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.0.0 (2025-02-12)
+
+### Chores
+
+- Update readme
+  ([`61e962a`](https://github.com/opentargets/gentroutils/commit/61e962a37d8b919fdadea3500a9381a71be0783b))
+
+
 ## v1.0.0-dev.5 (2025-02-12)
 
 ### Features
