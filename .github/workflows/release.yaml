@@ -9,8 +9,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  release:
+    name: test-pypi-release
+    uses: ./.github/workflows/_release.yaml
+    with:
+      environment: DEV
+      url: https://test.pypi.org/p/gentroutils
+
   dev-release:
-    name: dev-release
+    needs: release
+    name: pypi-release
     uses: ./.github/workflows/_release.yaml
     with:
       environment: PyPI
