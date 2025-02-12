@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.4.0-dev.1 (2025-02-12)
+
+### Features
+
+- Use default token
+  ([`7fde0f2`](https://github.com/opentargets/gentroutils/commit/7fde0f2704521e6db45811d2f65306beaa0a85d4))
+
+
 ## v1.3.0 (2025-02-12)
 
 

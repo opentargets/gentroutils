@@ -9,7 +9,7 @@ on:
 jobs:
   create-tag:
     # NOTE: only trigger the workflow when the commit is not from the GitHubActions bot (prevent self-triggering)
-    if: github.event.commits[0].author.name != 'github-actions[bot]'
+    if: github.event.commits[0].author.name != 'github-actions[botg]'
     runs-on: ubuntu-latest
     concurrency: release
     environment: DEV
@@ -50,10 +50,9 @@ jobs:
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           git checkout dev
           git merge main
-
       - name: Push changes
         if: ${{ github.ref_name == 'main' }}
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ steps.trigger-token.outcome.token }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: dev
