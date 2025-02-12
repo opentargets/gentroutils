@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.5.0-dev.1 (2025-02-12)
+
+### Features
+
+- Use semvar-release token
+  ([`e03d14c`](https://github.com/opentargets/gentroutils/commit/e03d14ca35d9ea68bce44a3f81e852848933958a))
+
+
 ## v1.4.0 (2025-02-12)
 
 
