@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.0.0-dev.2 (2025-02-12)
+
+### Features
+
+- Ensure the url is present in the env
+  ([`873130a`](https://github.com/opentargets/gentroutils/commit/873130a543e3ac5da0e515a2c663d902720fef93))
+
+
 ## v1.0.0-dev.1 (2025-02-12)
 
 ### Features
