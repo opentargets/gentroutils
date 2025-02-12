@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.0.0-dev.1 (2025-02-12)
+
+### Features
+
+- Change release token to dev
+  ([`1ff5138`](https://github.com/opentargets/gentroutils/commit/1ff51383fae579916413e58178762edad4ca3239))
+
+
 ## v1.0.0-rc.11 (2025-02-12)
 
 ### Features
