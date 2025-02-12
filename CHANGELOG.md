@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.0.0-rc.11 (2025-02-12)
+
+### Features
+
+- Revert name removal
+  ([`6972951`](https://github.com/opentargets/gentroutils/commit/69729519972650b1e865c7e7eb9b40c2ca20cabb))
+
+
 ## v1.0.0-rc.10 (2025-02-12)
 
 ### Features
