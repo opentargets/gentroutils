@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.0.0-dev.5 (2025-02-12)
+
+### Features
+
+- Update uv lock
+  ([`c3c2979`](https://github.com/opentargets/gentroutils/commit/c3c297922b251f8d8893553152e39296940da8ba))
+
+
 ## v1.0.0-dev.4 (2025-02-12)
 
 ### Features
