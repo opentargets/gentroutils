@@ -7,6 +7,10 @@ on:
         type: string
         description: release environment
         required: true
+      url:
+        type: string
+        description: release url
+        required: true
 
 jobs:
   build:
@@ -33,7 +37,9 @@ jobs:
       id-token: write
       contents: write
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ inputs.url }}
     steps:
       - uses: actions/download-artifact@v4
         with:

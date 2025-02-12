@@ -14,3 +14,4 @@ jobs:
     uses: ./.github/workflows/_release.yaml
     with:
       environment: PyPI
+      url: https://pypi.org/p/gentroutils
