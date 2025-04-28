@@ -1,4 +1,5 @@
 version = 1
+revision = 1
 requires-python = ">=3.10, <3.13"
 resolution-markers = [
     "python_full_version >= '3.12'",
@@ -414,7 +415,7 @@ wheels = [
 
 [[package]]
 name = "gentroutils"
-version = "1.0.0.dev3"
+version = "1.5.0"
 source = { editable = "." }
 dependencies = [
     { name = "click" },
