@@ -6,11 +6,13 @@ import sys
 import time
 from functools import wraps
 from pathlib import Path
-from tempfile import NamedTemporaryFile
+from tempfile import NamedTemporaryFile, _TemporaryFileWrapper
 from urllib.parse import urlparse
 
 import click
 from google.cloud import storage
+
+from gentroutils.cloud import CloudPath
 
 logger = logging.getLogger("gentroutils")
 
@@ -49,7 +51,7 @@ def set_log_file(ctx: click.Context, param: click.Option, log_file: str) -> str:
         parsed_uri = urlparse(log_file)
         if parsed_uri.scheme != "gs":
             raise click.BadParameter("Only GCS is supported for logging upload")
-        tmp_file = NamedTemporaryFile(delete=False)
+        tmp_file = NamedTemporaryFile(delete=False)  # noqa: SIM115
         logger.info("Logging to temporary file %s", tmp_file.name)
         handler = logging.FileHandler(tmp_file.name)
         formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
@@ -88,23 +90,25 @@ def teardown_cli(ctx: click.Context) -> None:
     Args:
         ctx (click.Context): click context
     """
-    if "upload_to_gcp" in ctx.obj and ctx.obj["upload_to_gcp"]:
+    if ctx.obj.get("upload_to_gcp"):
         gcp_file = ctx.obj["gcp_log_file"]
         local_file = ctx.obj["local_log_file"]
-        with open(local_file, "r") as f:
+        with open(local_file) as f:  # noqa: FURB101
             content = f.read()
         try:
             client = storage.Client()
-            bucket_name = urlparse(gcp_file).netloc
+            cpath = CloudPath(gcp_file)
+            bucket_name = cpath.bucket
             bucket = client.bucket(bucket_name=bucket_name)
-            file_name = urlparse(gcp_file).path.lstrip("/")
+            file_name = cpath.object.lstrip("/")
             blob = bucket.blob(file_name)
             logger.info("Uploading %s to %s", local_file, gcp_file)
             if ctx.obj["dry_run"]:
                 logger.info("Dry run, skipping the upload of the log file")
             else:
                 blob.upload_from_string(content)
-                ctx.obj["local_log_file_obj"].close()
+                fp: _TemporaryFileWrapper[bytes] = ctx.obj.get("local_log_file_obj")
+                fp.close()
         except Exception as e:
             msg = f"Failed to upload log file to GCP {e}"
             logger.error(click.style(msg, fg="red"))

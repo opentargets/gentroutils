@@ -7,15 +7,11 @@ import re
 import sys
 from enum import Enum
 from pathlib import Path
-from typing import TypeVar
 
 import click
 import great_expectations as gx
 from click import Argument, BadParameter
 from great_expectations import expectations as gxe
-
-T = TypeVar("T")
-
 
 logger = logging.getLogger("gentroutils")
 DATASOURCE_NAME = "GWAS Catalog curation"
@@ -25,21 +21,21 @@ class Lnum(Enum):
     """List convertable enum."""
 
     @classmethod
-    def as_list(cls) -> list[T]:
+    def as_list(cls) -> list:
         """Convert enum to list of strings."""
-        return list(map(lambda c: c.value, cls))
+        return [c.value for c in cls]
 
 
 class ColumnSet(Lnum):
     """Expected column names for curation file."""
 
+    PUBMED = "pubmedId"
+    PUBLICATION_TITLE = "publicationTitle"
     STUDY_ID = "studyId"
     STUDY_TYPE = "studyType"
     FLAG = "analysisFlag"
     QUALITY_CONTROL = "qualityControl"
     IS_CURATED = "isCurated"
-    PUBMED = "pubmedId"
-    PUBLICATION_TITLE = "publicationTitle"
     TRAIT = "traitFromSource"
 
 
@@ -60,6 +56,7 @@ class AnalysisFlag(Lnum):
     METABOLITE = "Metabolite"
     MULTIVARIATE = "Multivariate analysis"
     NON_ADDITIVE = "Non-additive model"
+    WGS = "wgsGWAS"
 
 
 class IsCurated(Lnum):
@@ -75,8 +72,8 @@ def _validate_input_file_name(_: click.Context, param: Argument, value: str) -> 
 
     logger.info(os.getcwd())
     pattern = re.compile(r"^[\w*/.-]*$")
-    _match = pattern.fullmatch(value)
-    if not _match:
+    match_ = pattern.fullmatch(value)
+    if not match_:
         logger.error("%s is not a local file.", value)
         raise BadParameter("Provided path is not local.")
     p = Path(value)
@@ -90,7 +87,7 @@ def _validate_input_file_name(_: click.Context, param: Argument, value: str) -> 
 
 
 def split_source_path(source_path: str) -> tuple[Path, str]:
-    """Split the source path into directory name and filename"""
+    """Split the source path into directory name and filename."""
     p = Path(source_path)
     return p.parent, p.name
 
@@ -98,13 +95,13 @@ def split_source_path(source_path: str) -> tuple[Path, str]:
 @click.command(name="validate-gwas-curation")
 @click.argument("source_path", type=click.UNPROCESSED, callback=_validate_input_file_name)
 @click.pass_context
-def validate_gwas_curation(ctx: click.Context, source_path: str) -> None:  # noqa: DOC101, D0C103
+def validate_gwas_curation(ctx: click.Context, source_path: str) -> None:
     """Validate GWAS catalog manual curation file.
 
     \b
     gentroutils -vvv validate-gwas-curation GWAS_Catalog_study_curation.tsv
 
-    """
+    """  # noqa: D301
     logger.info("Using %s as curation input.", source_path)
 
     dry_run = ctx.obj["dry_run"]
@@ -137,7 +134,9 @@ def validate_gwas_curation(ctx: click.Context, source_path: str) -> None:  # noq
     suite.add_expectation(
         gxe.ExpectColumnDistinctValuesToBeInSet(column=ColumnSet.STUDY_TYPE.value, value_set=StudyType.as_list())
     )
-    suite.add_expectation(gxe.ExpectColumnDistinctValuesToBeInSet(column=ColumnSet.FLAG.value, value_set=AnalysisFlag.as_list()))
+    suite.add_expectation(
+        gxe.ExpectColumnDistinctValuesToBeInSet(column=ColumnSet.FLAG.value, value_set=AnalysisFlag.as_list())
+    )
     suite.add_expectation(gxe.ExpectColumnValueLengthsToEqual(column=ColumnSet.PUBMED.value, value=8))
     suite.add_expectation(gxe.ExpectColumnValuesToMatchRegex(column=ColumnSet.STUDY_ID.value, regex=r"^GCST\d+$"))
     suite.add_expectation(gxe.ExpectColumnValuesToNotBeNull(column=ColumnSet.STUDY_ID.value))
@@ -148,7 +147,9 @@ def validate_gwas_curation(ctx: click.Context, source_path: str) -> None:  # noq
     result = validation_definition.run()
 
     logger.info(
-        click.style("Validation succeded" if result["success"] else "Validation failed", "green" if result["success"] else "red")
+        click.style(
+            "Validation succeded" if result["success"] else "Validation failed", "green" if result["success"] else "red"
+        )
     )
     if not result["success"]:
         for res in result["results"]:

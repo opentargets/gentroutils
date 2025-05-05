@@ -4,10 +4,12 @@ import threading
 from collections.abc import Generator
 from dataclasses import dataclass
 from ftplib import FTP
+from unittest.mock import PropertyMock, patch
 
 import pytest
 from gcloud_storage_emulator.server import Server as GCloudStorageMockServer
 from google.cloud import storage
+from google.cloud.storage import blob
 from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer
@@ -33,6 +35,7 @@ class FTPServerWrapper(threading.Thread):
 
     def run(self):
         """Run the FTP server inside the thread.
+
         NOTE: Investigate if the sever loop is stopping each time we exit the lock.
         """
         try:
@@ -59,7 +62,7 @@ class ConnectionData:
     port: int
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(autouse=True)
 def google_cloud_storage():
     """Fixture to start the gcloud storage emulator."""
     host = "localhost"
@@ -75,27 +78,49 @@ def google_cloud_storage():
         emulator.stop()
 
 
-@pytest.mark.usefixtures("google_cloud_storage")
-@pytest.fixture(scope="function")
+@pytest.fixture
 def staging_bucket():
     """Fixture to create a staging bucket."""
     bucket_name = "staging"
     client = storage.Client()
+    assert not client.bucket(bucket_name).exists(), "ensure the google cloud storage bucket does not exist."
     client.create_bucket(bucket_name)
     return bucket_name
 
 
-@pytest.mark.usefixtures("google_cloud_storage")
-@pytest.fixture(scope="function")
+@pytest.fixture
 def gwas_catalog_bucket():
     """Fixture to create a gwas catalog bucket."""
     bucket_name = "gwas_catalog"
     client = storage.Client()
+    assert not client.bucket(bucket_name).exists(), "ensure the google cloud storage bucket does not exist."
     client.create_bucket(bucket_name)
     return bucket_name
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
+def gwas_catalog_inputs_bucket_with_data():
+    """Fixture to create a gwas catalog input bucket with data."""
+    client = storage.Client()
+    bucket_name = "gwas_catalog_inputs"
+    assert not client.bucket(bucket_name).exists(), "Ensure the google cloud storage bucket does not exist."
+    bucket = client.bucket(bucket_name)
+    bucket.create()
+    files = [
+        "test/GCST01-GCST05/GCST01/harmonised/GCST01.h.tsv.gz",
+        "test/GCST01-GCST05/GCST02/harmonised/GCST02.h.tsv.gz",
+        "test/GCST01-GCST05/GCST03/harmonised/GCST03.h.tsv.gz",
+        "test/GCST01-GCST05/GCST04/harmonised/GCST04.h.tsv.gz",
+        "test/GCST01-GCST05/GCST05/harmonised/GCST05.h.tsv.gz",
+    ]
+    for file in files:
+        blob = bucket.blob(file)
+        blob.upload_from_filename("tests/data/test.h.tsv.gz")
+    yield gwas_catalog_bucket
+    blob.delete()
+
+
+@pytest.fixture
 def ftp_server_mock() -> Generator[ConnectionData, None, None]:
     """Fixture to start the ebi ftp server."""
     host = "127.0.0.1"
@@ -117,9 +142,9 @@ def ftp_server_mock() -> Generator[ConnectionData, None, None]:
     server_thread.stop()
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def ebi_mock_server(monkeypatch: pytest.MonkeyPatch, ftp_server_mock: ConnectionData) -> None:
-    """Fixture to mock FTP client to always redirect FTP.connect to mocked server"""
+    """Fixture to mock FTP client to always redirect FTP.connect to mocked server."""
 
     class MockFTP(FTP):
         """Mock FTP class from ftplib to redirect to FTPServer mock."""

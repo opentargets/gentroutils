@@ -140,25 +140,21 @@ def generate_transfer_tasks(uri_map: list[dict[str, ParseResult]], dry_run: bool
         out_prefix = "/".join(uri["output"].path[1:-1].split("/")[:-1])
         out_bucket = uri["output"].path.split("/")[-1]
         if uri["input"].scheme == "ftp":
-            ftp_transfer_list.append(
-                {
-                    "ftp_server": in_server,
-                    "ftp_prefix": in_prefix,
-                    "ftp_filename": in_file,
-                    "gcp_bucket": out_server,
-                    "gcp_prefix": out_prefix,
-                    "gcp_filename": out_bucket,
-                }
-            )
+            ftp_transfer_list.append({
+                "ftp_server": in_server,
+                "ftp_prefix": in_prefix,
+                "ftp_filename": in_file,
+                "gcp_bucket": out_server,
+                "gcp_prefix": out_prefix,
+                "gcp_filename": out_bucket,
+            })
         if uri["input"].scheme.startswith("http"):
-            http_transfer_list.append(
-                {
-                    "http_url": uri["input"].geturl(),
-                    "gcp_bucket": out_server,
-                    "gcp_prefix": out_prefix,
-                    "gcp_filename": out_bucket,
-                }
-            )
+            http_transfer_list.append({
+                "http_url": uri["input"].geturl(),
+                "gcp_bucket": out_server,
+                "gcp_prefix": out_prefix,
+                "gcp_filename": out_bucket,
+            })
     transfer_tasks = []
     for transfer_obj in ftp_transfer_list:
         transfer_tasks.append(
@@ -191,7 +187,9 @@ def generate_transfer_tasks(uri_map: list[dict[str, ParseResult]], dry_run: bool
     return transfer_tasks
 
 
-async def sync_from_http_to_gcp(url: str, gcp_bucket: str, gcp_prefix: str, gcp_file: str, *, dry_run: bool = True) -> None:
+async def sync_from_http_to_gcp(
+    url: str, gcp_bucket: str, gcp_prefix: str, gcp_file: str, *, dry_run: bool = True
+) -> None:
     """Sync file from HTTP and upload to GCP.
 
     This function fetches the data from the provided HTTP URL and uploads the content
