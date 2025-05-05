@@ -7,11 +7,11 @@ import io
 import logging
 import re
 import sys
-from ftplib import FTP
 from urllib.parse import ParseResult, urlparse
 
+import aioftp
+import aiohttp
 import click
-import requests
 from google.cloud import storage
 
 from gentroutils.commands.utils import coro
@@ -80,7 +80,7 @@ async def update_gwas_curation_metadata_command(
 
     To preserve the logs from this command, you can specify the log file path using `--log-file` option. The log file can point to local or GCP path.
     Currently only FTP and HTTP(s) protocols are supported for input and GCP protocol is supported for output.
-    """
+    """  # noqa: D301
     # we always want to have the logs from this command uploaded to the target bucket
     logger.debug("Running gwas_curation_update step.")
     dry_run = ctx.obj["dry_run"]
@@ -90,34 +90,40 @@ async def update_gwas_curation_metadata_command(
             MAX_CONCURRENT_CONNECTIONS,
         )
         sys.exit(1)
-    uri_map = [{"input": urlparse(ftp_file), "output": urlparse(gcp_file)} for ftp_file, gcp_file in file_to_transfer]
-    transfer_tasks = generate_transfer_tasks(uri_map, dry_run)
+    async with aiohttp.ClientSession() as session:
+        uri_map = [
+            {"input": urlparse(ftp_file), "output": urlparse(gcp_file)} for ftp_file, gcp_file in file_to_transfer
+        ]
+        transfer_tasks = generate_transfer_tasks(session, uri_map, dry_run)
 
-    # capture latest release metadata
-    with requests.get(gwas_catalog_release_info_url) as response:
-        if not response.ok:
-            logger.error("Failed to fetch release info.")
-            sys.exit(1)
-        release_info = response.json()
-        for key, value in release_info.items():
-            logger.debug("%s: %s", key, value)
+        # capture latest release metadata
+        async with session.get(gwas_catalog_release_info_url) as response:
+            if not response.ok:
+                logger.error("Failed to fetch release info.")
+                sys.exit(1)
+            release_info = await response.json()
+            for key, value in release_info.items():
+                logger.debug("%s: %s", key, value)
 
-        efo_version = release_info.get("efoversion")
-        logger.info("Diseases were mapped to %s EFO release.", efo_version)
-        logger.info("EFO version: %s", efo_version)
-        ensembl_build = release_info.get("ensemblbuild")
-        logger.info("Genes were mapped to v%s Ensembl release.", ensembl_build)
+            efo_version = release_info.get("efoversion")
+            logger.info("Diseases were mapped to %s EFO release.", efo_version)
+            logger.info("EFO version: %s", efo_version)
+            ensembl_build = release_info.get("ensemblbuild")
+            logger.info("Genes were mapped to v%s Ensembl release.", ensembl_build)
 
-    results = await asyncio.gather(*transfer_tasks)
-    if not dry_run:
-        logger.info("Transferred %s files.", len(results))
-    logger.info("gwas_curation_update step completed.")
+        results = await asyncio.gather(*transfer_tasks)
+        if not dry_run:
+            logger.info("Transferred %s files.", len(results))
+        logger.info("gwas_curation_update step completed.")
 
 
-def generate_transfer_tasks(uri_map: list[dict[str, ParseResult]], dry_run: bool) -> list[asyncio.Task[None]]:
+def generate_transfer_tasks(
+    session: aiohttp.ClientSession, uri_map: list[dict[str, ParseResult]], dry_run: bool
+) -> list[asyncio.Task[None]]:
     """Generate transfer tasks.
 
     Args:
+        session (aiohttp.ClientSession): Client Session.
         uri_map (list[dict[str, ParseResult]]): list of transferable tasks, each should have `input` and `output` keys.
         dry_run (bool): dry run flag.
 
@@ -155,40 +161,41 @@ def generate_transfer_tasks(uri_map: list[dict[str, ParseResult]], dry_run: bool
                 "gcp_prefix": out_prefix,
                 "gcp_filename": out_bucket,
             })
-    transfer_tasks = []
-    for transfer_obj in ftp_transfer_list:
-        transfer_tasks.append(
-            asyncio.create_task(
-                sync_from_ftp_to_gcp(
-                    transfer_obj["ftp_server"],
-                    transfer_obj["ftp_prefix"],
-                    transfer_obj["ftp_filename"],
-                    transfer_obj["gcp_bucket"],
-                    transfer_obj["gcp_prefix"],
-                    transfer_obj["gcp_filename"],
-                    dry_run=dry_run,
-                )
+    transfer_tasks = [
+        asyncio.create_task(
+            sync_from_ftp_to_gcp(
+                session,
+                transfer_obj["ftp_server"],
+                transfer_obj["ftp_prefix"],
+                transfer_obj["ftp_filename"],
+                transfer_obj["gcp_bucket"],
+                transfer_obj["gcp_prefix"],
+                transfer_obj["gcp_filename"],
+                dry_run=dry_run,
             )
         )
+        for transfer_obj in ftp_transfer_list
+    ]
 
-    for transfer_obj in http_transfer_list:
-        transfer_tasks.append(
-            asyncio.create_task(
-                sync_from_http_to_gcp(
-                    transfer_obj["http_url"],
-                    transfer_obj["gcp_bucket"],
-                    transfer_obj["gcp_prefix"],
-                    transfer_obj["gcp_filename"],
-                    dry_run=dry_run,
-                )
+    transfer_tasks.extend(
+        asyncio.create_task(
+            sync_from_http_to_gcp(
+                session,
+                transfer_obj["http_url"],
+                transfer_obj["gcp_bucket"],
+                transfer_obj["gcp_prefix"],
+                transfer_obj["gcp_filename"],
+                dry_run=dry_run,
             )
         )
+        for transfer_obj in http_transfer_list
+    )
 
     return transfer_tasks
 
 
 async def sync_from_http_to_gcp(
-    url: str, gcp_bucket: str, gcp_prefix: str, gcp_file: str, *, dry_run: bool = True
+    session: aiohttp.ClientSession, url: str, gcp_bucket: str, gcp_prefix: str, gcp_file: str, *, dry_run: bool = True
 ) -> None:
     """Sync file from HTTP and upload to GCP.
 
@@ -196,6 +203,7 @@ async def sync_from_http_to_gcp(
     directly to provided GCP bucket blob.
 
     Args:
+        session (aiohttp.ClientSession): Client session.
         url (str): HTTP URL to fetch the data.
         gcp_bucket (str): GCP bucket name.
         gcp_prefix (str): GCP prefix.
@@ -212,21 +220,23 @@ async def sync_from_http_to_gcp(
         )
         return
     logger.info("Retriving data from: %s.", url)
-    response = requests.get(url)
-    if not response.ok:
-        logger.error("Failed to fetch data from %s.", url)
-        return
+    async with session.get(url) as response:
+        if not response.ok:
+            logger.error("Failed to fetch data from %s.", url)
+            return
 
-    content = response.content
-    bucket = storage.Client().bucket(gcp_bucket)
-    gcp_path = f"{gcp_prefix}/{gcp_file}" if gcp_prefix else gcp_file
+        content = response.content
+        bucket = storage.Client().bucket(gcp_bucket)
+        gcp_path = f"{gcp_prefix}/{gcp_file}" if gcp_prefix else gcp_file
 
-    blob = bucket.blob(gcp_path)
-    logger.info("Uploading the data to: gs://%s/%s.", gcp_bucket, gcp_path)
-    blob.upload_from_string(content.decode("utf-8"))
+        blob = bucket.blob(gcp_path)
+        logger.info("Uploading the data to: gs://%s/%s.", gcp_bucket, gcp_path)
+        text = await content.read()
+        blob.upload_from_string(text)
 
 
 async def sync_from_ftp_to_gcp(
+    session: aiohttp.ClientSession,
     ftp_server: str,
     ftp_prefix: str,
     ftp_file: str,
@@ -242,6 +252,7 @@ async def sync_from_ftp_to_gcp(
     to the provided GCP bucket blob.
 
     Args:
+        session (aiohttp.ClientSession): Client session.
         ftp_server (str): FTP server.
         ftp_prefix (str): FTP prefix.
         ftp_file (str): FTP file name.
@@ -262,20 +273,24 @@ async def sync_from_ftp_to_gcp(
             gcp_file,
         )
         return
-    with FTP() as ftp:
-        ftp.connect(ftp_server)
-        ftp.login()
+
+    async with aioftp.Client.context(ftp_server, user="anonymous", password="anonymous") as ftp:  # noqa: S106
         bucket = storage.Client().bucket(gcp_bucket)
         gcp_path = f"{gcp_prefix}/{gcp_file}" if gcp_prefix else gcp_file
         blob = bucket.blob(gcp_path)
         logger.info("Changing directory to %s.", ftp_prefix)
-        ftp.cwd(ftp_prefix)
-        dir_match = re.match(r"^.*(?P<release_date>\d{4}\/\d{2}\/\d{2}){1}$", ftp.pwd())
+        await ftp.change_directory(ftp_prefix)
+        pwd = await ftp.get_current_directory()
+        dir_match = re.match(r"^.*(?P<release_date>\d{4}\/\d{2}\/\d{2}){1}$", str(pwd))
         if dir_match:
             logger.info("Found release date!: %s", dir_match.group("release_date"))
         buffer = io.BytesIO()
         logger.info("Retrieving data from: ftp://%s/%s/%s.", ftp_server, ftp_prefix, ftp_file)
-        ftp.retrbinary(f"RETR {ftp_file}", lambda x: buffer.write(x))
+        stream = await ftp.download_stream(ftp_file)
+        async with stream:
+            async for block in stream.iter_by_block():
+                buffer.write(block)
+        buffer.seek(0)
         content = buffer.getvalue().decode("utf-8")
         buffer.close()
         logger.info("Uploading data to: gs://%s/%s.", gcp_bucket, gcp_path)

@@ -1,15 +1,15 @@
 """Top level tet module for storing fixtures."""
 
+import logging
 import threading
 from collections.abc import Generator
 from dataclasses import dataclass
-from ftplib import FTP
-from unittest.mock import PropertyMock, patch
 
+import pandas as pd
 import pytest
+from aioftp import Client
 from gcloud_storage_emulator.server import Server as GCloudStorageMockServer
 from google.cloud import storage
-from google.cloud.storage import blob
 from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer
@@ -62,7 +62,7 @@ class ConnectionData:
     port: int
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(autouse=True, scope="session")
 def google_cloud_storage():
     """Fixture to start the gcloud storage emulator."""
     host = "localhost"
@@ -78,32 +78,33 @@ def google_cloud_storage():
         emulator.stop()
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def staging_bucket():
     """Fixture to create a staging bucket."""
-    bucket_name = "staging"
+    bucket_name = "gentroutils_test_staging"
     client = storage.Client()
-    assert not client.bucket(bucket_name).exists(), "ensure the google cloud storage bucket does not exist."
+    assert not client.bucket(bucket_name).exists(), "Ensure you are running against the mocks, not actual gcs."
     client.create_bucket(bucket_name)
-    return bucket_name
+    yield bucket_name
+    client.bucket(bucket_name).delete(force=True)
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True, scope="session")
 def gwas_catalog_bucket():
     """Fixture to create a gwas catalog bucket."""
-    bucket_name = "gwas_catalog"
+    bucket_name = "gentroutils_test_gwas_catalog"
     client = storage.Client()
-    assert not client.bucket(bucket_name).exists(), "ensure the google cloud storage bucket does not exist."
+    assert not client.bucket(bucket_name).exists(), "Ensure you are running against the mocks, not actual gcs."
     client.create_bucket(bucket_name)
     return bucket_name
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True, scope="session")
 def gwas_catalog_inputs_bucket_with_data():
     """Fixture to create a gwas catalog input bucket with data."""
     client = storage.Client()
-    bucket_name = "gwas_catalog_inputs"
-    assert not client.bucket(bucket_name).exists(), "Ensure the google cloud storage bucket does not exist."
+    bucket_name = "gentroutils_test_gwas_catalog_inputs"
+    assert not client.bucket(bucket_name).exists(), "Ensure you are running against the mocks, not actual gcs."
     bucket = client.bucket(bucket_name)
     bucket.create()
     files = [
@@ -114,22 +115,24 @@ def gwas_catalog_inputs_bucket_with_data():
         "test/GCST01-GCST05/GCST05/harmonised/GCST05.h.tsv.gz",
     ]
     for file in files:
-        blob = bucket.blob(file)
-        blob.upload_from_filename("tests/data/test.h.tsv.gz")
+        b = bucket.blob(file)
+        b.upload_from_filename("tests/data/test.h.tsv.gz")
     yield gwas_catalog_bucket
-    blob.delete()
+    b.delete()
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def ftp_server_mock() -> Generator[ConnectionData, None, None]:
     """Fixture to start the ebi ftp server."""
     host = "127.0.0.1"
     port = 2121
     perm = "elr"  # change dir, list, read
     authorizer = DummyAuthorizer()
-    authorizer.add_anonymous("tests/data", perm=perm)
+    authorizer.add_anonymous("tests/data/ftp", perm=perm)
     handler = FTPHandler
     handler.authorizer = authorizer
+    logger = logging.getLogger("pyftpdlib")
+    logger.setLevel(logging.CRITICAL)
 
     server = FTPServer((host, port), handler)
     server.max_cons = 5
@@ -142,16 +145,26 @@ def ftp_server_mock() -> Generator[ConnectionData, None, None]:
     server_thread.stop()
 
 
-@pytest.fixture
-def ebi_mock_server(monkeypatch: pytest.MonkeyPatch, ftp_server_mock: ConnectionData) -> None:
+@pytest.fixture(autouse=True)
+def ebi_mock_server(monkeypatch: pytest.MonkeyPatch, ftp_server_mock: ConnectionData) -> Generator[None, None, None]:
     """Fixture to mock FTP client to always redirect FTP.connect to mocked server."""
 
-    class MockFTP(FTP):
+    class MockFTP(Client):
         """Mock FTP class from ftplib to redirect to FTPServer mock."""
 
-        def connect(self, host, port, timeout, source_address):
-            """Connect to the FTP server mock."""
-            return super().connect(ftp_server_mock.host, ftp_server_mock.port, timeout, source_address)
+        async def connect(self, host, port):
+            """Connect to the aioftp Client connect method to point to the mock FTP."""
+            logger = logging.getLogger("gentrouitls")
+            logger.debug("Connecting to the mocked EBI server")
+            await super().connect(ftp_server_mock.host, ftp_server_mock.port)
 
-    with monkeypatch.context() as m:
-        m.setattr("ftplib.FTP", MockFTP)
+    monkeypatch.setattr("aioftp.Client", MockFTP)
+    yield  # noqa: PT022
+
+
+@pytest.fixture(autouse=True, scope="session")
+def set_pandas_display_options() -> None:
+    display = pd.options.display
+    display.max_columns = 4
+    display.max_rows = 5
+    display.max_colwidth = 185

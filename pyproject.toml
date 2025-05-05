@@ -9,12 +9,14 @@ dependencies = [
     "pyfiglet>=1.0.2",
     "requests>=2.32.3",
     "great-expectations>=1.3.4",
+    "pygithub>=2.6.1",
+    "click-option-group>=0.5.6",
+    "aiohttp>=3.11.18",
+    "aioftp>=0.25.1",
 ]
 readme = "README.md"
 requires-python = ">=3.10,<3.13"
 license = "Apache-2.0"
-documentation = "https://github.com/opentargets/gentroutils"
-repository = "https://github.com/opentargets/gentroutils"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Healthcare Industry",
@@ -52,6 +54,8 @@ dev = [
     "types-requests>=2.32.0.20240712",
     "pyftpdlib>=2.0.1",
     "python-semantic-release>=9.19.1",
+    "pandas-stubs>=2.2.3.250308",
+    "ipython>=8.36.0",
 ]
 
 [tool.hatch.metadata]
@@ -62,10 +66,10 @@ packages = ["src/gentroutils"]
 
 # test configuration
 [tool.pytest.ini_options]
-markers = ["integration_test", "unit_test"]
+markers = ["integration_test: Intergration tests", "unit_test: Unit tests"]
 addopts = "-n0 --doctest-modules --cov=gentroutils --cov-report=xml -s -p no:warnings --cov-report term-missing --cov-fail-under=80"
 pythonpath = ["src/"]
-testpaths = ["tests/"]
+testpaths = ["tests/", "src/gentroutils"]
 
 
 # add classifiers

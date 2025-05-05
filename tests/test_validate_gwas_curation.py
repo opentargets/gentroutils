@@ -28,19 +28,25 @@ def test_run_validate_curation_help():
         pytest.param(
             "tests/data/manual_curation/incorrect_publicationTitle_type.tsv", 1, id="Incorrect type in publicationTitle"
         ),
-        pytest.param("tests/data/manual_curation/incorrect_traitFromSource_type.tsv", 1, id="Incorrect type in traitFromSource"),
+        pytest.param(
+            "tests/data/manual_curation/incorrect_traitFromSource_type.tsv", 1, id="Incorrect type in traitFromSource"
+        ),
         pytest.param("tests/data/manual_curation/incorrect_studyId_type.tsv", 1, id="Incorrect type in studyId"),
         pytest.param("tests/data/manual_curation/incorrect_studyType_type.tsv", 1, id="Incorrect type in studyType"),
-        pytest.param("tests/data/manual_curation/incorrect_analysisFlag_type.tsv", 1, id="Incorrect type in analysisFlag"),
+        pytest.param(
+            "tests/data/manual_curation/incorrect_analysisFlag_type.tsv", 1, id="Incorrect type in analysisFlag"
+        ),
         pytest.param("tests/data/manual_curation/incorrect_studyType_value.tsv", 1, id="Incorrect value in studyType"),
-        pytest.param("tests/data/manual_curation/incorrect_analysisFlag_value.tsv", 1, id="Incorrect value in analysisFlag"),
+        pytest.param(
+            "tests/data/manual_curation/incorrect_analysisFlag_value.tsv", 1, id="Incorrect value in analysisFlag"
+        ),
         pytest.param("tests/data/manual_curation/incorrect_studyId_value.tsv", 1, id="Incorrect value in studyId"),
         pytest.param("tests/data/manual_curation/null_value_in_studyId.tsv", 1, id="Null value in studyId"),
         pytest.param("tests/data/manual_curation/non_unique_studyId.tsv", 1, id="Non unique studyId"),
         pytest.param("gs://gwas_catalog/correct_curation.tsv", 2, id="Non local path"),
     ],
 )
-@pytest.mark.intergration_test
+@pytest.mark.integration_test
 def test_run_validate_curation(
     curation_file: str,
     exit_code: int,
@@ -51,9 +57,9 @@ def test_run_validate_curation(
     assert result.exit_code == exit_code
 
 
-@pytest.mark.intergration_test
+@pytest.mark.integrration_test
 def test_run_validate_curation_dry_run():
-    """Test curation command with --dry-run flag"""
+    """Test curation command with --dry-run flag."""
     curation_file = "tests/data/manual_curation/correct_curation.tsv"
     runner = CliRunner()
     result = runner.invoke(cli, ["--dry-run", "validate-gwas-curation", curation_file])

@@ -95,7 +95,7 @@ def split_source_path(source_path: str) -> tuple[Path, str]:
 @click.command(name="validate-gwas-curation")
 @click.argument("source_path", type=click.UNPROCESSED, callback=_validate_input_file_name)
 @click.pass_context
-def validate_gwas_curation(ctx: click.Context, source_path: str) -> None:
+def validate_gwas_curation_command(ctx: click.Context, source_path: str) -> None:
     """Validate GWAS catalog manual curation file.
 
     \b
@@ -152,15 +152,7 @@ def validate_gwas_curation(ctx: click.Context, source_path: str) -> None:
         )
     )
     if not result["success"]:
-        for res in result["results"]:
-            if not res["success"]:
-                logger.error(
-                    "Expectation %s for column %s run with %s ",
-                    res["expectation_config"]["type"],
-                    res["expectation_config"]["kwargs"]["column"]
-                    if "column" in res["expectation_config"]["kwargs"]
-                    else res["expectation_config"]["kwargs"]["column_set"],
-                    "succeded" if res["success"] else "failed",
-                )
-                logger.error(res)
+        failed_validation_results = result.get_failed_validation_results()
+        msg = failed_validation_results.describe()
+        logger.error(msg)
         sys.exit(1)
