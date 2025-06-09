@@ -71,8 +71,8 @@ async def update_gwas_curation_metadata_command(
     One can overwrite this script to sync data files from FTP or HTTP(s) to GCP bucket. The example usage is as follows:
 
     \b
-    gentroutils --log-file gs://gwas_catalog_data/curated_inputs/log.txt update-gwas-curation-metadata \\
-    -f ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-associations_ontology-annotated.tsv gs://gwas_catalog_data/gwas_catalog_associations_ontology_annotated.tsv \\
+    gentroutils --log-file gs://gwas_catalog_data/gwas_catalog_inputs/20250609/log.txt update-gwas-curation-metadata \\
+    -f ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-associations_ontology-annotated.tsv gs://gwas_catalog_inputs/gwas_catalog_associations_ontology_annotated.tsv \\
     -f ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-download-studies-v1.0.3.1.txt gs://gwas_catalog_inputs/gwas_catalog_download_studies.tsv \\
     -f ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-download-ancestries-v1.0.3.1.txt gs://gwas_catalog_inputs/gwas_catalog_download_ancestries.tsv \\
     -g https://www.ebi.ac.uk/gwas/api/search/stats
