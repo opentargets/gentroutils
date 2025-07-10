@@ -13,7 +13,7 @@ import pytest
 )
 def test_cloud_path_init(uri: str, expected_bucket: str, expected_object: str) -> None:
     """Test the initialization of the CloudPath class."""
-    from gentroutils.cloud import CloudPath
+    from gentroutils.gcs import CloudPath
 
     # Test with a valid GCS path
 
@@ -25,8 +25,8 @@ def test_cloud_path_init(uri: str, expected_bucket: str, expected_object: str) -
 
 def test_cloud_path_init_invalid() -> None:
     """Test the initialization of the CloudPath class with invalid paths."""
-    from gentroutils.cloud import CloudPath
     from gentroutils.exceptions import GentroutilsError, GentroutilsErrorMessage
+    from gentroutils.gcs import CloudPath
 
     # Test with an unsupported URL scheme
     with pytest.raises(GentroutilsError) as excinfo:
@@ -37,8 +37,8 @@ def test_cloud_path_init_invalid() -> None:
 
 def test_cloud_path_init_missing_bucket() -> None:
     """Test the initialization of the CloudPath class with missing bucket."""
-    from gentroutils.cloud import CloudPath
     from gentroutils.exceptions import GentroutilsError, GentroutilsErrorMessage
+    from gentroutils.gcs import CloudPath
 
     url = "gs:///path/to/object"
 
@@ -51,8 +51,8 @@ def test_cloud_path_init_missing_bucket() -> None:
 
 def test_cloud_path_init_missing_object() -> None:
     """Test the initialization of the CloudPath class with missing object."""
-    from gentroutils.cloud import CloudPath
     from gentroutils.exceptions import GentroutilsError, GentroutilsErrorMessage
+    from gentroutils.gcs import CloudPath
 
     url = "gs://bucket_name/"
 

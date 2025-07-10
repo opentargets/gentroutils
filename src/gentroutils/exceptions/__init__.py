@@ -9,6 +9,7 @@ class GentroutilsErrorMessage(Enum):
     UNSUPPORTED_URL_SCHEME = "Unsupported URL scheme: {scheme}"
     BUCKET_NAME_MISSING = "Bucket name is missing in the URL: {url}"
     FILE_NAME_MISSING = "File name is missing in the URL: {url}"
+    GCS_CLIENT_INITIALIZATION_FAILED = "Failed to initialize Google Cloud Storage client: {error}"
 
 
 class GentroutilsError(Exception):

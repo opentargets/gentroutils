@@ -4,15 +4,14 @@ from __future__ import annotations
 
 import logging
 import sys
+from enum import Enum
 
 import click
 import pandas as pd
 from click_option_group import RequiredMutuallyExclusiveOptionGroup, optgroup
 
-from gentroutils.github import curation_latest_tag
 from gentroutils.manifests import (
     CuratedStudiesManifestBuilder,
-    PublishedStudiesManifestBuilder,
     SummaryStatisticsManifestBuilder,
     SyncedStudiesManifestBuilder,
 )
@@ -61,12 +60,19 @@ def prepare_curation_table_command(ctx: click.Context, **kwargs) -> None:
     if ctx.obj.get("dry_run"):
         logger.info("Running in --dry-run mode, exitting.")
         sys.exit(0)
-    logger.info(kwargs)
-    logger.info("Reading published studies...")
+    logger.info("Reading previous curation...")
+    previous_curation_file = kwargs.get("previous_curation_file")
+    if not previous_curation_file:
+        # Expect the tag to be present if curation file is missing
+        previous_curation_tag = kwargs.get("previous_curation_tag")
+        logger.info("Reading previous curation from repository tag %s", previous_curation_tag)
+
+        if not previous_curation_tag:
+            raise ValueError("Must provide either one tag or file for the previous curation inference.")
+
     # published_studies = PublishedStudiesManifestBuilder(catalog_study_file).create()
     logger.info("Listing synchornised studies to the Open Targets google cloud storage bucket...")
     # synced_studies = SyncedStudiesManifestBuilder(sumstat_glob).create()
     logger.info("Reading curated studies from ")
-    # curated_studies = CuratedStudiesManifestBuilder(previous_curation_file).create()
     # sumstat_manifest = SummaryStatisticsManifestBuilder(published_studies, synced_studies, curated_studies).create()
     # sumstat_manifest.to_csv(output_file, sep="\t", header=False)

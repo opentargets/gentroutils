@@ -6,7 +6,7 @@ from functools import cached_property
 import pandas as pd
 from google.cloud import storage
 
-from gentroutils.cloud import CloudPath
+from gentroutils.gcs import CloudPath
 
 
 @pd.api.extensions.register_dataframe_accessor("sumstat")
@@ -227,11 +227,6 @@ def extract_gwas_catalog_study_id_from_path(path: str) -> str:
     if not result:
         raise ValueError("Gwas Catalog identifier was not found in %s", path)
     return result.group(1)
-
-
-class PublishedStudiesManifestBuilder:
-    def __init__(self, published_studies: str) -> None: ...
-    def create(self) -> pd.DataFrame: ...
 
 
 class SyncedStudiesManifestBuilder:
