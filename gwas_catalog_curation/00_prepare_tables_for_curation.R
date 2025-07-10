@@ -1,84 +1,68 @@
-setwd("~/Projects/gentropy/notebooks/2506_release/gwas_catalog_curation/")
-
+library(tibble)
 library(data.table)
-gwascat=fread("gwas-catalog-v1.0.3.1-studies-r2025-04-14.tsv",data.table=FALSE,quote="")
+library(magrittr)
+library(dplyr)
+library(stringr)
+system("gcloud storage ls 'gs://gwas_catalog_inputs/raw_summary_statistics/**/*.h.tsv.gz' > gsutil_list.txt")
+system("gcloud storage ls 'gs://gwas_catalog_inputs/harmonised_summary_statistics/' > gsutil_list_harmonised.txt")
 
-lss=fread("gsutil_list.txt",data.table=FALSE,header=FALSE)
-lss=lss[,1]
+harmonised_by_gwas_catalog <- fread("gwas_catalog_download_studies.tsv", data.table = FALSE, quote = "") %>%
+  tibble::as_tibble() %>%
+  dplyr::select(studyId = `STUDY ACCESSION`, pubmedId = `PUBMED ID`, hasSumstats = `FULL SUMMARY STATISTICS`) %>%
+  dplyr::mutate(hasSumstats = dplyr::case_when(
+    hasSumstats == "Yes" ~ TRUE,
+    hasSumstats == "No" ~ FALSE,
+    hasSumstats == "yes" ~ TRUE,
+    hasSumstats == "no" ~ FALSE,
+    hasSumstats == "Unknown" ~ NA,
+    TRUE ~ NA
+  )) %>%
+  dplyr::filter(!is.na(hasSumstats))
 
-l1=gsub(pattern="gs://gwas_catalog_inputs/raw_summary_statistics/",repl="",x=lss)
+harmonised_by_ot <- fread("gsutil_list_harmonised.txt", data.table = FALSE, header = FALSE) %>%
+  tibble::as_tibble() %>%
+  dplyr::rename(harmonisedSumstatsPath = V1) %>%
+  dplyr::filter(harmonisedSumstatsPath != "") %>%
+  dplyr::filter(!endsWith(harmonisedSumstatsPath, "statistics/")) %>%
+  dplyr::filter(!endsWith(harmonisedSumstatsPath, "statistics/:")) %>%
+  dplyr::mutate(studyId = stringr::str_extract(harmonisedSumstatsPath, ".*(GCST\\d+).*", group = 1)) %>%
+  dplyr::mutate(isHarmonisedByOt = TRUE) %>%
+  dplyr::select(studyId, harmonisedSumstatsPath, isHarmonisedByOt)
 
-ll1=strsplit(l1,split="/")
+synced_to_gcs <- fread("gsutil_list.txt", data.table = FALSE, header = FALSE) %>%
+  tibble::as_tibble() %>%
+  dplyr::rename(sumstatsPath = V1) %>%
+  dplyr::mutate(studyId = stringr::str_extract(sumstatsPath, ".*(GCST\\d+).*", group = 1)) %>%
+  dplyr::select(studyId, sumstatsPath)
 
-l2=c()
-for (i in 1:length(ll1)){
-	x=ll1[[i]]
-	l2=c(l2,x[2])
-}
+previous_curation <- fread("202506_GWAS_Catalog_study_curation.tsv", data.table = FALSE, header = TRUE) %>%
+  tibble::as_tibble()
 
-table(l2%in%gwascat[,"STUDY ACCESSION"])
-#FALSE  TRUE 
-#14220 81310
+new_studies_harmonised_by_gwas_catalog <- harmonised_by_gwas_catalog %>%
+  dplyr::filter(hasSumstats) %>%
+  dplyr::anti_join(previous_curation, by = "studyId") %>%
+  dplyr::select(studyId, pubmedId, hasSumstats)
 
-for_curation=gwascat[gwascat[,"STUDY ACCESSION"]%in%l2,]
+new_studies_harmonised_by_gwas_catalog_and_synced <- new_studies_harmonised_by_gwas_catalog %>%
+  dplyr::inner_join(synced_to_gcs, by = "studyId") %>%
+  dplyr::select(studyId, pubmedId, sumstatsPath) %>%
+  dplyr::mutate(isCurated = FALSE, studyType = "", analysisFlag = "", qualityControl = NA_character_, ) %>%
+  dplyr::select(studyId, studyType, analysisFlag, qualityControl, isCurated, pubmedId)
 
-old_cur=fread("20241219_output_curation.txt",data.table=FALSE,quote="")
+new_curation <- new_studies_harmonised_by_gwas_catalog_and_synced %>%
+  dplyr::full_join(previous_curation, by = "studyId")
 
-old_cur=old_cur[old_cur[,"isCurated"]==TRUE,]
+removed_studies_by_gwas_catalog <- previous_curation %>%
+  dplyr::anti_join(synced_to_gcs, by = "studyId") %>%
+  dplyr::left_join(harmonised_by_ot, by = "studyId") %>%
+  dplyr::mutate(isHarmonisedByOt = dplyr::coalesce(isHarmonisedByOt, FALSE)) %>%
+  dplyr::select(studyId, pubmedId, isHarmonisedByOt) %>%
+  dplyr::group_by(pubmedId, isHarmonisedByOt) %>%
+  dplyr::summarise(n = n(), .groups = )
 
-old_cur=old_cur[old_cur[,"STUDY ACCESSION"]%in%for_curation[,"STUDY ACCESSION"],]
-
-ind=match(old_cur[,"STUDY ACCESSION"],for_curation[,"STUDY ACCESSION"])
-table(old_cur[,"STUDY ACCESSION"]==for_curation[ind,"STUDY ACCESSION"])
-
-#studyType analysisFlag qualityControl isCurated
-
-for_curation[,"studyType"]=""
-for_curation[,"analysisFlag"]=""
-for_curation[,"isCurated"]=FALSE
-
-for_curation[ind,"studyType"]=old_cur[,"studyType"]
-for_curation[ind,"analysisFlag"]=old_cur[,"analysisFlag"]
-for_curation[ind,"isCurated"]=TRUE
-
-clnms=c("PUBMED ID","STUDY","DISEASE/TRAIT","STUDY ACCESSION","FULL SUMMARY STATISTICS","studyType","analysisFlag","isCurated")
-
-
-#x=fread("CUR.tsv",data.table=F)
-x=for_curation[,clnms]
-
-#unique_pmid=unique(x$`PUBMED ID`)
-
-#for (upim in unique_pmid){
-#  ind=which(x$`PUBMED ID`==upim)
-#  
-#  if (sum(x[ind,"isCurated"])>0){
-#    x[ind,"isCurated"]=TRUE
-#  }
-#  
-#  ll=unique(x[ind,"studyType"])
-#  ll=ll[ll!=""]
-#  if (length(ll)>0){
-#    x[ind,"studyType"]=ll[1]
-#    x[ind,"isCurated"]=TRUE
-#  }
-#  
-#  ll=unique(x[ind,"analysisFlag"])
-#  ll=ll[ll!=""]
-#  if (length(ll)>0){
-#    x[ind,"analysisFlag"]=ll[1]
-#    x[ind,"isCurated"]=TRUE
-#  } 
-#}
-
-dim(for_curation)
-#80701    28
-
-table(for_curation$isCurated)
-#FALSE  TRUE 
-#8077 72624 
+n_new_rows <- new_curation %>%
+  dplyr::anti_join(previous_curation, by = "studyId") %>%
+  nrow()
 
 
-fwrite(x=x,file="20250426_input_for_curation.tsv",sep="\t",quote=FALSE)
-
-
+fwrite(x = new_curation, file = "20250426_input_for_curation.tsv", sep = "\t", quote = FALSE)

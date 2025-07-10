@@ -1,0 +1,27 @@
+2025-07-08 12:23:09,650 - gentroutils - DEBUG - Running gwas_curation_update step.
+2025-07-08 12:23:10,348 - gentroutils - INFO - Changing directory to pub/databases/gwas/releases/latest.
+2025-07-08 12:23:11,008 - gentroutils - INFO - Changing directory to pub/databases/gwas/releases/latest.
+2025-07-08 12:23:11,640 - gentroutils - INFO - Changing directory to pub/databases/gwas/releases/latest.
+2025-07-08 12:23:11,653 - gentroutils - INFO - Found release date!: 2025/06/30
+2025-07-08 12:23:11,653 - gentroutils - INFO - Retrieving data from: ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-download-studies-v1.0.3.1.txt.
+2025-07-08 12:23:11,653 - gentroutils - DEBUG - date: 2025-06-27
+2025-07-08 12:23:11,653 - gentroutils - DEBUG - associations: 891200
+2025-07-08 12:23:11,653 - gentroutils - DEBUG - ensemblbuild: 114
+2025-07-08 12:23:11,653 - gentroutils - DEBUG - dbsnpbuild: 156
+2025-07-08 12:23:11,653 - gentroutils - DEBUG - studies: 7286
+2025-07-08 12:23:11,653 - gentroutils - DEBUG - snps: 453187
+2025-07-08 12:23:11,653 - gentroutils - DEBUG - genebuild: GRCh38.p14
+2025-07-08 12:23:11,653 - gentroutils - DEBUG - sumstats: 136189
+2025-07-08 12:23:11,653 - gentroutils - DEBUG - efoversion: v3.79.0
+2025-07-08 12:23:11,653 - gentroutils - INFO - Diseases were mapped to v3.79.0 EFO release.
+2025-07-08 12:23:11,653 - gentroutils - INFO - EFO version: v3.79.0
+2025-07-08 12:23:11,653 - gentroutils - INFO - Genes were mapped to v114 Ensembl release.
+2025-07-08 12:23:11,653 - gentroutils - INFO - Found release date!: 2025/06/30
+2025-07-08 12:23:11,653 - gentroutils - INFO - Retrieving data from: ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-download-ancestries-v1.0.3.1.txt.
+2025-07-08 12:23:11,660 - gentroutils - INFO - Found release date!: 2025/06/30
+2025-07-08 12:23:11,660 - gentroutils - INFO - Retrieving data from: ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/latest/gwas-catalog-associations_ontology-annotated.tsv.
+2025-07-08 12:23:15,843 - gentroutils - INFO - Uploading data to: gs://gwas_catalog_inputs/gentroutils/20250708/gwas_catalog_download_ancestries.tsv.
+2025-07-08 12:24:24,432 - gentroutils - INFO - Uploading data to: gs://gwas_catalog_inputs/gentroutils/20250708/gwas_catalog_download_studies.tsv.
+2025-07-08 12:24:52,479 - gentroutils - INFO - Uploading data to: gs://gwas_catalog_inputs/gentroutils/20250708/gwas_catalog_associations_ontology_annotated.tsv.
+2025-07-08 12:25:16,755 - gentroutils - INFO - Transferred 3 files.
+2025-07-08 12:25:16,756 - gentroutils - INFO - gwas_curation_update step completed.

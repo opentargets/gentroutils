@@ -18,7 +18,7 @@ class SummaryStatisticsManifestMethods:
         self._validate(pandas_obj)
         self._df = pandas_obj
 
-    def _validate(self, obj: pd.DataFrame):
+    def _validate(self, obj: pd.DataFrame) -> None:
         """Verify that correct fields are passed in the object."""
         if not self.expected_cols.issubset(set(obj.columns)):
             raise AttributeError("Passed object does not match the sumstat manifest dataframe")
@@ -103,46 +103,54 @@ class SummaryStatisticsManifest(pd.DataFrame):
 class SummaryStatisticsManifestBuilder:
     """Custom class that holds the information about the currently synced raw summary statistics from the GWAS Catalog FTP.
 
+    Args:
+        sumstat_glob (str): Path to the bucket where the summary statistics are stored.
+        suffix (str): Suffix of the files to be included in the table.
+            Default is "h.tsv.gz".
+        args: Additional arguments to pass to the constructor.
+
+
     Examples:
-        ### Initialize the manifest builder
+    --------
+    ### Initialize the manifest builder
 
-        >>> sumstat_glob = "gs://gentroutils_test_gwas_catalog_inputs/test/**/*h.tsv.gz"
-        >>> builder = SummaryStatisticsManifestBuilder(sumstat_glob, "h.tsv.gz")
-        >>> builder.suffix
-        'h.tsv.gz'
+    >>> sumstat_glob = "gs://gentroutils_test_gwas_catalog_inputs/test/**/*h.tsv.gz"
+    >>> builder = SummaryStatisticsManifestBuilder(sumstat_glob, "h.tsv.gz")
+    >>> builder.suffix
+    'h.tsv.gz'
 
-        >>> builder.bucket
-        'gentroutils_test_gwas_catalog_inputs'
+    >>> builder.bucket
+    'gentroutils_test_gwas_catalog_inputs'
 
-        >>> builder.prefix
-        'test/'
+    >>> builder.prefix
+    'test/'
 
-        >>> builder.match_glob
-        '**/*h.tsv.gz'
+    >>> builder.match_glob
+    '**/*h.tsv.gz'
 
-        ### Create the manifest from the summary statistics in existing bucket.
+    ### Create the manifest from the summary statistics in existing bucket.
 
-        List existing studies to see what should be in the manifest
+    List existing studies to see what should be in the manifest
 
-        >>> blobs = builder.client.list_blobs(builder.bucket)
-        >>> len(list(blobs))
-        5
+    >>> blobs = builder.client.list_blobs(builder.bucket)
+    >>> len(list(blobs))
+    5
 
-        >>> manifest = builder.create()
+    >>> manifest = builder.create()
 
-        >>> isinstance(manifest, SummaryStatisticsManifest)
-        True
+    >>> isinstance(manifest, SummaryStatisticsManifest)
+    True
 
-        >>> list(manifest.columns)
-        ['studyId', 'rawSumstatPaths', 'hasSyncedRawSumstatPaths']
+    >>> list(manifest.columns)
+    ['studyId', 'rawSumstatPaths', 'hasSyncedRawSumstatPaths']
 
-        >>> manifest.studyId
-        0    GCST01
-        1    GCST02
-        2    GCST03
-        3    GCST04
-        4    GCST05
-        Name: studyId, dtype: object
+    >>> manifest.studyId
+    0    GCST01
+    1    GCST02
+    2    GCST03
+    3    GCST04
+    4    GCST05
+    Name: studyId, dtype: object
     """
 
     def __init__(self, sumstat_glob: str, suffix: str = "h.tsv.gz", *args) -> None:
