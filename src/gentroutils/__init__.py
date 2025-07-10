@@ -146,7 +146,7 @@ def prepare_gwas_curation_command(
     from gentroutils.prepare_gwas_curation import prepare_gwas_curation
 
     prepare_gwas_curation(
-        study_list=study_list,
+        study_list_file=study_list,
         raw_sumstat_bucket=raw_sumstat_bucket,
         previous_curation_file=previous_curation_file,
         output_file=output_file,

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from concurrent.futures import ThreadPoolExecutor
 from typing import TYPE_CHECKING
 
@@ -18,9 +19,9 @@ def prepare_gwas_curation(study_list_file: str, raw_sumstat_bucket: str, previou
     """Prepare GWAS curation table."""
     synced = SyncedStudiesManifest(raw_sumstat_bucket).construct()
 
-    curated = CuratedStudiesManifest(previous_curation_file).construct()
+    # curated = CuratedStudiesManifest(previous_curation_file).construct()
 
-    published = PublisedStudiesManifest(study_list_file).construct()
+    # published = PublisedStudiesManifest(study_list_file).construct()
 
     # Merging strategy:
     # 1. Start with previously curated studies.
@@ -68,6 +69,14 @@ class SyncedStudiesManifest:
         """Construct the DataFrame of synced studies."""
         iterator = self.list_sumstats()
         with ThreadPoolExecutor(max_workers=4) as executor:
-            results = list(executor.map(lambda x: x.name, iterator))
+            results = list(executor.map(lambda x: (extract_study_id(x.name), x.name), iterator))
 
-        return pl.concat(results)
+        return pl.DataFrame(results, schema=[("studyId", pl.Utf8), ("rawSumstatPath", pl.Utf8)], orient="row")
+
+
+def extract_study_id(blob_name: str) -> str:
+    """Extract study ID from the blob name."""
+    # Assuming the blob name is structured as 'study_id/filename'
+    pattern = re.compile(r"\/(GCST\d+)\/")
+    match = pattern.search(blob_name)
+    return match.group(1) if match else ""
