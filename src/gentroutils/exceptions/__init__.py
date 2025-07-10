@@ -10,6 +10,7 @@ class GentroutilsErrorMessage(Enum):
     BUCKET_NAME_MISSING = "Bucket name is missing in the URL: {url}"
     FILE_NAME_MISSING = "File name is missing in the URL: {url}"
     GCS_CLIENT_INITIALIZATION_FAILED = "Failed to initialize Google Cloud Storage client: {error}"
+    FTP_SERVER_MISSING = "FTP server is missing in the URL: {url}"
 
 
 class GentroutilsError(Exception):
