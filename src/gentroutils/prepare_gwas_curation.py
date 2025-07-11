@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 import polars as pl
 from google.cloud import storage
+from loguru import logger
 
 from gentroutils.gcs import CloudPath
 
@@ -18,10 +19,12 @@ if TYPE_CHECKING:
 def prepare_gwas_curation(study_list_file: str, raw_sumstat_bucket: str, previous_curation_file: str, output_file: str):
     """Prepare GWAS curation table."""
     synced = SyncedStudiesManifest(raw_sumstat_bucket).construct()
+    logger.info(f"Synced studies manifest constructed with {synced.shape[0]} entries.")
+    logger.info(SyncedStudiesManifest.synced_statistics(synced))
 
-    # curated = CuratedStudiesManifest(previous_curation_file).construct()
+    curated = CuratedStudiesManifest(previous_curation_file).construct()
 
-    # published = PublisedStudiesManifest(study_list_file).construct()
+    published = PublisedStudiesManifest(study_list_file).construct()
 
     # Merging strategy:
     # 1. Start with previously curated studies.
@@ -71,7 +74,21 @@ class SyncedStudiesManifest:
         with ThreadPoolExecutor(max_workers=4) as executor:
             results = list(executor.map(lambda x: (extract_study_id(x.name), x.name), iterator))
 
-        return pl.DataFrame(results, schema=[("studyId", pl.Utf8), ("rawSumstatPath", pl.Utf8)], orient="row")
+        df = pl.DataFrame(results, schema=[("studyId", pl.Utf8), ("rawSumstatPath", pl.Utf8)], orient="row")
+        return (
+            df.group_by("studyId")
+            .agg(pl.col("rawSumstatPath").alias("rawSumstatPaths"), pl.count("rawSumstatPath").alias("nSumstat"))
+            .with_columns(
+                pl.when(pl.col("nSumstat") != 1)
+                .then(pl.lit(True))
+                .otherwise(pl.lit(False))
+                .alias("hasMultipleSumstatFiles")
+            )
+        )
+
+    @staticmethod
+    def synced_statistics(synced_df: pl.DataFrame) -> pl.DataFrame:
+        return synced_df.group_by("hasMultipleSumstatFiles").len().sort("len")
 
 
 def extract_study_id(blob_name: str) -> str:
