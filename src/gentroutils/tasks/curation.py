@@ -1,0 +1,110 @@
+"""Module to handle the business logic for the GWAS Catalog curation task."""
+
+from __future__ import annotations
+
+from datetime import date
+from functools import cached_property
+from typing import Annotated, Any, Self
+
+from otter.task.model import Spec, Task, TaskContext
+from otter.task.task_reporter import report
+from pydantic import AfterValidator, computed_field
+
+from gentroutils.io.transfer.polars_to_gcs import PolarsDataFrameToGCSTransferableObject
+from gentroutils.parsers.curation import GWASCatalogCuration
+from gentroutils.tasks import TemplateDestination, _requires_release_date_template
+from gentroutils.transfer import TransferManager
+
+
+class CurationSpec(Spec):
+    """Configuration fields for the curation task.
+
+    The `CurationSpec` defines the parameters needed to curate GWAS Catalog data.
+    It includes the `previous_curation`, which is the path to the previous curation data,
+    and the `studies`, which is the path to the studies data.
+
+    Examples:
+    ---
+    >>> cs = CurationSpec(
+    ...     name="curate gwas catalog data",
+    ...     previous_curation="gs://gwas_catalog_inputs/curation/latest/curated/GWAS_Catalog_study_curation.tsv",
+    ...     studies="gs://gwas_catalog_inputs/gentroutils/latest/gwas_catalog_download_studies.tsv",
+    ...     destination_template="gs://gwas_catalog_inputs/{release_date}/pending/curation.tsv"
+    ... )
+    >>> cs.name
+    'curate gwas catalog data'
+    >>> cs.previous_curation
+    'gs://gwas_catalog_inputs/curation/latest/curated/GWAS_Catalog_study_curation.tsv'
+    >>> cs.studies
+    'gs://gwas_catalog_inputs/gentroutils/latest/gwas_catalog_download_studies.tsv'
+    >>> cs.destination_template
+    'gs://gwas_catalog_inputs/{release_date}/pending/curation.tsv'
+    """
+
+    name: str = "curate gwas catalog data"
+    """The name of the curation task."""
+
+    previous_curation: str
+    """The path to the previous curation data."""
+
+    studies: str
+    """The path to the studies data."""
+
+    destination_template: Annotated[str, AfterValidator(_requires_release_date_template)]
+    """The destination path for the curation data."""
+
+    promote: bool = False
+    """Whether to promote the curation data to the latest version."""
+
+    @computed_field  # type: ignore[prop-decorator]
+    @cached_property
+    def destinations(self) -> list[TemplateDestination]:
+        """Get the list of destinations templates where the release information will be saved.
+
+        Returns:
+            list[TemplateDestination]: A list of TemplateDestination objects with the formatted destination paths.
+
+        Depending on the `promote` flag this property will return:
+            * If `promote` is `False`, it will return a single destination template.
+            * If `promote` is `True`, it will return two destinations:
+                1. The destination template with the release date substituted.
+                2. The destination with the release date substituted to `latest`.
+        """
+        d1 = TemplateDestination(self.destination_template, False)
+        if self.promote:
+            d2 = d1.format({"release_date": "latest"})
+            return [d1, d2]
+        return [d1]
+
+    def substituted_destinations(self, release_date: date) -> list[str]:
+        """Safely parse the destination name to ensure it is valid."""
+        substitutions = {"release_date": release_date.strftime("%Y%m%d")}
+        return [
+            d.format(substitutions).destination if not d.is_substituted else d.destination for d in self.destinations
+        ]
+
+    def model_post_init(self, __context: Any) -> None:
+        """Method to ensure the scratchpad is set to ignore missing replacements."""
+        self.scratchpad_ignore_missing = True
+
+
+class Curation(Task):
+    """Task for curating GWAS Catalog data."""
+
+    def __init__(self, spec: CurationSpec, context: TaskContext) -> None:
+        """Initialize the Curation task with the given specification and context."""
+        super().__init__(spec, context)
+        self.spec: CurationSpec
+
+    @report
+    def run(self) -> Self:
+        """Run the curation task."""
+        release_date = date.today()
+        destinations = self.spec.substituted_destinations(release_date)
+        curation = GWASCatalogCuration.from_prev_curation(self.spec.previous_curation, self.spec.studies)
+        transfer_objects = [
+            PolarsDataFrameToGCSTransferableObject(source=curation.result, destination=d) for d in destinations
+        ]
+        TransferManager().transfer(transfer_objects)
+
+        return self

@@ -9,5 +9,11 @@
   },
   "python.testing.pytestArgs": ["tests", "src"],
   "python.testing.unittestEnabled": false,
-  "python.testing.pytestEnabled": true
+  "python.testing.pytestEnabled": true,
+  "cSpell.words": [
+    "aioftp",
+    "gentroutils",
+    "harmonised",
+    "sumstat"
+  ]
 }
