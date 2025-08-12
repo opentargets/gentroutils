@@ -17,3 +17,17 @@ coverage.xml
 interrogate_badge.svg
 
 .idea
+.cloudstorage
+.mypy_cache
+.pytest_cache
+.ruff_cache
+
+
+# R
+.RData
+.Rhistory
+data
+
+
+# otter
+work/
