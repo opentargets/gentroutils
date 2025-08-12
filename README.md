@@ -27,8 +27,6 @@ To run a single step run
 uv run gentroutils -s gwas_catalog_release  # After cloning the repository
 gentroutils -s gwas_catalog_release -c otter_config.yaml # When installed by pip
 ```
-```
-```
 
 The `gentroutils` repository uses the [otter](https://github.com/opentargets/otter) framework to build the set of tasks to run. The current implementation of tasks can be found in the `config.yaml` file in the root of the repository. To run gentroutils installed via `pip` you need to define the otter config that looks like the `config.yaml` file.
 
@@ -91,7 +89,8 @@ The list of tasks (defined in the `config.yaml` file) that can be run are:
 
 This task fetches the latest GWAS Catalog release metadata from the `https://www.ebi.ac.uk/gwas/api/search/stats` endpoint and saves it to the specified destination.
 
-> [!NOTE] Task parameters
+> [!NOTE] 
+> **Task parameters**
 >
 > - The `stats_uri` is used to fetch the latest release date and other metadata.
 > - The `destination_template` is where the metadata will be saved, and it uses the `{release_date}` placeholder to specify the release date dynamically. By default it searches for the release directly in the stats_uri json output.
@@ -111,7 +110,8 @@ This task fetches the latest GWAS Catalog release metadata from the `https://www
 
 This task fetches the GWAS Catalog associations file from the specified FTP server and saves it to the specified destination.
 
-> [!NOTE] Task parameters
+> [!NOTE] 
+> **Task parameters**
 >
 > - The `stats_uri` is used to fetch the latest release date and other metadata.
 > - The `source_template` is the URL of the GWAS Catalog associations file, which uses the `{release_date}` placeholder to specify the release date dynamically. The release date is fetched from the `stats_uri` endpoint.
@@ -132,7 +132,8 @@ This task fetches the GWAS Catalog associations file from the specified FTP serv
 
 This task fetches the GWAS Catalog studies file from the specified FTP server and saves it to the specified destination.
 
-> [!NOTE] Task parameters
+> [!NOTE] 
+> **Task parameters**
 >
 > - The `stats_uri` is used to fetch the latest release date and other metadata.
 > - The `source_template` is the URL of the GWAS Catalog studies file, which uses the `{release_date}` placeholder to specify the release date dynamically. The release date is fetched from the `stats_uri` endpoint.
@@ -153,7 +154,8 @@ This task fetches the GWAS Catalog studies file from the specified FTP server an
 
 This task fetches the GWAS Catalog ancestries file from the specified FTP server and saves it to the specified destination.
 
-> [!NOTE] Task parameters
+> [!NOTE] 
+> **Task parameters**
 >
 > - The `stats_uri` is used to fetch the latest release date and other metadata.
 > - The `source_template` is the URL of the GWAS Catalog ancestries file, which uses the `{release_date}` placeholder to specify the release date dynamically. The release date is fetched from the `stats_uri` endpoint.
@@ -176,7 +178,8 @@ This task fetches the GWAS Catalog ancestries file from the specified FTP server
 
 This task is used to build the GWAS Catalog curation file that is later used as a template for manual curation. It requires the `fetch studies` task to be completed before it can run. This is due to the fact that the curation file is build based on the list of studies fetched from `download studies` file.
 
-> [!NOTE] Task parameters
+> [!NOTE] 
+> **Task parameters**
 >
 > - The `requires` field specifies that this task depends on the `fetch studies` task, meaning it will only run after the studies have been fetched.
 > - The `previous_curation` field is used to specify the path to the previous curation file. This is used to build the new curation file based on the previous one.
