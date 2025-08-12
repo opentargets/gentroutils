@@ -1,0 +1,32 @@
+---
+work_path: ./work
+log_level: DEBUG
+scratchpad:
+steps:
+  gwas_catalog_release:
+    - name: crawl release metadata
+      stats_uri: "https://www.ebi.ac.uk/gwas/api/search/stats"
+      destination_template: 'gs://gwas_catalog_inputs/gentroutils/{release_date}/stats.json'
+      promote: 'true'
+    - name: fetch associations
+      stats_uri: "https://www.ebi.ac.uk/gwas/api/search/stats"
+      source_template: "ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/{release_date}/gwas-catalog-associations_ontology-annotated.tsv"
+      destination_template: "gs://gwas_catalog_inputs/gentroutils/{release_date}/gwas_catalog_associations_ontology_annotated.tsv"
+      promote: true
+    - name: fetch studies
+      stats_uri: "https://www.ebi.ac.uk/gwas/api/search/stats"
+      source_template: "ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/{release_date}/gwas-catalog-download-studies-v1.0.3.1.txt"
+      destination_template: "gs://gwas_catalog_inputs/gentroutils/{release_date}/gwas_catalog_download_studies.tsv"
+      promote: true
+    - name: fetch ancestries
+      stats_uri: "https://www.ebi.ac.uk/gwas/api/search/stats"
+      source_template: "ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases/{release_date}/gwas-catalog-download-ancestries-v1.0.3.1.txt"
+      destination_template: "gs://gwas_catalog_inputs/gentroutils/{release_date}/gwas_catalog_download_ancestries.tsv"
+      promote: true
+    - name: curation study
+      requires:
+        - fetch studies
+      previous_curation: gs://gwas_catalog_inputs/curation/latest/curated/GWAS_Catalog_study_curation.tsv
+      studies: gs://gwas_catalog_inputs/gentroutils/latest/gwas_catalog_download_studies.tsv
+      destination_template: ./work/curation_{release_date}.tsv
+      promote: true
