@@ -22,6 +22,14 @@ gentroutils --help
 
 ## Usage
 
+To run a single step run
+```{bash}
+uv run gentroutils -s gwas_catalog_release  # After cloning the repository
+gentroutils -s gwas_catalog_release -c otter_config.yaml # When installed by pip
+```
+```
+```
+
 The `gentroutils` repository uses the [otter](https://github.com/opentargets/otter) framework to build the set of tasks to run. The current implementation of tasks can be found in the `config.yaml` file in the root of the repository. To run gentroutils installed via `pip` you need to define the otter config that looks like the `config.yaml` file.
 
 <details>
@@ -232,3 +240,7 @@ To check CLI execution manually you need to run
 ```{bash}
 uv run gentroutils
 ```
+---
+
+This software was developed as part of the Open Targets project. For more
+information please see: http://www.opentargets.org
