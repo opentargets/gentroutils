@@ -54,6 +54,7 @@ jobs:
         name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
+          token_format: access_token
           project_id: ${{ env.GCP_PROJECT_ID }}
           workload_identity_provider: projects/234703259993/locations/global/workloadIdentityPools/github/providers/opentargets
           access_token_lifetime: 300s
