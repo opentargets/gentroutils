@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v2.0.0-dev.1 (2025-08-28)
+
+### Features
+
+- 2.0.0
+  ([`3268c38`](https://github.com/opentargets/gentroutils/commit/3268c383cf6dfac4be7748ad6b48e8ded5f6157c))
+
+
 ## v1.6.0-dev.2 (2025-08-12)
 
 ### Features
