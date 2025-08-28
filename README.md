@@ -72,7 +72,7 @@ steps:
         - fetch studies
       previous_curation: gs://gwas_catalog_inputs/curation/latest/curated/GWAS_Catalog_study_curation.tsv
       studies: gs://gwas_catalog_inputs/gentroutils/latest/gwas_catalog_download_studies.tsv
-      destination_template: ./work/curation_{release_date}.tsv
+      destination_template: gs://gwas_catalog_inputs/gentroutils/curation/{release_date}/GWAS_Catalog_study_curation.tsv
       promote: true
 ```
 
@@ -180,7 +180,8 @@ This task fetches the GWAS Catalog ancestries file from the specified FTP server
 
 This task is used to build the GWAS Catalog curation file that is later used as a template for manual curation. It requires the `fetch studies` task to be completed before it can run. This is due to the fact that the curation file is build based on the list of studies fetched from `download studies` file.
 
-> [!NOTE] > **Task parameters**
+> [!NOTE]
+> **Task parameters**
 >
 > - The `requires` field specifies that this task depends on the `fetch studies` task, meaning it will only run after the studies have been fetched.
 > - The `previous_curation` field is used to specify the path to the previous curation file. This is used to build the new curation file based on the previous one.
