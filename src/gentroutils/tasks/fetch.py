@@ -1,15 +1,14 @@
 """Module to handle the fetching of GWAS Catalog release files."""
 
-from functools import cached_property
 from typing import Annotated, Any, Self
 
 from loguru import logger
 from otter.task.model import Spec, Task, TaskContext
 from otter.task.task_reporter import report
-from pydantic import AfterValidator, computed_field
+from pydantic import AfterValidator
 
 from gentroutils.io.transfer import FTPtoGCPTransferableObject
-from gentroutils.tasks import GwasCatalogReleaseInfo, TemplateDestination, _requires_release_date_template
+from gentroutils.tasks import GwasCatalogReleaseInfo, TemplateDestination, destination_validator
 from gentroutils.transfer import TransferManager
 
 MAX_CONCURRENT_CONNECTIONS = 10
@@ -57,10 +56,10 @@ class FetchSpec(Spec):
     stats_uri: str = "https://www.ebi.ac.uk/gwas/api/search/stats"
     """The URI to crawl the release statistics information from."""
 
-    source_template: Annotated[str, AfterValidator(_requires_release_date_template)]
+    source_template: Annotated[str, AfterValidator(destination_validator)]
     """The template URI of the file to download."""
 
-    destination_template: Annotated[str, AfterValidator(_requires_release_date_template)]
+    destination_template: Annotated[str, AfterValidator(destination_validator)]
     """The template URI to upload the file to."""
 
     promote: bool = False
@@ -78,8 +77,6 @@ class FetchSpec(Spec):
         promoting the release as the latest release.
     """
 
-    @computed_field  # type: ignore[prop-decorator]
-    @cached_property
     def destinations(self) -> list[TemplateDestination]:
         """Get the list of destinations templates where the release information will be saved.
 
@@ -102,7 +99,7 @@ class FetchSpec(Spec):
         """Safely parse the destination name to ensure it is valid."""
         substitutions = {"release_date": release_info.strfmt("%Y%m%d")}
         return [
-            d.format(substitutions).destination if not d.is_substituted else d.destination for d in self.destinations
+            d.format(substitutions).destination if not d.is_substituted else d.destination for d in self.destinations()
         ]
 
     def substituted_sources(self, release_info: GwasCatalogReleaseInfo) -> list[str]:

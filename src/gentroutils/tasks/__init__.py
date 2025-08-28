@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+from collections import defaultdict
 from dataclasses import dataclass
 from datetime import date
 
@@ -13,7 +14,12 @@ from pydantic import AliasPath, BaseModel, Field
 from gentroutils.errors import GentroutilsError, GentroutilsErrorMessage
 
 
-def _requires_release_date_template(path: str) -> str:
+class KeepMissing(defaultdict[str, str]):
+    def __missing__(self, key):
+        return "{" + key + "}"
+
+
+def destination_validator(path: str) -> str:
     """Ensure that the destination path contains a template for the release date."""
     if "{release_date}" not in path:
         raise GentroutilsError(GentroutilsErrorMessage.MISSING_RELEASE_DATE_TEMPLATE, release_date="{release_date}")
@@ -34,7 +40,7 @@ class TemplateDestination:
 
         This method returns a new TemplateDestination object (not a copy of the current one) with the formatted destination.
         """
-        return TemplateDestination(self.destination.format(**substitutions), True)
+        return TemplateDestination(self.destination.format_map(KeepMissing(**substitutions)), True)
 
 
 class GwasCatalogReleaseInfo(BaseModel):
@@ -83,6 +89,7 @@ class GwasCatalogReleaseInfo(BaseModel):
     @classmethod
     def from_uri(cls, uri: str) -> GwasCatalogReleaseInfo:
         """Fetch the release information from the specified URI."""
+        logger.debug(f"Fetching release info from {uri}")
         try:
             return asyncio.run(cls._get_release_info(uri))
         except aiohttp.ClientError as e:

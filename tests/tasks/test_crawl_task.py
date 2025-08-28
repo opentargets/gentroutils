@@ -88,7 +88,7 @@ class TestCrawlSpec:
 
     def test_crawl_spec_destinations_with_promote(self, crawl_spec):
         """Test destinations property when promote=True."""
-        destinations = crawl_spec.destinations
+        destinations = crawl_spec.destinations()
         assert len(destinations) == 2
         assert destinations[0].destination == "gs://test-bucket/gwas/{release_date}/stats.json"
         assert destinations[0].is_substituted is False
@@ -97,7 +97,7 @@ class TestCrawlSpec:
 
     def test_crawl_spec_destinations_without_promote(self, crawl_spec_no_promote):
         """Test destinations property when promote=False."""
-        destinations = crawl_spec_no_promote.destinations
+        destinations = crawl_spec_no_promote.destinations()
         assert len(destinations) == 1
         assert destinations[0].destination == "gs://test-bucket/gwas/{release_date}/stats.json"
         assert destinations[0].is_substituted is False
