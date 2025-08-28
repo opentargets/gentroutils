@@ -18,19 +18,19 @@ steps:
     #   source_template: '${gc_ftp}/{release_date}/gwas-catalog-associations_ontology-annotated.tsv'
     #   destination_template: '${gc_bucket}/gentroutils/{release_date}/gwas_catalog_associations_ontology_annotated.tsv'
     #   promote: true
-    
+
     # - name: fetch studies
     #   stats_uri: ${gc_stats_uri}
     #   source_template: '${gc_ftp}/{release_date}/gwas-catalog-download-studies-v1.0.3.1.txt'
     #   destination_template: '${gc_bucket}/gentroutils/{release_date}/gwas_catalog_download_studies.tsv'
     #   promote: true
-    
+
     # - name: fetch ancestries
     #   stats_uri: ${gc_stats_uri}
     #   source_template: '${gc_ftp}/{release_date}/gwas-catalog-download-ancestries-v1.0.3.1.txt'
     #   destination_template: '${gc_bucket}/gentroutils/{release_date}/gwas_catalog_download_ancestries.tsv'
     #   promote: true
-  
+
     - name: curation study
       # requires:
       #   - fetch studies
