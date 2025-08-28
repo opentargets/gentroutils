@@ -1,6 +1,35 @@
 # CHANGELOG
 
 
+## v3.0.0 (2025-08-28)
+
+### Bug Fixes
+
+- Ensure otter scratchpad works
+  ([`b781b1f`](https://github.com/opentargets/gentroutils/commit/b781b1f587f94807daa3abde0dbb785121904e68))
+
+### Build System
+
+- Update dependencies
+  ([`e9e05c3`](https://github.com/opentargets/gentroutils/commit/e9e05c31ec6ea443d1cb8af28f3583c6486ecb52))
+
+### Chores
+
+- Format
+  ([`876400b`](https://github.com/opentargets/gentroutils/commit/876400b3d8b5a09c198a8b13db2ffc598a1f218a))
+
+- Remove R session files
+  ([`ffe093d`](https://github.com/opentargets/gentroutils/commit/ffe093d494ec7c469b8b9f99978bfa002426c189))
+
+- Update readme
+  ([`06a21db`](https://github.com/opentargets/gentroutils/commit/06a21dbdb0b706e06537f80d378f8837041b3906))
+
+### Continuous Integration
+
+- Add build command
+  ([`2e67fcd`](https://github.com/opentargets/gentroutils/commit/2e67fcd1d7478b96dc698d5e54e2a077529fcb61))
+
+
 ## v2.0.0 (2025-08-28)
 
 ### Chores
@@ -15,6 +44,16 @@
 ---------
 
 Co-authored-by: Szymon Szyszkowski <69353402+project-defiant@users.noreply.github.com>
+
+### Continuous Integration
+
+- Update ci
+  ([`81c39b2`](https://github.com/opentargets/gentroutils/commit/81c39b2d02f8fe318d8921b46c636a3361093263))
+
+### Features
+
+- 2.0.0
+  ([`3268c38`](https://github.com/opentargets/gentroutils/commit/3268c383cf6dfac4be7748ad6b48e8ded5f6157c))
 
 
 ## v1.6.0-dev.2 (2025-08-12)
