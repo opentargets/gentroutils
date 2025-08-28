@@ -3,16 +3,16 @@
 from __future__ import annotations
 
 from datetime import date
-from functools import cached_property
 from typing import Annotated, Any, Self
 
+from loguru import logger
 from otter.task.model import Spec, Task, TaskContext
 from otter.task.task_reporter import report
-from pydantic import AfterValidator, computed_field
+from pydantic import AfterValidator
 
 from gentroutils.io.transfer.polars_to_gcs import PolarsDataFrameToGCSTransferableObject
 from gentroutils.parsers.curation import GWASCatalogCuration
-from gentroutils.tasks import TemplateDestination, _requires_release_date_template
+from gentroutils.tasks import TemplateDestination, destination_validator
 from gentroutils.transfer import TransferManager
 
 
@@ -50,14 +50,12 @@ class CurationSpec(Spec):
     studies: str
     """The path to the studies data."""
 
-    destination_template: Annotated[str, AfterValidator(_requires_release_date_template)]
+    destination_template: Annotated[str, AfterValidator(destination_validator)]
     """The destination path for the curation data."""
 
     promote: bool = False
     """Whether to promote the curation data to the latest version."""
 
-    @computed_field  # type: ignore[prop-decorator]
-    @cached_property
     def destinations(self) -> list[TemplateDestination]:
         """Get the list of destinations templates where the release information will be saved.
 
@@ -80,7 +78,7 @@ class CurationSpec(Spec):
         """Safely parse the destination name to ensure it is valid."""
         substitutions = {"release_date": release_date.strftime("%Y%m%d")}
         return [
-            d.format(substitutions).destination if not d.is_substituted else d.destination for d in self.destinations
+            d.format(substitutions).destination if not d.is_substituted else d.destination for d in self.destinations()
         ]
 
     def model_post_init(self, __context: Any) -> None:
@@ -99,9 +97,13 @@ class Curation(Task):
     @report
     def run(self) -> Self:
         """Run the curation task."""
+        logger.info("Starting curation task.")
         release_date = date.today()
+        logger.debug(f"Using release date: {release_date}")
         destinations = self.spec.substituted_destinations(release_date)
+        logger.debug(f"Destinations for curation data: {destinations}")
         curation = GWASCatalogCuration.from_prev_curation(self.spec.previous_curation, self.spec.studies)
+        logger.debug(f"Curation result preview:\n{curation.result.head()}")
         transfer_objects = [
             PolarsDataFrameToGCSTransferableObject(source=curation.result, destination=d) for d in destinations
         ]

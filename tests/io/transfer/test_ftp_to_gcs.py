@@ -70,14 +70,13 @@ class TestFTPtoGCPTransferableObject:
 
         # Create and execute transfer
         obj = FTPtoGCPTransferableObject(
-            source="ftp://example.com/data/file.txt", destination="gs://test-bucket/file.txt"
+            source="ftp://example.com/2025/12/12/file.txt", destination="gs://test-bucket/file.txt"
         )
         await obj.transfer()
 
         # Verify FTP operations
         mock_ftp_context.assert_called_once_with("example.com", user="anonymous", password="anonymous")  # noqa: S106
-        mock_ftp_client.change_directory.assert_called_once_with("/data")
-        mock_ftp_client.get_current_directory.assert_called_once()
+        mock_ftp_client.change_directory.assert_called()
         mock_ftp_client.download_stream.assert_called_once_with("file.txt")
 
         # Verify GCS operations

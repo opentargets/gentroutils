@@ -28,10 +28,11 @@ class TestCurationSpec:
         assert curation_spec.studies == "gs://test-bucket/studies.json"
         assert curation_spec.destination_template == "gs://test-bucket/{release_date}/curation.json"
         assert curation_spec.promote is True
-        assert curation_spec.destinations[0].destination == "gs://test-bucket/{release_date}/curation.json"
-        assert curation_spec.destinations[0].is_substituted is False
-        assert curation_spec.destinations[1].destination == "gs://test-bucket/latest/curation.json"
-        assert curation_spec.destinations[1].is_substituted is True
+        destinations = curation_spec.destinations()
+        assert destinations[0].destination == "gs://test-bucket/{release_date}/curation.json"
+        assert destinations[0].is_substituted is False
+        assert destinations[1].destination == "gs://test-bucket/latest/curation.json"
+        assert destinations[1].is_substituted is True
 
     def test_curation_spec_requires_release_date_template(self):
         """Test that CurationSpec validates release date template."""

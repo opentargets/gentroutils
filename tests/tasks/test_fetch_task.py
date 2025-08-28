@@ -46,11 +46,12 @@ class TestFetchSpec:
         assert fetch_spec.source_template == "https://example.com/{release_date}/data.json"
         assert fetch_spec.destination_template == "gs://test-bucket/{release_date}/data.json"
         assert fetch_spec.promote is True
-        assert len(fetch_spec.destinations) == 2
-        assert fetch_spec.destinations[0].destination == "gs://test-bucket/{release_date}/data.json"
-        assert fetch_spec.destinations[0].is_substituted is False
-        assert fetch_spec.destinations[1].destination == "gs://test-bucket/latest/data.json"
-        assert fetch_spec.destinations[1].is_substituted is True
+        destinations = fetch_spec.destinations()
+        assert len(destinations) == 2
+        assert destinations[0].destination == "gs://test-bucket/{release_date}/data.json"
+        assert destinations[0].is_substituted is False
+        assert destinations[1].destination == "gs://test-bucket/latest/data.json"
+        assert destinations[1].is_substituted is True
 
     def test_initialization_no_promote(self):
         """Test FetchSpec initialization with promote = False."""
@@ -65,9 +66,11 @@ class TestFetchSpec:
         assert fetch_spec.source_template == "https://example.com/{release_date}/data.json"
         assert fetch_spec.destination_template == "gs://test-bucket/{release_date}/data.json"
         assert fetch_spec.promote is False
-        assert len(fetch_spec.destinations) == 1
-        assert fetch_spec.destinations[0].destination == "gs://test-bucket/{release_date}/data.json"
-        assert fetch_spec.destinations[0].is_substituted is False
+
+        destinations = fetch_spec.destinations()
+        assert len(destinations) == 1
+        assert destinations[0].destination == "gs://test-bucket/{release_date}/data.json"
+        assert destinations[0].is_substituted is False
 
     def test_requires_release_date_template(self):
         """Test that FetchSpec validates release date template."""

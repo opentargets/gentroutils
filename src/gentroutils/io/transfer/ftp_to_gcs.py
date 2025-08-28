@@ -32,12 +32,24 @@ class FTPtoGCPTransferableObject(TransferableObject):
         async with aioftp.Client.context(ftp_obj.server, user="anonymous", password="anonymous") as ftp:  # noqa: S106
             bucket = storage.Client().bucket(gcs_obj.bucket)
             blob = bucket.blob(gcs_obj.object)
-            logger.info(f"Changing directory to {ftp_obj.base_dir}.")
-            await ftp.change_directory(ftp_obj.base_dir)
-            pwd = await ftp.get_current_directory()
-            dir_match = re.match(r"^.*(?P<release_date>\d{4}\/\d{2}\/\d{2}){1}$", str(pwd))
+            logger.info(f"Searching for the release date in the provided ftp path: {ftp_obj.base_dir}.")
+            dir_match = re.match(r"^.*(?P<release_date>\d{4}\/\d{2}\/\d{2}){1}$", str(ftp_obj.base_dir))
+
             if dir_match:
-                logger.info(f"Found release date!: {dir_match.group('release_date')}")
+                logger.info(f"Found release date to search in the ftp {dir_match.group('release_date')}.")
+                release_date = dir_match.group("release_date")
+                try:
+                    await ftp.change_directory(ftp_obj.base_dir)
+                except aioftp.StatusCodeError as e:
+                    logger.error(f"Failed to change directory to {ftp_obj.base_dir}: {e}")
+                    logger.warning("Attempting to load the `latest` release.")
+                    ftp_obj = FTPPath(self.source.replace(release_date, "latest"))
+                    try:
+                        await ftp.change_directory(ftp_obj.base_dir)
+                    except aioftp.StatusCodeError as e:
+                        logger.error(f"Failed to find the latest release under {ftp_obj}")
+                        raise
+
             buffer = io.BytesIO()
             stream = await ftp.download_stream(ftp_obj.filename)
             async with stream:

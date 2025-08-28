@@ -1,7 +1,6 @@
 """Module to handle the crawling of GWAS Catalog release information."""
 
 import tempfile
-from functools import cached_property
 from pathlib import Path
 from typing import Annotated, Any, Self
 
@@ -9,9 +8,10 @@ from loguru import logger
 from otter.storage import get_remote_storage
 from otter.task.model import Spec, Task, TaskContext
 from otter.task.task_reporter import report
-from pydantic import AfterValidator, computed_field
+from pydantic import AfterValidator
 
-from gentroutils.tasks import GwasCatalogReleaseInfo, TemplateDestination, _requires_release_date_template
+from gentroutils.io.path import GCSPath
+from gentroutils.tasks import GwasCatalogReleaseInfo, TemplateDestination, destination_validator
 
 
 class CrawlSpec(Spec):
@@ -68,7 +68,7 @@ class CrawlSpec(Spec):
     stats_uri: str = "https://www.ebi.ac.uk/gwas/api/search/stats"
     """The URI to crawl the release statistics information from."""
 
-    destination_template: Annotated[str, AfterValidator(_requires_release_date_template)]
+    destination_template: Annotated[str, AfterValidator(destination_validator)]
     """The destination path to save the release information.
        This path should always be a template string that includes `{release_date}`.
        For example, `gs://gwas_catalog_inputs/gentroutils/{release_date}/stats.json`.
@@ -91,8 +91,6 @@ class CrawlSpec(Spec):
         promoting the release as the latest release.
     """
 
-    @computed_field  # type: ignore[prop-decorator]
-    @cached_property
     def destinations(self) -> list[TemplateDestination]:
         """Get the list of destinations templates where the release information will be saved.
 
@@ -105,17 +103,17 @@ class CrawlSpec(Spec):
                 1. The destination template with the release date substituted.
                 2. The destination with the release date substituted to `latest`.
         """
-        d1 = self.destination_template
+        d1 = TemplateDestination(self.destination_template, False)
         if self.promote:
-            d2 = self.destination_template.format(release_date="latest")
-            return [TemplateDestination(d1, False), TemplateDestination(d2, True)]
-        return [TemplateDestination(d1, False)]
+            d2 = d1.format({"release_date": "latest"})
+            return [d1, d2]
+        return [d1]
 
     def substituted_destinations(self, release_info: GwasCatalogReleaseInfo) -> list[str]:
         """Safely parse the destination name to ensure it is valid."""
         substitutions = {"release_date": release_info.strfmt("%Y%m%d")}
         return [
-            d.format(substitutions).destination if not d.is_substituted else d.destination for d in self.destinations
+            d.format(substitutions).destination if not d.is_substituted else d.destination for d in self.destinations()
         ]
 
     def model_post_init(self, __context: Any) -> None:
@@ -141,9 +139,10 @@ class Crawl(Task):
                 logger.info(f"Destinations for release information: {destinations}")
                 for destination in destinations:
                     storage = get_remote_storage(destination)
+                    assert "gs://" in destination, f"Invalid GCS path in destination template: {destination}"
                     storage.upload(Path(source.name), destination)
                     logger.info(f"Release information written to {destination}")
-            return self
+        return self
 
     @report
     def run(self) -> Self:
