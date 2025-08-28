@@ -1,6 +1,22 @@
 # CHANGELOG
 
 
+## v2.0.0 (2025-08-28)
+
+### Chores
+
+- Release v2.0.0
+  ([`be9cc5c`](https://github.com/opentargets/gentroutils/commit/be9cc5c21db58c25d0e0d4fd7482c8a9078d0d87))
+
+* feat!: 2.0.0
+
+* ci: update ci
+
+---------
+
+Co-authored-by: Szymon Szyszkowski <69353402+project-defiant@users.noreply.github.com>
+
+
 ## v1.6.0-dev.2 (2025-08-12)
 
 ### Features
