@@ -1,6 +1,9 @@
 # CHANGELOG
 
 
+## v3.0.0-dev.1 (2025-08-28)
+
+
 ## v2.0.0 (2025-08-28)
 
 ### Chores
@@ -15,6 +18,16 @@
 ---------
 
 Co-authored-by: Szymon Szyszkowski <69353402+project-defiant@users.noreply.github.com>
+
+### Continuous Integration
+
+- Update ci
+  ([`81c39b2`](https://github.com/opentargets/gentroutils/commit/81c39b2d02f8fe318d8921b46c636a3361093263))
+
+### Features
+
+- 2.0.0
+  ([`3268c38`](https://github.com/opentargets/gentroutils/commit/3268c383cf6dfac4be7748ad6b48e8ded5f6157c))
 
 
 ## v1.6.0-dev.2 (2025-08-12)
