@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v3.0.1-dev.1 (2025-08-28)
+
+### Bug Fixes
+
+- Update auth
+  ([`a95b566`](https://github.com/opentargets/gentroutils/commit/a95b566a164d31ad36383fb99d7c88a5aec27b70))
+
+
 ## v3.0.0 (2025-08-28)
 
 ### Bug Fixes
