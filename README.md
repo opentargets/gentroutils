@@ -8,7 +8,7 @@ Set of Command Line Interface tools to process Open Targets Genetics GWAS data.
 
 ## Installation
 
-```
+```{bash}
 pip install gentroutils
 ```
 
@@ -95,7 +95,8 @@ The list of tasks (defined in the `config.yaml` file) that can be run are:
 
 This task fetches the latest GWAS Catalog release metadata from the `https://www.ebi.ac.uk/gwas/api/search/stats` endpoint and saves it to the specified destination.
 
-> [!NOTE] > **Task parameters**
+> [!NOTE]
+> **Task parameters**
 >
 > - The `stats_uri` is used to fetch the latest release date and other metadata.
 > - The `destination_template` is where the metadata will be saved, and it uses the `{release_date}` placeholder to specify the release date dynamically. By default it searches for the release directly in the stats_uri json output.
@@ -115,7 +116,8 @@ This task fetches the latest GWAS Catalog release metadata from the `https://www
 
 This task fetches the GWAS Catalog associations file from the specified FTP server and saves it to the specified destination.
 
-> [!NOTE] > **Task parameters**
+> [!NOTE]
+> **Task parameters**
 >
 > - The `stats_uri` is used to fetch the latest release date and other metadata.
 > - The `source_template` is the URL of the GWAS Catalog associations file, which uses the `{release_date}` placeholder to specify the release date dynamically. The release date is fetched from the `stats_uri` endpoint.
@@ -136,7 +138,8 @@ This task fetches the GWAS Catalog associations file from the specified FTP serv
 
 This task fetches the GWAS Catalog studies file from the specified FTP server and saves it to the specified destination.
 
-> [!NOTE] > **Task parameters**
+> [!NOTE] 
+> **Task parameters**
 >
 > - The `stats_uri` is used to fetch the latest release date and other metadata.
 > - The `source_template` is the URL of the GWAS Catalog studies file, which uses the `{release_date}` placeholder to specify the release date dynamically. The release date is fetched from the `stats_uri` endpoint.
@@ -157,7 +160,8 @@ This task fetches the GWAS Catalog studies file from the specified FTP server an
 
 This task fetches the GWAS Catalog ancestries file from the specified FTP server and saves it to the specified destination.
 
-> [!NOTE] > **Task parameters**
+> [!NOTE] 
+> **Task parameters**
 >
 > - The `stats_uri` is used to fetch the latest release date and other metadata.
 > - The `source_template` is the URL of the GWAS Catalog ancestries file, which uses the `{release_date}` placeholder to specify the release date dynamically. The release date is fetched from the `stats_uri` endpoint.
