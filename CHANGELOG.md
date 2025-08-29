@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v3.1.0-dev.5 (2025-08-29)
+
+### Continuous Integration
+
+- Update path to attestations
+  ([`febea43`](https://github.com/opentargets/gentroutils/commit/febea4366fe94de09b82154d92b90baadfb08871))
+
+
 ## v3.1.0-dev.4 (2025-08-29)
 
 ### Continuous Integration
