@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v3.1.0-dev.3 (2025-08-29)
+
+### Continuous Integration
+
+- Change image name structure for gcs
+  ([`88dbbbd`](https://github.com/opentargets/gentroutils/commit/88dbbbd7637bf7c9ec8c405a9811ad9e29416d48))
+
+
 ## v3.1.0-dev.2 (2025-08-29)
 
 ### Continuous Integration
