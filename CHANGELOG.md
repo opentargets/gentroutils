@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v3.0.1-dev.3 (2025-08-29)
+
+### Continuous Integration
+
+- Prevent running create-tag on tag
+  ([`963f657`](https://github.com/opentargets/gentroutils/commit/963f657221f2f08f20f1b20a371ad884d584bf0a))
+
+
 ## v3.0.1-dev.2 (2025-08-29)
 
 ### Continuous Integration
