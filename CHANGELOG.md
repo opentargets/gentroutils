@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v3.0.1-dev.5 (2025-08-29)
+
+### Chores
+
+- Update readme
+  ([`9e75c35`](https://github.com/opentargets/gentroutils/commit/9e75c35a4ed6113dae76ed9b0a67762fbcd882e3))
+
+### Continuous Integration
+
+- Run artifact build only from tag
+  ([`4906b38`](https://github.com/opentargets/gentroutils/commit/4906b38c49d51a7b8a6a28cb12638ecc9a6fdc5e))
+
+
 ## v3.0.1-dev.4 (2025-08-29)
 
 ### Bug Fixes
