@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v3.0.1-dev.4 (2025-08-29)
+
+### Bug Fixes
+
+- Workflow file
+  ([`f840d55`](https://github.com/opentargets/gentroutils/commit/f840d555bbf4a8415c71b56b34d72393af8c8ebf))
+
+### Continuous Integration
+
+- Prevent running create-tag by semantic-release
+  ([`57fb068`](https://github.com/opentargets/gentroutils/commit/57fb068a21bf86d048376ab0f4678694abeb2e71))
+
+
 ## v3.0.1-dev.3 (2025-08-29)
 
 ### Continuous Integration
