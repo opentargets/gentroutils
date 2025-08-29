@@ -10,8 +10,9 @@ on:
 
 jobs:
   create-tag:
-    # NOTE: only trigger the workflow when the commit is not from the GitHubActions bot (prevent self-triggering)
-    if: github.event.commits[0].author.name != 'github-actions[bot]'
+    # NOTE: only trigger the workflow only when human user pushed to the branch (prevent self-triggering)
+    if: |
+      !contains(fromJSON(['github-actions[bot]', 'semantic-release']), github.actor)
     runs-on: ubuntu-latest
     concurrency: release
     environment: DEV
