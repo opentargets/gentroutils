@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v3.0.1-dev.6 (2025-08-29)
+
+### Continuous Integration
+
+- Prevent tag action to run after semvar
+  ([`847e36b`](https://github.com/opentargets/gentroutils/commit/847e36ba4a5848116c2f6311849a1960dd55b34c))
+
+
 ## v3.0.1-dev.5 (2025-08-29)
 
 ### Chores
