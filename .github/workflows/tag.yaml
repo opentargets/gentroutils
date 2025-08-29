@@ -12,7 +12,8 @@ jobs:
   create-tag:
     # NOTE: only trigger the workflow only when human user pushed to the branch (prevent self-triggering)
     if: |
-      !contains(fromJSON('["github-actions[bot]", "semantic-release"]'), github.actor)
+      !contains(fromJSON('["github-actions[bot]", "semantic-release"]'), github.actor) &&
+      github.event.head_commit.author.name != 'semantic-release'
     runs-on: ubuntu-latest
     concurrency: release
     environment: DEV
