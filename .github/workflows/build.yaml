@@ -8,10 +8,11 @@ env:
   GCP_PROJECT_ID: "open-targets-genetics-dev"
   GCP_REGION: "europe-west1"
   TAG: "${{ github.ref_name }}"
-  REPO: "${{ github.event.repository_name }}"
+  REPO: "${{ github.event.repository.name }}"
 
 
 jobs:
+  if: startsWith(github.ref, 'refs/tags/')
   push-to-ghcr-and-gar:
     name: Build docker image and push to GHCR and GAR
     runs-on: ubuntu-22.04
