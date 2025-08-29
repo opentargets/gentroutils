@@ -1,6 +1,22 @@
 # CHANGELOG
 
 
+## v3.1.0-dev.1 (2025-08-29)
+
+### Build System
+
+- Remove obscured gcs scope from polars
+  ([`895bfed`](https://github.com/opentargets/gentroutils/commit/895bfed2486c6ca5123cc6908760020d832638ec))
+
+### Features
+
+- Add docker build command
+  ([`8f42913`](https://github.com/opentargets/gentroutils/commit/8f42913c6c41b160a28ca230cb801dd2da0bebf1))
+
+- Rebuild docker image
+  ([`94f2a49`](https://github.com/opentargets/gentroutils/commit/94f2a49ccb25a8c9eb9238cd56ea75024e26ff50))
+
+
 ## v3.0.1-dev.6 (2025-08-29)
 
 ### Continuous Integration
