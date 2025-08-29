@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v3.1.0-dev.2 (2025-08-29)
+
+### Continuous Integration
+
+- Fix container name
+  ([`9c64ae1`](https://github.com/opentargets/gentroutils/commit/9c64ae1e4d43b1861625ef673df8edd7b5127b48))
+
+
 ## v3.1.0-dev.1 (2025-08-29)
 
 ### Build System
