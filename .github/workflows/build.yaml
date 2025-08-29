@@ -56,6 +56,7 @@ jobs:
         with:
           token_format: access_token
           project_id: ${{ env.GCP_PROJECT_ID }}
+          service_account: github-actions@open-targets-genetics-dev.iam.gserviceaccount.com
           workload_identity_provider: projects/234703259993/locations/global/workloadIdentityPools/github/providers/opentargets
           access_token_lifetime: 300s
 
