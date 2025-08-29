@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v3.0.1-dev.2 (2025-08-29)
+
+### Continuous Integration
+
+- Add service account to impersonate
+  ([`05d5eb1`](https://github.com/opentargets/gentroutils/commit/05d5eb133efc9a5e3103397ff33233b543c1d2e2))
+
+
 ## v3.0.1-dev.1 (2025-08-28)
 
 ### Bug Fixes
