@@ -8,11 +8,12 @@ env:
   GCP_PROJECT_ID: "open-targets-genetics-dev"
   GCP_REGION: "europe-west1"
   TAG: "${{ github.ref_name }}"
-  REPO: "${{ github.event.repository_name }}"
+  REPO: "${{ github.event.repository.name }}"
 
 
 jobs:
   push-to-ghcr-and-gar:
+    if: startsWith(github.ref, 'refs/tags/')
     name: Build docker image and push to GHCR and GAR
     runs-on: ubuntu-22.04
 
@@ -54,7 +55,9 @@ jobs:
         name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
+          token_format: access_token
           project_id: ${{ env.GCP_PROJECT_ID }}
+          service_account: github-actions@open-targets-genetics-dev.iam.gserviceaccount.com
           workload_identity_provider: projects/234703259993/locations/global/workloadIdentityPools/github/providers/opentargets
           access_token_lifetime: 300s
 
@@ -75,13 +78,13 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository }}:latest
             ghcr.io/${{ github.repository }}:${{ env.TAG }}
-            ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.REPO }}/${{ env.REPO }}:latest
-            ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.REPO }}:${{ env.TAG }}
+            ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/opentargets/${{ env.REPO }}:latest
+            ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/opentargets/${{ env.REPO }}:${{ env.TAG }}
 
       - id: generate-attestations
         name: Generate artifact attestation
         uses: actions/attest-build-provenance@v1
         with:
-          subject-name: ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.REPO }}/${{ env.REPO }}
+          subject-name: ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/opentargets/${{ env.REPO }}
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true

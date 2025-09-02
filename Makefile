@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 .PHONY: $(shell sed -n -e '/^$$/ { n ; /^[^ .\#][^ ]*:/ { s/:.*$$// ; p ; } ; }' $(MAKEFILE_LIST))
-VERSION := $$(grep '^version' pyproject.toml | sed 's%version = "\(.*\)"%\1%')
+VERSION := $$(grep '^version' pyproject.toml | head -1 | sed 's%version = "\(.*\)"%\1%')
 APP_NAME := $$(grep '^name' pyproject.toml | head -1 | sed 's%name = "\(.*\)"%\1%')
 
 .DEFAULT_GOAL := help
@@ -41,3 +41,6 @@ check: lint format test type-check dep-check ## run all checks
 
 help: ## This is help
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+
+build-docker: ## build docker image
+	docker build -t $(APP_NAME):$(VERSION) --no-cache -f Dockerfile .

@@ -4,12 +4,16 @@ on:
     branches:
       - dev
       - main
+    tags-ignore: # Prevent running the action on the tag
+      - '*'
 
 
 jobs:
   create-tag:
-    # NOTE: only trigger the workflow when the commit is not from the GitHubActions bot (prevent self-triggering)
-    if: github.event.commits[0].author.name != 'github-actions[botg]'
+    # NOTE: only trigger the workflow only when human user pushed to the branch (prevent self-triggering)
+    if: |
+      !contains(fromJSON('["github-actions[bot]", "semantic-release"]'), github.actor) &&
+      github.event.head_commit.author.name != 'semantic-release'
     runs-on: ubuntu-latest
     concurrency: release
     environment: DEV

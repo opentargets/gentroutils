@@ -1,6 +1,112 @@
 # CHANGELOG
 
 
+## v3.1.0-dev.5 (2025-08-29)
+
+### Continuous Integration
+
+- Update path to attestations
+  ([`febea43`](https://github.com/opentargets/gentroutils/commit/febea4366fe94de09b82154d92b90baadfb08871))
+
+
+## v3.1.0-dev.4 (2025-08-29)
+
+### Continuous Integration
+
+- Update path to attestations
+  ([`55a80f1`](https://github.com/opentargets/gentroutils/commit/55a80f11838d6569f4919b730e291be665f33dad))
+
+
+## v3.1.0-dev.3 (2025-08-29)
+
+### Continuous Integration
+
+- Change image name structure for gcs
+  ([`88dbbbd`](https://github.com/opentargets/gentroutils/commit/88dbbbd7637bf7c9ec8c405a9811ad9e29416d48))
+
+
+## v3.1.0-dev.2 (2025-08-29)
+
+### Continuous Integration
+
+- Fix container name
+  ([`9c64ae1`](https://github.com/opentargets/gentroutils/commit/9c64ae1e4d43b1861625ef673df8edd7b5127b48))
+
+
+## v3.1.0-dev.1 (2025-08-29)
+
+### Build System
+
+- Remove obscured gcs scope from polars
+  ([`895bfed`](https://github.com/opentargets/gentroutils/commit/895bfed2486c6ca5123cc6908760020d832638ec))
+
+### Features
+
+- Add docker build command
+  ([`8f42913`](https://github.com/opentargets/gentroutils/commit/8f42913c6c41b160a28ca230cb801dd2da0bebf1))
+
+- Rebuild docker image
+  ([`94f2a49`](https://github.com/opentargets/gentroutils/commit/94f2a49ccb25a8c9eb9238cd56ea75024e26ff50))
+
+
+## v3.0.1-dev.6 (2025-08-29)
+
+### Continuous Integration
+
+- Prevent tag action to run after semvar
+  ([`847e36b`](https://github.com/opentargets/gentroutils/commit/847e36ba4a5848116c2f6311849a1960dd55b34c))
+
+
+## v3.0.1-dev.5 (2025-08-29)
+
+### Chores
+
+- Update readme
+  ([`9e75c35`](https://github.com/opentargets/gentroutils/commit/9e75c35a4ed6113dae76ed9b0a67762fbcd882e3))
+
+### Continuous Integration
+
+- Run artifact build only from tag
+  ([`4906b38`](https://github.com/opentargets/gentroutils/commit/4906b38c49d51a7b8a6a28cb12638ecc9a6fdc5e))
+
+
+## v3.0.1-dev.4 (2025-08-29)
+
+### Bug Fixes
+
+- Workflow file
+  ([`f840d55`](https://github.com/opentargets/gentroutils/commit/f840d555bbf4a8415c71b56b34d72393af8c8ebf))
+
+### Continuous Integration
+
+- Prevent running create-tag by semantic-release
+  ([`57fb068`](https://github.com/opentargets/gentroutils/commit/57fb068a21bf86d048376ab0f4678694abeb2e71))
+
+
+## v3.0.1-dev.3 (2025-08-29)
+
+### Continuous Integration
+
+- Prevent running create-tag on tag
+  ([`963f657`](https://github.com/opentargets/gentroutils/commit/963f657221f2f08f20f1b20a371ad884d584bf0a))
+
+
+## v3.0.1-dev.2 (2025-08-29)
+
+### Continuous Integration
+
+- Add service account to impersonate
+  ([`05d5eb1`](https://github.com/opentargets/gentroutils/commit/05d5eb133efc9a5e3103397ff33233b543c1d2e2))
+
+
+## v3.0.1-dev.1 (2025-08-28)
+
+### Bug Fixes
+
+- Update auth
+  ([`a95b566`](https://github.com/opentargets/gentroutils/commit/a95b566a164d31ad36383fb99d7c88a5aec27b70))
+
+
 ## v3.0.0 (2025-08-28)
 
 ### Bug Fixes
