@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.13"
 
 [[package]]
@@ -500,7 +500,7 @@ wheels = [
 
 [[package]]
 name = "gentroutils"
-version = "3.0.1.dev6"
+version = "3.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "aioftp" },
@@ -557,7 +557,7 @@ requires-dist = [
     { name = "gcsfs", specifier = ">=2025.7.0" },
     { name = "google-cloud-storage", specifier = ">=3.1.1" },
     { name = "loguru", specifier = ">=0.7.3" },
-    { name = "opentargets-otter", specifier = ">=25.0.2" },
+    { name = "opentargets-otter", specifier = ">=25.0.15" },
     { name = "polars", extras = ["fsspec"], specifier = ">=1.31.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
     { name = "tqdm", specifier = ">=4.67.1" },
@@ -1091,7 +1091,7 @@ wheels = [
 
 [[package]]
 name = "opentargets-otter"
-version = "25.0.4"
+version = "25.0.15"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "filelock" },
@@ -1102,9 +1102,9 @@ dependencies = [
     { name = "requests" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b9/78/1a225a5f7c630109e12642c9855bef09d80186730cca8520e121bddd4658/opentargets_otter-25.0.4.tar.gz", hash = "sha256:47976e20808af5d409cc63d715b2a23877685e0769439421baa37edd9b98d195", size = 81897, upload-time = "2025-08-07T13:32:22.085Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c8/87/69355fcec44e288191c357915c9a6ccdfb5094cef58226fffbce635e9ee1/opentargets_otter-25.0.15.tar.gz", hash = "sha256:3e52445bd77c1dfd75a558f595bf4fb535ca033b3dc28e36238fc5c60a3c130d", size = 107393, upload-time = "2025-11-03T13:03:01.069Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/79/75/26de247581a2aee6a18099088d94c3e44f7dd73de7fda1a9207ea677b9fa/opentargets_otter-25.0.4-py3-none-any.whl", hash = "sha256:ea8dc6b86a218c3aefd101adbc29bfd87df1c2a346a7d41a6a9325271211b04b", size = 50375, upload-time = "2025-08-07T13:32:20.558Z" },
+    { url = "https://files.pythonhosted.org/packages/16/1f/0a35a90fb21435c5548ebca7080e73cc96bb5cdde7c205afb073436f3873/opentargets_otter-25.0.15-py3-none-any.whl", hash = "sha256:a30dcbb4009e2485d306ae562ae10541ad93fdef51ded03f043a92cd8c215f33", size = 51849, upload-time = "2025-11-03T13:02:59.802Z" },
 ]
 
 [[package]]

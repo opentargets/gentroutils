@@ -4,7 +4,7 @@ from datetime import date
 from unittest.mock import Mock, mock_open, patch
 
 import pytest
-from otter.task.model import TaskContext
+from otter.task.model import State, TaskContext
 
 from gentroutils.errors import GentroutilsError
 from gentroutils.tasks import GwasCatalogReleaseInfo
@@ -60,7 +60,7 @@ def mock_task_context():
     """Return a mock TaskContext."""
     context = Mock(spec=TaskContext)
     # Set up required attributes that the otter framework expects
-    context.state = Mock()
+    context.state = State.PENDING_RUN
     context.abort = Mock()
     context.abort.set = Mock()
     return context

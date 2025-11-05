@@ -1,4 +1,4 @@
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
@@ -69,26 +69,32 @@ class TestTransferManager:
         with pytest.raises(GentroutilsError, match="Invalid transferable objects provided"):
             TransferManager().transfer([mock_ftp_obj, mock_polars_obj])
 
-    @patch("gentroutils.transfer.asyncio.run")
-    def test_transfer_ftp_objects(self, mock_asyncio_run):
+    @pytest.mark.asyncio
+    async def test_transfer_ftp_objects(self):
         """Test transfer method with FTP transferable objects."""
         mock_ftp_obj = MagicMock(spec=FTPtoGCPTransferableObject)
+        mock_ftp_obj.transfer = AsyncMock()
 
-        transfer_manager = TransferManager()
-        transfer_manager.transfer([mock_ftp_obj])
+        transferable_objects = [mock_ftp_obj]
 
-        # Verify that asyncio.run was called with the correct method
-        mock_asyncio_run.assert_called_once()
-        assert mock_asyncio_run.called
+        # Execute the transfer directly (async)
+        await TransferManager.transfer_ftp_to_gcp(transferable_objects)
 
-    @patch("gentroutils.transfer.asyncio.run")
-    def test_transfer_polars_objects(self, mock_asyncio_run):
+        # Verify the transfer method was called
+        mock_ftp_obj.transfer.assert_called_once()
+        mock_ftp_obj.transfer.assert_awaited()
+
+    @pytest.mark.asyncio
+    async def test_transfer_polars_objects(self):
         """Test transfer method with Polars transferable objects."""
         mock_polars_obj = MagicMock(spec=PolarsDataFrameToGCSTransferableObject)
+        mock_polars_obj.transfer = AsyncMock()
 
-        transfer_manager = TransferManager()
-        transfer_manager.transfer([mock_polars_obj])
+        transferable_objects = [mock_polars_obj]
 
-        # Verify that asyncio.run was called with the correct method
-        mock_asyncio_run.assert_called_once()
-        assert mock_asyncio_run.called
+        # Execute the transfer directly (async)
+        await TransferManager.transfer_polars_to_gcs(transferable_objects)
+
+        # Verify the transfer method was called
+        mock_polars_obj.transfer.assert_called_once()
+        mock_polars_obj.transfer.assert_awaited()

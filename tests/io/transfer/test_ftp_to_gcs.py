@@ -1,5 +1,7 @@
 """Test FTP to GCS transfer."""
 
+import io
+import zipfile
 from contextlib import contextmanager
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -7,6 +9,7 @@ import pytest
 
 from gentroutils.errors import GentroutilsError
 from gentroutils.io.transfer import FTPtoGCPTransferableObject
+from gentroutils.io.transfer.ftp_to_gcs import unzip_buffer
 
 
 @contextmanager
@@ -83,4 +86,52 @@ class TestFTPtoGCPTransferableObject:
         mock_storage_client.assert_called_once()
         mock_client.bucket.assert_called_once_with("test-bucket")
         mock_bucket.blob.assert_called_once_with("file.txt")
-        mock_blob.upload_from_string.assert_called_once_with("testdatacontent")
+        mock_blob.upload_from_string.assert_called_once_with(b"testdatacontent")
+
+
+class TestUnzipBuffer:
+    """Test the unzip_buffer function."""
+
+    def test_unzip_buffer_single_file(self):
+        """Test unzipping a buffer containing a single file."""
+        # Create a zip file in memory
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, "w") as z:
+            z.writestr("test_file.txt", b"This is test content")
+
+        buffer.seek(0)
+
+        # Unzip the buffer
+        result = unzip_buffer(buffer)
+
+        # Verify the result
+        assert result == b"This is test content"
+
+    def test_unzip_buffer_multiple_files(self):
+        """Test that unzipping a buffer with multiple files raises ValueError."""
+        # Create a zip file with multiple files
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, "w") as z:
+            z.writestr("file1.txt", b"Content 1")
+            z.writestr("file2.txt", b"Content 2")
+
+        buffer.seek(0)
+
+        # Verify that ValueError is raised
+        with pytest.raises(ValueError, match="Multiple files were found in the zipped buffer"):
+            unzip_buffer(buffer)
+
+    def test_unzip_buffer_empty_zip(self):
+        """Test unzipping an empty zip file (no files in archive)."""
+        # Create an empty zip file
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, "w") as _:
+            pass  # Don't add any files
+
+        buffer.seek(0)
+
+        # The function should handle empty zip files
+        # Based on the code, it logs an error but doesn't raise an exception for 0 files
+
+        with pytest.raises(ValueError, match="No files were found in the zipped buffer"):
+            unzip_buffer(buffer)

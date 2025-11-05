@@ -1,7 +1,7 @@
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import MagicMock, patch
 
 import pytest
-from otter.task.model import TaskContext
+from otter.task.model import State, TaskContext
 
 from gentroutils.errors import GentroutilsError
 from gentroutils.tasks import GwasCatalogReleaseInfo
@@ -158,9 +158,8 @@ class TestFetchTask:
     """Test cases for the Fetch task."""
 
     @patch("gentroutils.tasks.fetch.GwasCatalogReleaseInfo.from_uri")
-    @patch("gentroutils.tasks.fetch.FTPtoGCPTransferableObject")
-    @patch("gentroutils.tasks.curation.TransferManager")
-    def test_fetch_run(self, mock_tf_manager, mock_tf_object, mock_from_uri, mock_gwas_catalog_release_info):
+    @patch("gentroutils.tasks.fetch.TransferManager")
+    def test_fetch_run(self, mock_tf_manager, mock_from_uri, mock_gwas_catalog_release_info):
         fetch_spec = FetchSpec(
             name="test fetch",
             stats_uri="https://www.ebi.ac.uk/gwas/api/search/stats",
@@ -178,7 +177,7 @@ class TestFetchTask:
 
         mock_context = MagicMock(spec=TaskContext)
         # Set up required attributes that the otter framework expects
-        mock_context.state = MagicMock()
+        mock_context.state = State.PENDING_RUN
         mock_context.abort = MagicMock()
         mock_context.abort.set = MagicMock()
 
@@ -190,12 +189,17 @@ class TestFetchTask:
 
         # Assert the `GwasCatalogReleaseInfo.from_uri` was called once with the endpoint
         mock_from_uri.assert_called_once_with("https://www.ebi.ac.uk/gwas/api/search/stats")
-        expected_calls = [
-            call(source="ftp://example.com/2023/10/01/data.json", destination="gs://test-bucket/20231001/data.json"),
-            call(source="ftp://example.com/2023/10/01/data.json", destination="gs://test-bucket/latest/data.json"),
-        ]
-        mock_tf_object.assert_called()
-        # Assert transfer was run
-        assert mock_tf_object.call_args_list == expected_calls
+
+        # Assert transfer was called once
+        mock_tf_manager_instance.transfer.assert_called_once()
+
+        # Get the transferable objects that were passed to transfer
+        call_args = mock_tf_manager_instance.transfer.call_args[0][0]
+        assert len(call_args) == 2
+        assert call_args[0].source == "ftp://example.com/2023/10/01/data.json"
+        assert call_args[0].destination == "gs://test-bucket/20231001/data.json"
+        assert call_args[1].source == "ftp://example.com/2023/10/01/data.json"
+        assert call_args[1].destination == "gs://test-bucket/latest/data.json"
+
         assert result == task  # Should return self
         assert isinstance(result, Fetch)

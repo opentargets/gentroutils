@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import polars as pl
 import pytest
-from otter.task.model import TaskContext
+from otter.task.model import State, TaskContext
 
 from gentroutils.errors import GentroutilsError
 from gentroutils.tasks.curation import Curation, CurationSpec
@@ -113,7 +113,7 @@ class TestCurationTask:
 
         mock_context = MagicMock(spec=TaskContext)
         # Set up required attributes that the otter framework expects
-        mock_context.state = MagicMock()
+        mock_context.state = State.PENDING_RUN
         mock_context.abort = MagicMock()
         mock_context.abort.set = MagicMock()
         curation_task = Curation(curation_spec, mock_context)
@@ -200,7 +200,7 @@ class TestCurationTask:
 
         mock_context = MagicMock(spec=TaskContext)
         # Set up required attributes that the otter framework expects
-        mock_context.state = MagicMock()
+        mock_context.state = State.PENDING_RUN
         mock_context.abort = MagicMock()
         mock_context.abort.set = MagicMock()
         curation_task = Curation(curation_spec, mock_context)
