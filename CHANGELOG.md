@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v3.2.0-dev.1 (2025-11-05)
+
+### Chores
+
+- Uncomment config
+  ([`30c4d68`](https://github.com/opentargets/gentroutils/commit/30c4d68e79a35d2c5c83cd17a15f63906ef834d6))
+
+### Features
+
+- **associations**: Allow zip file transfer from ftp
+  ([`662a635`](https://github.com/opentargets/gentroutils/commit/662a63593cd5f340a768974041461cc65e1566b9))
+
+
 ## v3.1.0 (2025-09-02)
 
 ### Chores
