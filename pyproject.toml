@@ -50,7 +50,6 @@ dev = [
     "gcloud-storage-emulator>=0.5.0",
     "types-requests>=2.32.0.20240712",
     "pyftpdlib>=2.0.1",
-    "python-semantic-release>=9.19.1",
     "pandas-stubs>=2.2.3.250308",
     "ipython>=8.36.0",
     "pytest-asyncio>=1.1.0",

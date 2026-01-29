@@ -36,5 +36,6 @@ steps:
         - fetch studies
       previous_curation: '${gc_bucket}/curation/latest/curated/GWAS_Catalog_study_curation.tsv'
       studies: '${gc_bucket}/gentroutils/latest/gwas_catalog_download_studies.tsv'
+      summary_statistics_glob: '${gc_bucket}/raw_summary_statistics/**/*.tsv.gz'
       destination_template: '${gc_bucket}/curation/{release_date}/raw/GWAS_Catalog_study_curation.tsv'
       promote: true

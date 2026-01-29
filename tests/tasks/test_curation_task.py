@@ -21,6 +21,7 @@ class TestCurationSpec:
             previous_curation="gs://test-bucket/previous_curation.json",
             studies="gs://test-bucket/studies.json",
             destination_template="gs://test-bucket/{release_date}/curation.json",
+            summary_statistics_glob="gs://test-bucket/summary_statistics/*.txt",
             promote=True,
         )
         assert curation_spec.name == "test curation"
@@ -42,6 +43,7 @@ class TestCurationSpec:
                 previous_curation="gs://test-bucket/previous_curation.json",
                 studies="gs://test-bucket/studies.json",
                 destination_template="gs://test-bucket/curation.json",  # Missing {release_date}
+                summary_statistics_glob="gs://test-bucket/summary_statistics/*.txt",
             )
 
     def test_curation_spec_substituted_destinations(self):
@@ -51,6 +53,7 @@ class TestCurationSpec:
             previous_curation="gs://test-bucket/previous_curation.json",
             studies="gs://test-bucket/studies.json",
             destination_template="gs://test-bucket/{release_date}/curation.json",
+            summary_statistics_glob="gs://test-bucket/summary_statistics/*.txt",
             promote=True,
         )
         mock_release_info = MagicMock()
@@ -108,6 +111,7 @@ class TestCurationTask:
             previous_curation="gs://test-bucket/previous_curation.tsv",
             studies="gs://test-bucket/studies.tsv",
             destination_template="gs://test-bucket/{release_date}/curation.tsv",
+            summary_statistics_glob="gs://test-bucket/summary_statistics/*.txt",
             promote=True,
         )
 
@@ -129,7 +133,9 @@ class TestCurationTask:
 
         # Verify GWASCatalogCuration.from_prev_curation was called correctly
         mock_gwas_catalog_curation.from_prev_curation.assert_called_once_with(
-            "gs://test-bucket/previous_curation.tsv", "gs://test-bucket/studies.tsv"
+            "gs://test-bucket/previous_curation.tsv",
+            "gs://test-bucket/studies.tsv",
+            "gs://test-bucket/summary_statistics/*.txt",
         )
 
         # Verify substituted destinations are correct
@@ -195,6 +201,7 @@ class TestCurationTask:
             previous_curation="gs://test-bucket/previous_curation.tsv",
             studies="gs://test-bucket/studies.tsv",
             destination_template="gs://test-bucket/{release_date}/curation.tsv",
+            summary_statistics_glob="gs://test-bucket/summary_statistics/*.txt",
             promote=False,
         )
 
