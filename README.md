@@ -180,6 +180,7 @@ This task fetches the GWAS Catalog ancestries file from the specified FTP server
       previous_curation: gs://gwas_catalog_inputs/curation/latest/curated/GWAS_Catalog_study_curation.tsv
       studies: gs://gwas_catalog_inputs/gentroutils/latest/gwas_catalog_download_studies.tsv
       destination_template: gs://gwas_catalog_inputs/curation/{release_date}/raw/gwas_catalog_study_curation.tsv
+      summary_statistics_glob: gs://gwas_catalog_inputs/raw_summary_statistics/*.h.tsv.gz
       promote: true
 ```
 
@@ -193,6 +194,7 @@ This task is used to build the GWAS Catalog curation file that is later used as 
 > - The `studies` field is the path to the studies file that was fetched in the `fetch studies` task. This file is used to build the curation file.
 > - The `destination_template` is where the curation file will be saved, and it uses the `{release_date}` placeholder to specify the release date dynamically. The release date is fetched from the `stats_uri` endpoint.
 > - The `promote` field is set to `true`, which means the output will be promoted to the latest release. Meaning that the file will be saved under `gs://gwas_catalog_inputs/curation/latest/raw/gwas_catalog_study_curation.tsv` after the task is completed. If the `promote` field is set to `false`, the file will not be promoted and will be saved under the specified path with the release date.
+> The `summary_statistics_glob` field is used to specify the glob pattern to list all synced summary statistics files from GCS. This is used to identify which studies have summary statistics available.
 
 ---
 
