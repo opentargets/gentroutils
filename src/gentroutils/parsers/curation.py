@@ -133,7 +133,7 @@ class GCSSummaryStatisticsFileCrawler:
             .alias(SyncedSummaryStatisticsSchema.STUDY_ID)
         )
         # Post check to find if there are any studies with multiple files.
-        multi_files = data.group_by(SyncedSummaryStatisticsSchema.STUDY_ID).len().filter(pl.col("count") > 1)
+        multi_files = data.group_by(SyncedSummaryStatisticsSchema.STUDY_ID).len().filter(pl.col("len") > 1)
         if not multi_files.is_empty():
             logger.warning("Studies with multiple summary statistics files found: {}", multi_files)
             logger.warning("DataFrame shape before deduplication: {}", data.shape)
@@ -235,9 +235,6 @@ class GWASCatalogCuration:
             .alias("status"),
         )
         logger.debug("New studies identified: {}", new_studies.shape[0])
-
-        logger.error(new_studies_annotated.columns)
-        logger.error(prev_studies.columns)
 
         # Union of new studies and previously curated studies
         all_studies = pl.concat([prev_studies, new_studies_annotated], how="vertical")

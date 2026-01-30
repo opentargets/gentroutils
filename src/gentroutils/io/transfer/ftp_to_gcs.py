@@ -76,6 +76,7 @@ class FTPtoGCPTransferableObject(TransferableObject):
                     logger.success(f"Successfully changed directory to: {ftp_obj.base_dir}")
                 except aioftp.StatusCodeError as e:
                     logger.warning(f"Failed to change directory to {ftp_obj.base_dir}: {e}")
+                    logger.warning(f"Probably the release date {release_date} is out of sync with the api endpoint.")
                     try:
                         logger.warning("Attempting to load the `latest` release.")
                         ftp_obj = FTPPath(self.source.replace(release_date, "latest"))
