@@ -165,7 +165,9 @@ class TestGwasCatalogCuration:
         synced_data: pl.DataFrame,
     ) -> None:
         """Test constructor from previous curation and studies."""
-        crawl.crawl = MagicMock(return_value=synced_data)
+        mock_crawler_instance = MagicMock()
+        mock_crawler_instance.crawl = MagicMock(return_value=synced_data)
+        crawl.return_value = mock_crawler_instance
         curation = GWASCatalogCuration.from_prev_curation(
             prev_curation_file,
             downloaded_studies_file,
