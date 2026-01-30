@@ -73,9 +73,9 @@ class DownloadStudiesSchema(StrEnum):
 class SyncedSummaryStatisticsSchema(StrEnum):
     """Enum to define the columns for synced summary statistics."""
 
-    FILE_PATH = "file_path"
+    FILE_PATH = "filePath"
     """The GCS file path of the summary statistics file."""
-    SYNCED = "synced"
+    SYNCED = "isSynced"
     """Flag indicating whether the file has been synced."""
     STUDY_ID = "studyId"
     """The unique identifier for a study."""
@@ -91,8 +91,8 @@ class CuratedStudyStatus(StrEnum):
 
     REMOVED = "removed"
     """The study has been removed from the GWAS Catalog."""
-    NEW = "new"
-    """The study is new in the GWAS Catalog."""
+    TO_CURATE = "to_curate"
+    """The study is new and needs to be curated."""
     CURATED = "curated"
     """The study has been curated and is still in the GWAS Catalog."""
     NO_SUMSTATS = "no_summary_statistics"
@@ -107,9 +107,9 @@ class GCSSummaryStatisticsFileCrawler:
         self.gcs_glob = gcs_glob
         logger.debug("Initialized GCSSummaryStatisticsFileCrawler with glob: {}", gcs_glob)
 
-    def crawl(self) -> pl.DataFrame:
-        """Crawl GCS and return a DataFrame of summary statistics files."""
-        # Implementation to crawl GCS and return a DataFrame
+    def _fetch_paths(self) -> list[str]:
+        """Fetch file paths from GCS based on the glob pattern."""
+        # Implementation to fetch file paths from GCS
         c = storage.Client()
         bucket_name = self.gcs_glob.split("/")[2]
         prefix = "/".join(self.gcs_glob.split("/")[3:-1])
@@ -117,7 +117,12 @@ class GCSSummaryStatisticsFileCrawler:
         logger.debug("Crawling GCS bucket: {}, prefix: {}, suffix: {}", bucket_name, prefix, suffix)
         bucket = c.bucket(bucket_name)
         blobs = bucket.list_blobs(prefix=prefix)
-        file_paths = [f"gs://{bucket_name}/{blob.name}" for blob in blobs if blob.name.endswith(suffix)]
+        return [f"gs://{bucket_name}/{blob.name}" for blob in blobs if blob.name.endswith(suffix)]
+
+    def crawl(self) -> pl.DataFrame:
+        """Crawl GCS and return a DataFrame of summary statistics files."""
+        # Implementation to crawl GCS and return a DataFrame
+        file_paths = self._fetch_paths()
         logger.debug("Found {} summary statistics files.", len(file_paths))
         return pl.DataFrame({
             SyncedSummaryStatisticsSchema.FILE_PATH: file_paths,
@@ -203,10 +208,10 @@ class GWASCatalogCuration:
 
         # Studies that are new in the GWAS Catalog
         new_studies = self.studies.join(self.previous_curation, on=CurationSchema.STUDY_ID, how="anti")
-        # Assign status NO_SUMSTATS to new studies without synced summary statistics (left join to drop info about already curated studies)
+        # Annotate new studies with info if they have summary statistics synced to the GCS bucket
         new_studies_annotated = new_studies.join(self.synced, on=CurationSchema.STUDY_ID, how="left")
-
-        new_studies_annotated.select(
+        # Assign status NO_SUMSTATS to new studies without synced summary statistics (left join to drop info about already curated studies)
+        new_studies_annotated = new_studies_annotated.select(
             CurationSchema.STUDY_ID,
             pl.lit(None).alias(CurationSchema.STUDY_TYPE),
             pl.lit(None).alias(CurationSchema.ANALYSIS_FLAG),
@@ -217,13 +222,16 @@ class GWASCatalogCuration:
             CurationSchema.TRAIT_FROM_SOURCE,
             pl.when(pl.col(SyncedSummaryStatisticsSchema.SYNCED).is_null())
             .then(pl.lit(CuratedStudyStatus.NO_SUMSTATS))
-            .otherwise(pl.lit(CuratedStudyStatus.NEW))
+            .otherwise(pl.lit(CuratedStudyStatus.TO_CURATE))
             .alias("status"),
         )
         logger.debug("New studies identified: {}", new_studies.shape[0])
 
+        logger.error(new_studies_annotated.columns)
+        logger.error(prev_studies.columns)
+
         # Union of new studies and previously curated studies
-        all_studies = pl.concat([prev_studies, new_studies], how="vertical")
+        all_studies = pl.concat([prev_studies, new_studies_annotated], how="vertical")
 
         logger.debug("All studies after combining new and previous: {}", all_studies.shape[0])
 
