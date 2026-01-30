@@ -124,7 +124,7 @@ class GCSSummaryStatisticsFileCrawler:
         # Implementation to crawl GCS and return a DataFrame
         file_paths = self._fetch_paths()
         logger.debug("Found {} summary statistics files.", len(file_paths))
-        return pl.DataFrame({
+        data = pl.DataFrame({
             SyncedSummaryStatisticsSchema.FILE_PATH: file_paths,
             SyncedSummaryStatisticsSchema.SYNCED: [True] * len(file_paths),
         }).with_columns(
@@ -132,6 +132,15 @@ class GCSSummaryStatisticsFileCrawler:
             .str.extract(r"\/(GCST\d+)\/", 1)
             .alias(SyncedSummaryStatisticsSchema.STUDY_ID)
         )
+        # Post check to find if there are any studies with multiple files.
+        multi_files = data.group_by(SyncedSummaryStatisticsSchema.STUDY_ID).len().filter(pl.col("count") > 1)
+        if not multi_files.is_empty():
+            logger.warning("Studies with multiple summary statistics files found: {}", multi_files)
+            logger.warning("DataFrame shape before deduplication: {}", data.shape)
+            logger.warning("Synced data preview:\n{}", data.head())
+            data = data.unique(subset=SyncedSummaryStatisticsSchema.STUDY_ID)
+            logger.warning("Synced data after deduplication:\n{}", data.shape)
+        return data
 
 
 class GWASCatalogCuration:

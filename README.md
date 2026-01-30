@@ -73,6 +73,7 @@ steps:
       previous_curation: gs://gwas_catalog_inputs/curation/latest/curated/GWAS_Catalog_study_curation.tsv
       studies: gs://gwas_catalog_inputs/gentroutils/latest/gwas_catalog_download_studies.tsv
       destination_template: gs://gwas_catalog_inputs/gentroutils/curation/{release_date}/GWAS_Catalog_study_curation.tsv
+      summary_statistics_glob: gs://gwas_catalog_inputs/raw_summary_statistics/*.h.tsv.gz
       promote: true
 ```
 
@@ -197,19 +198,20 @@ This task is used to build the GWAS Catalog curation file that is later used as 
 
 ## Curation process
 
-The base of the curation process for GWAS Catalog data is defined in the [docs/gwas_catalog_curation.md](docs/gwas_catalog_curation.md). The original solution uses R script to prepare the data for curation and then manually curates the data. The solution proposed in the `curation` task autommates the preparation of the data for curation and provides a template for manual curation. The manual curation process is still required, but the data preparation is automated.
+The base of the curation process for GWAS Catalog data is defined in the [docs/gwas_catalog_curation.md](docs/gwas_catalog_curation.md). The original solution uses R script to prepare the data for curation and then manually curates the data. The solution proposed in the `curation` task automates the preparation of the data for curation and provides a template for manual curation. The manual curation process is still required, but the data preparation is automated.
 
 The automated process includes:
 
 1. Reading `download studies` file with the list of studies that are currently comming from the latest GWAS Catalog release.
 2. Reading `previous curation` file that contains the list of the curated studies from the previous release.
-3. Comparing the two datasets with following logic:
+3. Listing all synced summary statistics files from the `summary_statistics_glob` parameter to identify which studies have summary statistics available. Note that this can be more then the list of studies in the `download studies` file as syncing also involves the unpublished studies.
+4. Comparing the three datasets with following logic:
    - In case the study is present in the `previous curation` and `download studies`, the study is marked as `curated`
-   * In case the study is present in the `download studies` but not in the `previous curation`, the study is marked as `new`
-   * In case the study is present in the `previous curation` but not in the `download studies`, the study is marked as `removed`
-4. The output of the curation process is a file that contains the list of studies with their status (curated, new, removed) and the fields that are required for manual curation. The output file is saved to the `destination_template` path specified in the task configuration. The file is saved under `gs://gwas_catalog_inputs/curation/{release_date}/raw/gwas_catalog_study_curation.tsv` path.
-5. The output file is then promoted to the latest release path `gs://gwas_catalog_inputs/curation/latest/raw/gwas_catalog_study_curation.tsv` so that it can be used for manual curation.
-6. The manual curation process is then performed on the `gs://gwas_catalog_inputs/curation/latest/raw/gwas_catalog_study_curation.tsv` file. The manual curation process is not automated and requires manual intervention. The output from the manual curation process should be saved then to the `gs://gwas_catalog_inputs/curation/latest/curated/GWAS_Catalog_study_curation.tsv` and `gs://gwas_catalog_inputs/curation/{release_date}/curated/GWAS_Catalog_study_curation.tsv` file. This file is then used for the [Open Targets Staging Dags](https://github.com/opentargets/orchestration).
+   - In case the study is present in the `download studies` but not in the `previous curation`, the study is marked as `to_curate` or `has_no_sumstats` depending on the presence of summary statistics files
+   - In case the study is present in the `previous curation` but not in the `download studies`, the study is marked as `removed`
+5. The output of the curation process is a file that contains the list of studies with their status (curated, new, removed) and the fields that are required for manual curation. The output file is saved to the `destination_template` path specified in the task configuration. The file is saved under `gs://gwas_catalog_inputs/curation/{release_date}/raw/gwas_catalog_study_curation.tsv` path.
+6. The output file is then promoted to the latest release path `gs://gwas_catalog_inputs/curation/latest/raw/gwas_catalog_study_curation.tsv` so that it can be used for manual curation.
+7. The manual curation process is then performed on the `gs://gwas_catalog_inputs/curation/latest/raw/gwas_catalog_study_curation.tsv` file. The manual curation process is not automated and requires manual intervention. The output from the manual curation process should be saved then to the `gs://gwas_catalog_inputs/curation/latest/curated/GWAS_Catalog_study_curation.tsv` and `gs://gwas_catalog_inputs/curation/{release_date}/curated/GWAS_Catalog_study_curation.tsv` file. This file is then used for the [Open Targets Staging Dags](https://github.com/opentargets/orchestration).
 
 ---
 
