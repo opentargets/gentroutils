@@ -5,7 +5,7 @@ from __future__ import annotations
 from enum import StrEnum
 
 import polars as pl
-from google.cloud import storage
+from google.cloud.storage import Client
 from loguru import logger
 
 from gentroutils.errors import GentroutilsError, GentroutilsErrorMessage
@@ -110,7 +110,7 @@ class GCSSummaryStatisticsFileCrawler:
     def _fetch_paths(self) -> list[str]:
         """Fetch file paths from GCS based on the glob pattern."""
         # Implementation to fetch file paths from GCS
-        c = storage.Client()
+        c = Client()
         bucket_name = self.gcs_glob.split("/")[2]
         prefix = "/".join(self.gcs_glob.split("/")[3:-1])
         suffix = self.gcs_glob.split("/")[-1].replace("*", "")

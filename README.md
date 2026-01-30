@@ -138,7 +138,7 @@ This task fetches the GWAS Catalog associations file from the specified FTP serv
 
 This task fetches the GWAS Catalog studies file from the specified FTP server and saves it to the specified destination.
 
-> [!NOTE] 
+> [!NOTE]
 > **Task parameters**
 >
 > - The `stats_uri` is used to fetch the latest release date and other metadata.
@@ -160,7 +160,7 @@ This task fetches the GWAS Catalog studies file from the specified FTP server an
 
 This task fetches the GWAS Catalog ancestries file from the specified FTP server and saves it to the specified destination.
 
-> [!NOTE] 
+> [!NOTE]
 > **Task parameters**
 >
 > - The `stats_uri` is used to fetch the latest release date and other metadata.
