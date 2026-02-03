@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v4.0.0-dev.1 (2026-02-03)
+
+### Features
+
+- Updete dependencies
+  ([`b6af4d2`](https://github.com/opentargets/gentroutils/commit/b6af4d28605e7c687f5ec15cae7187c64e834cb0))
+
+
 ## v3.2.0 (2026-02-03)
 
 ### Chores
