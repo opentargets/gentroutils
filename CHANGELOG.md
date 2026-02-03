@@ -3,6 +3,11 @@
 
 ## v3.2.0 (2026-02-03)
 
+### Chores
+
+- Update uv lock
+  ([`6f13fc0`](https://github.com/opentargets/gentroutils/commit/6f13fc0055ee9a49a215166d3cccb31747602a4f))
+
 
 ## v3.2.0-dev.2 (2026-02-03)
 
