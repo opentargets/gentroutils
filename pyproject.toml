@@ -1,7 +1,7 @@
 [project]
 authors = [{ name = "Szymon Szyszkowski", email = "ss60@sanger.ac.uk" }]
 name = "gentroutils"
-version = "3.1.0"
+version = "3.2.0-dev.2"
 description = "Open Targets python genetics utility CLI tools"
 dependencies = [
     "aiohttp>=3.11.18",
@@ -10,7 +10,7 @@ dependencies = [
     "pydantic>=2.10.6",
     "loguru>=0.7.3",
     "tqdm>=4.67.1",
-    "opentargets-otter>=25.0.2",
+    "opentargets-otter>=25.0.15",
     "google-cloud-storage>=3.1.1",
     "gcsfs>=2025.7.0",
 ]
@@ -50,7 +50,6 @@ dev = [
     "gcloud-storage-emulator>=0.5.0",
     "types-requests>=2.32.0.20240712",
     "pyftpdlib>=2.0.1",
-    "python-semantic-release>=9.19.1",
     "pandas-stubs>=2.2.3.250308",
     "ipython>=8.36.0",
     "pytest-asyncio>=1.1.0",

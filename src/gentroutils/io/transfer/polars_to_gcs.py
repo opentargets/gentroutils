@@ -16,5 +16,5 @@ class PolarsDataFrameToGCSTransferableObject(TransferableObject):
         """Transfer the Polars DataFrame to the specified GCS destination."""
         # Convert Polars DataFrame to CSV and upload to GCS
         logger.info(f"Transferring Polars DataFrame to {self.destination}.")
-        self.source.write_csv(self.destination)
+        self.source.write_csv(self.destination, separator="\t", include_header=True)
         logger.info(f"Uploading DataFrame to {self.destination}")

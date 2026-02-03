@@ -16,9 +16,9 @@ class TestPolarsDataFrameToGCSTransferableObject:
 
     def test_validation_success(self, df):
         """Test successful creation with valid DataFrame and destination."""
-        obj = PolarsDataFrameToGCSTransferableObject(source=df, destination="gs://test-bucket/data.csv")
+        obj = PolarsDataFrameToGCSTransferableObject(source=df, destination="gs://test-bucket/data.tsv")
         assert obj.source.equals(df)
-        assert obj.destination == "gs://test-bucket/data.csv"
+        assert obj.destination == "gs://test-bucket/data.tsv"
 
     @pytest.mark.asyncio
     async def test_transfer(self):
@@ -27,19 +27,21 @@ class TestPolarsDataFrameToGCSTransferableObject:
         mock_df = MagicMock(spec=pl.DataFrame)
 
         # Create the transferable object
-        obj = PolarsDataFrameToGCSTransferableObject(source=mock_df, destination="gs://test-bucket/output.csv")
+        obj = PolarsDataFrameToGCSTransferableObject(source=mock_df, destination="gs://test-bucket/output.tsv")
 
         # Execute the transfer
         await obj.transfer()
 
         # Verify the write_csv method was called with correct destination
-        mock_df.write_csv.assert_called_once_with("gs://test-bucket/output.csv")
+        mock_df.write_csv.assert_called_once_with("gs://test-bucket/output.tsv", separator="\t", include_header=True)
 
     @pytest.mark.asyncio
     async def test_transfer_current_implementation(self, df):
         """Test transfer with current implementation (direct write_csv call)."""
         with patch.object(df, "write_csv") as mock_write_csv:
-            obj = PolarsDataFrameToGCSTransferableObject(source=df, destination="gs://test-bucket/study_data.csv")
+            obj = PolarsDataFrameToGCSTransferableObject(source=df, destination="gs://test-bucket/study_data.tsv")
 
             await obj.transfer()
-            mock_write_csv.assert_called_once_with("gs://test-bucket/study_data.csv")
+            mock_write_csv.assert_called_once_with(
+                "gs://test-bucket/study_data.tsv", separator="\t", include_header=True
+            )

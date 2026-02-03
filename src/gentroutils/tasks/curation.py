@@ -29,6 +29,7 @@ class CurationSpec(Spec):
     ...     name="curate gwas catalog data",
     ...     previous_curation="gs://gwas_catalog_inputs/curation/latest/curated/GWAS_Catalog_study_curation.tsv",
     ...     studies="gs://gwas_catalog_inputs/gentroutils/latest/gwas_catalog_download_studies.tsv",
+    ...     summary_statistics_glob="gs://gwas_catalog_inputs/raw_summary_statistics/**/*.tsv.gz",
     ...     destination_template="gs://gwas_catalog_inputs/{release_date}/pending/curation.tsv"
     ... )
     >>> cs.name
@@ -39,6 +40,8 @@ class CurationSpec(Spec):
     'gs://gwas_catalog_inputs/gentroutils/latest/gwas_catalog_download_studies.tsv'
     >>> cs.destination_template
     'gs://gwas_catalog_inputs/{release_date}/pending/curation.tsv'
+    >>> cs.summary_statistics_glob
+    'gs://gwas_catalog_inputs/raw_summary_statistics/**/*.tsv.gz'
     """
 
     name: str = "curate gwas catalog data"
@@ -52,6 +55,9 @@ class CurationSpec(Spec):
 
     destination_template: Annotated[str, AfterValidator(destination_validator)]
     """The destination path for the curation data."""
+
+    summary_statistics_glob: str
+    """The glob pattern to locate summary statistics files."""
 
     promote: bool = False
     """Whether to promote the curation data to the latest version."""
@@ -102,7 +108,9 @@ class Curation(Task):
         logger.debug(f"Using release date: {release_date}")
         destinations = self.spec.substituted_destinations(release_date)
         logger.debug(f"Destinations for curation data: {destinations}")
-        curation = GWASCatalogCuration.from_prev_curation(self.spec.previous_curation, self.spec.studies)
+        curation = GWASCatalogCuration.from_prev_curation(
+            self.spec.previous_curation, self.spec.studies, self.spec.summary_statistics_glob
+        )
         logger.debug(f"Curation result preview:\n{curation.result.head()}")
         transfer_objects = [
             PolarsDataFrameToGCSTransferableObject(source=curation.result, destination=d) for d in destinations

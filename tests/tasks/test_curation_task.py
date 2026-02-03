@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import polars as pl
 import pytest
-from otter.task.model import TaskContext
+from otter.task.model import State, TaskContext
 
 from gentroutils.errors import GentroutilsError
 from gentroutils.tasks.curation import Curation, CurationSpec
@@ -21,6 +21,7 @@ class TestCurationSpec:
             previous_curation="gs://test-bucket/previous_curation.json",
             studies="gs://test-bucket/studies.json",
             destination_template="gs://test-bucket/{release_date}/curation.json",
+            summary_statistics_glob="gs://test-bucket/summary_statistics/*.txt",
             promote=True,
         )
         assert curation_spec.name == "test curation"
@@ -42,6 +43,7 @@ class TestCurationSpec:
                 previous_curation="gs://test-bucket/previous_curation.json",
                 studies="gs://test-bucket/studies.json",
                 destination_template="gs://test-bucket/curation.json",  # Missing {release_date}
+                summary_statistics_glob="gs://test-bucket/summary_statistics/*.txt",
             )
 
     def test_curation_spec_substituted_destinations(self):
@@ -51,6 +53,7 @@ class TestCurationSpec:
             previous_curation="gs://test-bucket/previous_curation.json",
             studies="gs://test-bucket/studies.json",
             destination_template="gs://test-bucket/{release_date}/curation.json",
+            summary_statistics_glob="gs://test-bucket/summary_statistics/*.txt",
             promote=True,
         )
         mock_release_info = MagicMock()
@@ -108,12 +111,13 @@ class TestCurationTask:
             previous_curation="gs://test-bucket/previous_curation.tsv",
             studies="gs://test-bucket/studies.tsv",
             destination_template="gs://test-bucket/{release_date}/curation.tsv",
+            summary_statistics_glob="gs://test-bucket/summary_statistics/*.txt",
             promote=True,
         )
 
         mock_context = MagicMock(spec=TaskContext)
         # Set up required attributes that the otter framework expects
-        mock_context.state = MagicMock()
+        mock_context.state = State.PENDING_RUN
         mock_context.abort = MagicMock()
         mock_context.abort.set = MagicMock()
         curation_task = Curation(curation_spec, mock_context)
@@ -129,7 +133,9 @@ class TestCurationTask:
 
         # Verify GWASCatalogCuration.from_prev_curation was called correctly
         mock_gwas_catalog_curation.from_prev_curation.assert_called_once_with(
-            "gs://test-bucket/previous_curation.tsv", "gs://test-bucket/studies.tsv"
+            "gs://test-bucket/previous_curation.tsv",
+            "gs://test-bucket/studies.tsv",
+            "gs://test-bucket/summary_statistics/*.txt",
         )
 
         # Verify substituted destinations are correct
@@ -195,12 +201,13 @@ class TestCurationTask:
             previous_curation="gs://test-bucket/previous_curation.tsv",
             studies="gs://test-bucket/studies.tsv",
             destination_template="gs://test-bucket/{release_date}/curation.tsv",
+            summary_statistics_glob="gs://test-bucket/summary_statistics/*.txt",
             promote=False,
         )
 
         mock_context = MagicMock(spec=TaskContext)
         # Set up required attributes that the otter framework expects
-        mock_context.state = MagicMock()
+        mock_context.state = State.PENDING_RUN
         mock_context.abort = MagicMock()
         mock_context.abort.set = MagicMock()
         curation_task = Curation(curation_spec, mock_context)
