@@ -1,6 +1,40 @@
 # CHANGELOG
 
 
+## v3.2.0-dev.2 (2026-02-03)
+
+### Bug Fixes
+
+- Output tsv file instead of csv
+  ([`aff71b1`](https://github.com/opentargets/gentroutils/commit/aff71b16b6c4d273cc851050a793d3798bae27ac))
+
+- Test
+  ([`f9dd890`](https://github.com/opentargets/gentroutils/commit/f9dd890efc32ab969fbcd14eb0da14e40678e8fb))
+
+- Test for curation
+  ([`b853358`](https://github.com/opentargets/gentroutils/commit/b85335815d7a22745c61404f81b612a14cce06d5))
+
+- Test for curation
+  ([`22138ab`](https://github.com/opentargets/gentroutils/commit/22138ab31f7551a4b161f6f1885b7975d57a0ac7))
+
+### Chores
+
+- Cleanup
+  ([`68a3f66`](https://github.com/opentargets/gentroutils/commit/68a3f6607a4a1b61441c1369f2a9d3b4babec30c))
+
+- Fix glob pattern
+  ([`404b8ca`](https://github.com/opentargets/gentroutils/commit/404b8ca71b95764529ebb3df7c39881a0a12ff5e))
+
+- Handle mutliple sumstat files
+  ([`1fc8902`](https://github.com/opentargets/gentroutils/commit/1fc8902171a8f6edac407b790c3bcbe691792f96))
+
+- Update
+  ([`e69575b`](https://github.com/opentargets/gentroutils/commit/e69575b5a6c802b78b959314b84348d7969eeaeb))
+
+- Update readme
+  ([`12f274c`](https://github.com/opentargets/gentroutils/commit/12f274c5158b3986ba2511791fc2289b24d9aa40))
+
+
 ## v3.2.0-dev.1 (2025-11-05)
 
 ### Chores
