@@ -39,3 +39,92 @@ steps:
       summary_statistics_glob: '${gc_bucket}/raw_summary_statistics/**.h.tsv.gz'
       destination_template: '${gc_bucket}/curation/{release_date}/raw/GWAS_Catalog_study_curation.tsv'
       promote: true
+
+  genetics_etl:
+    - name: transform biosample_index
+      transform: biosample_index
+      source:
+        cell_ontology_input_path: FIXME
+        uberon_input_path: FIXME
+        efo_input_path: FIXME
+      destination:
+        biosample_index_path: FIXME
+
+    - name: transform study_validation
+      transform: study_validation
+      source:
+        study_index_path:
+          - FIXME
+        target_index_path: FIXME
+        disease_index_path: FIXME
+        biosample_index_path: FIXME
+      destination:
+        valid_study_index_path: FIXME
+        invalid_study_index_path: FIXME
+      settings:
+        invalid_qc_reasons: []
+        deprecated_project_ids: []
+
+    - name: transform credible_set_validation
+      transform: credible_set_validation
+      source:
+        study_locus_path:
+          - FIXME
+        study_index_path: FIXME
+        target_index_path: FIXME
+      destination:
+        valid_study_locus_path: FIXME
+        invalid_study_locus_path: FIXME
+      settings:
+        trans_qtl_threshold: FIXME
+        invalid_qc_reasons: []
+
+    - name: transform colocalisation
+      transform: colocalisation
+      source:
+        credible_set_path: FIXME
+      destination:
+        coloc_path: FIXME
+      settings:
+        colocalisation_method: FIXME
+        restrict_right_studies: []
+        gwas_v_qtl_overlap_only: false
+        colocalisation_method_params: {}
+
+    - name: transform variant_to_vcf
+      transform: variant_to_vcf
+      source:
+        source_paths:
+          - FIXME
+      destination:
+        output_path: FIXME
+      settings:
+        source_formats:
+          - FIXME
+        partition_size: 2000
+
+    - name: transform variant_index
+      transform: variant_index
+      source:
+        vep_output_json_path: FIXME
+        variant_annotations_path:
+          - FIXME
+      destination:
+        variant_index_path: FIXME
+      settings:
+        hash_threshold: FIXME
+        amino_acid_change_annotations: []
+
+    - name: transform locus_to_gene
+      transform: locus_to_gene
+      source:
+        credible_set_path: FIXME
+        feature_matrix_path: FIXME
+        gold_standard_curation_path: FIXME
+      destination:
+        model_path: FIXME
+      settings:
+        run_mode: train
+        hyperparameters: {}
+        download_from_hub: false
+        cross_validate: false
