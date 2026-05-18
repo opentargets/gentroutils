@@ -1,12 +1,14 @@
 ---
 work_path: ./work
 log_level: DEBUG
+release_uri: 'gs://open-targets-pipeline-runs/sz/26.03-ppp.1'
+l2g_training_version: '26.03-ppp'
 scratchpad:
   gc_stats_uri: "https://www.ebi.ac.uk/gwas/api/search/stats"
   gc_bucket: "gs://gwas_catalog_inputs"
   gc_ftp: "ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases"
-  release_uri: FIXME  # e.g. gs://genetics-portal-dev-data/24.09
-  l2g_training_version: FIXME  # e.g. 24.09
+  release_uri: 'gs://open-targets-pipeline-runs/sz/26.03-ppp.1'
+  l2g_training_version: '26.03-ppp'
 
 steps:
   gwas_catalog_release:
