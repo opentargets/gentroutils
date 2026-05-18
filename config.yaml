@@ -181,6 +181,34 @@ steps:
       settings:
         hash_threshold: 300
 
+    - name: transform enhancer_to_gene
+      transform: enhancer_to_gene
+      session_properties:
+        write_mode: overwrite
+        output_partitions: 30
+      source:
+        target_index_path: '${release_uri}/output/target'
+        biosample_index_path: '${release_uri}/output/biosample'
+        biosample_mapping_path: '${release_uri}/input/encode/rE2G/biosample_mapping.csv'
+        chromosome_contig_index_path: '${release_uri}/input/chromosome/chromosome.parquet'
+        interval_source: '${release_uri}/input/encode/rE2G/datasets/*.bed.gz'
+      destination:
+        valid_output_path: '${release_uri}/output/enhancer_to_gene'
+        invalid_output_path: '${release_uri}/excluded/enhancer_to_gene'
+      settings:
+        min_valid_score: 0.6
+        max_valid_score: 1.0
+        invalid_qc_reasons:
+          - UNRESOLVED_TARGET
+          - UNKNOWN_BIOSAMPLE
+          - SCORE_OUTSIDE_BOUNDS
+          - UNKNOWN_INTERVAL_TYPE
+          - AMBIGUOUS_SCORE
+          - UNKNOWN_PROJECT_ID
+          - INVALID_CHROMOSOME
+          - INVALID_RANGE
+          - AMBIGUOUS_INTERVAL_TYPE
+
     - name: transform locus_to_gene
       transform: locus_to_gene
       session_properties:

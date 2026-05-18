@@ -13,6 +13,7 @@ _STEP_REGISTRY: dict[str, tuple[str, str]] = {
     "biosample_index": ("gentropy.biosample_index", "BiosampleIndexStep"),
     "colocalisation": ("gentropy.colocalisation", "ColocalisationStep"),
     "credible_set_validation": ("gentropy.study_locus_validation", "StudyLocusValidationStep"),
+    "enhancer_to_gene": ("gentropy.intervals", "IntervalE2GStep"),
     "locus_to_gene": ("gentropy.l2g", "LocusToGeneStep"),
     "study_validation": ("gentropy.study_validation", "StudyValidationStep"),
     "variant_index": ("gentropy.variant_index", "VariantIndexStep"),
@@ -56,7 +57,8 @@ class TransformSpec(Spec):
 
     transform: str
     """Gentropy step name. One of: biosample_index, colocalisation,
-    credible_set_validation, locus_to_gene, study_validation, variant_index, variant_to_vcf."""
+    credible_set_validation, enhancer_to_gene, locus_to_gene, study_validation,
+    variant_index, variant_to_vcf."""
 
     source: dict[str, Any] = {}
     """Input path parameters forwarded to the step constructor by name."""
