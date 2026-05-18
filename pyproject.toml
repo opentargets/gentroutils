@@ -16,7 +16,7 @@ dependencies = [
     "gentropy @ git+https://github.com/opentargets/gentropy@v3.2.0",
 ]
 readme = "README.md"
-requires-python = ">3.11,<=3.13"
+requires-python = ">3.11,<3.14"
 license = "Apache-2.0"
 classifiers = [
     "Development Status :: 3 - Alpha",
