@@ -5,6 +5,8 @@ scratchpad:
   gc_stats_uri: "https://www.ebi.ac.uk/gwas/api/search/stats"
   gc_bucket: "gs://gwas_catalog_inputs"
   gc_ftp: "ftp://ftp.ebi.ac.uk/pub/databases/gwas/releases"
+  release_uri: FIXME  # e.g. gs://genetics-portal-dev-data/24.09
+  l2g_training_version: FIXME  # e.g. 24.09
 
 steps:
   gwas_catalog_release:
@@ -43,88 +45,166 @@ steps:
   genetics_etl:
     - name: transform biosample_index
       transform: biosample_index
+      session_properties:
+        write_mode: overwrite
+        output_partitions: 1
       source:
-        cell_ontology_input_path: FIXME
-        uberon_input_path: FIXME
-        efo_input_path: FIXME
+        cell_ontology_input_path: '${release_uri}/input/biosample/cl.json'
+        uberon_input_path: '${release_uri}/input/biosample/uberon.json'
+        efo_input_path: '${release_uri}/input/biosample/efo.json'
       destination:
-        biosample_index_path: FIXME
+        biosample_index_path: '${release_uri}/output/biosample'
 
     - name: transform study_validation
       transform: study_validation
+      session_properties:
+        write_mode: overwrite
+        output_partitions: 1
       source:
         study_index_path:
-          - FIXME
-        target_index_path: FIXME
-        disease_index_path: FIXME
-        biosample_index_path: FIXME
+          - '${release_uri}/input/gwas/study/gcca'
+          - '${release_uri}/input/gwas/study/gcss_pics'
+          - '${release_uri}/input/gwas/study/gcss_susie'
+          - '${release_uri}/input/gwas/study/finngen'
+          - '${release_uri}/input/molqtl/study/eqtl_catalogue'
+          - '${release_uri}/input/molqtl/study/ukb_ppp_eur'
+        target_index_path: '${release_uri}/output/target'
+        disease_index_path: '${release_uri}/output/disease'
+        biosample_index_path: '${release_uri}/output/biosample'
       destination:
-        valid_study_index_path: FIXME
-        invalid_study_index_path: FIXME
+        valid_study_index_path: '${release_uri}/output/study'
+        invalid_study_index_path: '${release_uri}/excluded/study'
       settings:
-        invalid_qc_reasons: []
-        deprecated_project_ids: []
+        invalid_qc_reasons:
+          - UNRESOLVED_TARGET
+          - UNRESOLVED_DISEASE
+          - UNKNOWN_STUDY_TYPE
+          - DUPLICATED_STUDY
+          - UNKNOWN_BIOSAMPLE
+          - FAILED_MEAN_BETA_CHECK
+          - FAILED_PZ_CHECK
+          - FAILED_GC_LAMBDA_CHECK
+          - NO_OT_CURATION
+          - CASE_CASE_STUDY_DESIGN
 
     - name: transform credible_set_validation
       transform: credible_set_validation
+      session_properties:
+        write_mode: overwrite
+        output_partitions: 200
       source:
         study_locus_path:
-          - FIXME
-        study_index_path: FIXME
-        target_index_path: FIXME
+          - '${release_uri}/input/gwas/credible_set/gcca'
+          - '${release_uri}/input/gwas/credible_set/gcss_pics'
+          - '${release_uri}/input/gwas/credible_set/gcss_susie'
+          - '${release_uri}/input/gwas/credible_set/finngen'
+          - '${release_uri}/input/molqtl/credible_set/eqtl_catalogue'
+          - '${release_uri}/input/molqtl/credible_set/ukb_ppp_eur'
+        study_index_path: '${release_uri}/output/study'
+        target_index_path: '${release_uri}/output/target'
       destination:
-        valid_study_locus_path: FIXME
-        invalid_study_locus_path: FIXME
+        valid_study_locus_path: '${release_uri}/output/credible_set'
+        invalid_study_locus_path: '${release_uri}/excluded/credible_set'
       settings:
-        trans_qtl_threshold: FIXME
-        invalid_qc_reasons: []
+        trans_qtl_threshold: 5000000
+        invalid_qc_reasons:
+          - DUPLICATED_STUDYLOCUS_ID
+          - AMBIGUOUS_STUDY
+          - MISSING_STUDY
+          - NO_GENOMIC_LOCATION_FLAG
+          - COMPOSITE_FLAG
+          - INCONSISTENCY_FLAG
+          - SUBSIGNIFICANT_FLAG
+          - LD_CLUMPED
+          - IN_MHC
+          - REDUNDANT_PICS_TOP_HIT
+          - EXPLAINED_BY_SUSIE
+          - WINDOW_CLUMPED
+          - NON_MAPPED_VARIANT_FLAG
+          - INVALID_VARIANT_IDENTIFIER
+          - INVALID_CHROMOSOME
+          - TOP_HIT_AND_SUMMARY_STATS
 
     - name: transform colocalisation
       transform: colocalisation
+      session_properties:
+        write_mode: overwrite
+        output_partitions: 200
+      spark_properties:
+        spark.executor.memory: '22g'
+        spark.executor.memoryOverhead: '4g'
+        spark.executor.cores: '4'
+        spark.memory.fraction: '0.8'
+        spark.memory.storageFraction: '0.2'
       source:
-        credible_set_path: FIXME
+        credible_set_path: '${release_uri}/output/credible_set'
       destination:
-        coloc_path: FIXME
+        coloc_path: '${release_uri}/output/colocalisation'
       settings:
-        colocalisation_method: FIXME
-        restrict_right_studies: []
-        gwas_v_qtl_overlap_only: false
-        colocalisation_method_params: {}
+        colocalisation_method: coloc_pip_ecaviar
 
     - name: transform variant_to_vcf
       transform: variant_to_vcf
+      session_properties:
+        write_mode: overwrite
       source:
         source_paths:
-          - FIXME
+          - '${release_uri}/input/evidence/uniprot_variants.json.gz'
+          - '${release_uri}/input/evidence/eva.json.gz'
+          - '${release_uri}/output/pharmacogenomics'
+          - '${release_uri}/output/credible_set'
       destination:
-        output_path: FIXME
+        output_path: '${release_uri}/intermediate/variant_partition'
       settings:
         source_formats:
-          - FIXME
+          - json
+          - json
+          - parquet
+          - parquet
         partition_size: 2000
 
     - name: transform variant_index
       transform: variant_index
+      session_properties:
+        write_mode: overwrite
+        output_partitions: 25
       source:
-        vep_output_json_path: FIXME
+        vep_output_json_path: '${release_uri}/intermediate/variant_annotation'
         variant_annotations_path:
-          - FIXME
+          - gs://gnomad_data_2/v4.1/variant_index
+        amino_acid_change_annotations:
+          - gs://otar013-ppp/OTAR2081_foldx/foldx_variant_annotation
       destination:
-        variant_index_path: FIXME
+        variant_index_path: '${release_uri}/output/variant'
       settings:
-        hash_threshold: FIXME
-        amino_acid_change_annotations: []
+        hash_threshold: 300
 
     - name: transform locus_to_gene
       transform: locus_to_gene
+      session_properties:
+        write_mode: overwrite
+      spark_properties:
+        spark.kryoserializer.buffer.max: 500m
+        spark.sql.autoBroadcastJoinThreshold: '-1'
       source:
-        credible_set_path: FIXME
-        feature_matrix_path: FIXME
-        gold_standard_curation_path: FIXME
+        credible_set_path: '${release_uri}/output/credible_set'
+        feature_matrix_path: '${release_uri}/intermediate/l2g_feature_matrix'
+        gold_standard_curation_path: '${release_uri}/input/l2g/gold_standard.json'
       destination:
-        model_path: FIXME
+        model_path: '${release_uri}/etc/model/locus_to_gene_model/classifier.skops'
       settings:
         run_mode: train
-        hyperparameters: {}
-        download_from_hub: false
+        hyperparameters:
+          max_depth: 5
+          reg_alpha: 1
+          reg_lambda: 1.0
+          subsample: 0.8
+          colsample_bytree: 0.8
+          eta: 0.05
+          min_child_weight: 10
+          scale_pos_weight: 0.8
+        download_from_hub: true
         cross_validate: false
+        wandb_run_name: '${l2g_training_version}'
+        hf_hub_repo_id: 'opentargets/locus_to_gene_${l2g_training_version}'
+        hf_model_commit_message: 'chore: update model base model for ${l2g_training_version} run'
