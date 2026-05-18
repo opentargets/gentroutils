@@ -21,7 +21,7 @@ _STEP_REGISTRY: dict[str, tuple[str, str]] = {
 }
 
 
-class TransformSpec(Spec):
+class PysparkTaskSpec(Spec):
     """Configuration for a gentropy transform step.
 
     Input paths are declared in `source`, output paths in `destination`, and
@@ -32,9 +32,9 @@ class TransformSpec(Spec):
 
     Examples:
     ---
-    >>> ts = TransformSpec(
-    ...     name="transform biosample_index",
-    ...     transform="biosample_index",
+    >>> ts = PysparkTaskSpec(
+    ...     name="pyspark biosample_index",
+    ...     pyspark="biosample_index",
     ...     source={
     ...         "cell_ontology_input_path": "gs://bucket/cl.owl",
     ...         "uberon_input_path": "gs://bucket/uberon.owl",
@@ -43,7 +43,7 @@ class TransformSpec(Spec):
     ...     destination={"biosample_index_path": "gs://bucket/output/biosample_index"},
     ...     session_properties={"write_mode": "overwrite"},
     ... )
-    >>> ts.transform
+    >>> ts.pyspark
     'biosample_index'
     >>> ts.source["uberon_input_path"]
     'gs://bucket/uberon.owl'
@@ -55,7 +55,7 @@ class TransformSpec(Spec):
     {}
     """
 
-    transform: str
+    pyspark: str
     """Gentropy step name. One of: biosample_index, colocalisation,
     credible_set_validation, enhancer_to_gene, locus_to_gene, study_validation,
     variant_index, variant_to_vcf."""
@@ -79,19 +79,19 @@ class TransformSpec(Spec):
     """Remaining Session constructor flags (e.g. spark_uri, write_mode, output_partitions)."""
 
 
-class Transform(Task):
+class PysparkTask(Task):
     """Task that runs a gentropy step with a managed Spark session."""
 
-    def __init__(self, spec: TransformSpec, context: TaskContext) -> None:
+    def __init__(self, spec: PysparkTaskSpec, context: TaskContext) -> None:
         super().__init__(spec, context)
-        self.spec: TransformSpec
+        self.spec: PysparkTaskSpec
 
     @report
     def run(self) -> Self:
         """Instantiate the requested gentropy step and execute it."""
         from gentropy.common.session import Session
 
-        step_name = self.spec.transform
+        step_name = self.spec.pyspark
         if step_name not in _STEP_REGISTRY:
             raise ValueError(
                 f"Unknown gentropy step: {step_name!r}. Available: {sorted(_STEP_REGISTRY)}"

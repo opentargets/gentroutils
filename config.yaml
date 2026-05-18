@@ -45,8 +45,8 @@ steps:
       promote: true
 
   genetics_etl:
-    - name: transform biosample_index
-      transform: biosample_index
+    - name: pyspark biosample_index
+      pyspark: biosample_index
       session_properties:
         write_mode: overwrite
         output_partitions: 1
@@ -57,8 +57,8 @@ steps:
       destination:
         biosample_index_path: '${release_uri}/output/biosample'
 
-    - name: transform study_validation
-      transform: study_validation
+    - name: pyspark study_validation
+      pyspark: study_validation
       session_properties:
         write_mode: overwrite
         output_partitions: 1
@@ -89,8 +89,8 @@ steps:
           - NO_OT_CURATION
           - CASE_CASE_STUDY_DESIGN
 
-    - name: transform credible_set_validation
-      transform: credible_set_validation
+    - name: pyspark credible_set_validation
+      pyspark: credible_set_validation
       session_properties:
         write_mode: overwrite
         output_partitions: 200
@@ -127,8 +127,8 @@ steps:
           - INVALID_CHROMOSOME
           - TOP_HIT_AND_SUMMARY_STATS
 
-    - name: transform colocalisation
-      transform: colocalisation
+    - name: pyspark colocalisation
+      pyspark: colocalisation
       session_properties:
         write_mode: overwrite
         output_partitions: 200
@@ -145,8 +145,8 @@ steps:
       settings:
         colocalisation_method: coloc_pip_ecaviar
 
-    - name: transform variant_to_vcf
-      transform: variant_to_vcf
+    - name: pyspark variant_to_vcf
+      pyspark: variant_to_vcf
       session_properties:
         write_mode: overwrite
       source:
@@ -165,8 +165,8 @@ steps:
           - parquet
         partition_size: 2000
 
-    - name: transform variant_index
-      transform: variant_index
+    - name: pyspark variant_index
+      pyspark: variant_index
       session_properties:
         write_mode: overwrite
         output_partitions: 25
@@ -181,8 +181,8 @@ steps:
       settings:
         hash_threshold: 300
 
-    - name: transform enhancer_to_gene
-      transform: enhancer_to_gene
+    - name: pyspark enhancer_to_gene
+      pyspark: enhancer_to_gene
       session_properties:
         write_mode: overwrite
         output_partitions: 30
@@ -209,8 +209,8 @@ steps:
           - INVALID_RANGE
           - AMBIGUOUS_INTERVAL_TYPE
 
-    - name: transform locus_to_gene
-      transform: locus_to_gene
+    - name: pyspark locus_to_gene
+      pyspark: locus_to_gene
       session_properties:
         write_mode: overwrite
       spark_properties:
