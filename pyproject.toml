@@ -10,12 +10,13 @@ dependencies = [
     "pydantic>=2.10.6",
     "loguru>=0.7.3",
     "tqdm>=4.67.1",
-    "opentargets-otter>=25.0.15",
+    "opentargets-otter>=25.0.16",
     "google-cloud-storage>=3.1.1",
     "gcsfs>=2025.7.0",
+    "gentropy @ git+https://github.com/opentargets/gentropy@v3.2.0",
 ]
 readme = "README.md"
-requires-python = ">3.11,<=3.13"
+requires-python = ">3.11,<3.14"
 license = "Apache-2.0"
 classifiers = [
     "Development Status :: 3 - Alpha",
