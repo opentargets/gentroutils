@@ -1,7 +1,7 @@
 [project]
 authors = [{ name = "Szymon Szyszkowski", email = "ss60@sanger.ac.uk" }]
 name = "gentroutils"
-version = "4.0.0"
+version = "4.1.0-dev.1"
 description = "Open Targets python genetics utility CLI tools"
 dependencies = [
     "aiohttp>=3.11.18",
@@ -10,12 +10,13 @@ dependencies = [
     "pydantic>=2.10.6",
     "loguru>=0.7.3",
     "tqdm>=4.67.1",
-    "opentargets-otter>=25.0.15",
+    "opentargets-otter>=25.0.16",
     "google-cloud-storage>=3.1.1",
     "gcsfs>=2025.7.0",
+    "gentropy @ git+https://github.com/opentargets/gentropy@v3.2.0",
 ]
 readme = "README.md"
-requires-python = ">3.11,<=3.13"
+requires-python = ">3.11,<3.14"
 license = "Apache-2.0"
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -27,12 +28,13 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License",
 ]
 
+[project.scripts]
+gentroutils = "gentroutils:main"
+
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
-
-[project.scripts]
-gentroutils = "gentroutils:main"
 
 [dependency-groups]
 dev = [

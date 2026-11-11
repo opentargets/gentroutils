@@ -1,6 +1,96 @@
 # CHANGELOG
 
 
+## v4.1.0-dev.1 (2026-05-26)
+
+### Bug Fixes
+
+- Widen requires-python to <3.14 to allow 3.13.x patch releases
+  ([`971ef47`](https://github.com/opentargets/gentroutils/commit/971ef478a68fda07462ca3db92c5c45f602087eb))
+
+<=3.13 is interpreted as <=3.13.0 by PEP 440, rejecting 3.13.13+. Aligned with gentropy v3.2.0 which
+  requires >=3.11,<3.14.
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+
+### Build System
+
+- **depnendency**: Add gentropy
+  ([`7f952f4`](https://github.com/opentargets/gentroutils/commit/7f952f407f34789d159dd9c328887ffb53501dd3))
+
+### Documentation
+
+- Update README with genetics_etl PysparkTask section
+  ([`1751448`](https://github.com/opentargets/gentroutils/commit/175144808bef032066a8e1b477e4c9dd831c573b))
+
+Documents the new gentropy-backed task type: supported steps, config schema, top-level
+  release_uri/l2g_training_version variables, and how to run a single genetics ETL step.
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+
+### Features
+
+- Add enhancer_to_gene (IntervalE2GStep) transform task
+  ([`0906520`](https://github.com/opentargets/gentroutils/commit/0906520e8635ca2fd020d34852ceff4b8a1d050c))
+
+Registers gentropy.intervals.IntervalE2GStep under the enhancer_to_gene key and adds the
+  corresponding genetics_etl config entry with paths and QC reasons sourced from
+  orchestration/gentropy.yaml.
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+
+- Add gentropy transform task with session management
+  ([`5cf0721`](https://github.com/opentargets/gentroutils/commit/5cf07219fbcc26ae04541788c01d4f97b00b1ca2))
+
+Introduces a Transform/TransformSpec task that wraps gentropy steps (biosample_index,
+  study_validation, credible_set_validation, colocalisation, variant_to_vcf, variant_index,
+  locus_to_gene) using the same discriminator pattern as pts pyspark tasks. Adds skeleton
+  genetics_etl config entries.
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+
+- **config**: Populate genetics_etl steps from orchestration config
+  ([`0b43552`](https://github.com/opentargets/gentroutils/commit/0b435521d0c15ae3bf37fd69b4d82c0a1a9b8d3e))
+
+Replaces FIXME placeholders with actual paths and settings sourced from orchestration/gentropy.yaml.
+  Adds release_uri and l2g_training_version scratchpad variables. Fills gentropy defaults
+  (hash_threshold=300, hyperparameters, download_from_hub) where orchestration config is silent.
+  Drops train_on_full_dataset which is absent from gentropy v3.2.0.
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+
+- **config**: Populate release_uri and l2g_training_version from unified pipeline
+  ([`cfdd44e`](https://github.com/opentargets/gentroutils/commit/cfdd44e7b28097f98707cbf534cad5305c38521a))
+
+Follows pts.yaml/pis.yaml pattern of declaring release_uri as a top-level field. Values derived from
+  unified_pipeline.yaml: dev run sz/26.03-ppp.1 (bucket open-targets-pipeline-runs) and release_name
+  26.03-ppp. Mirrored in scratchpad for ${...} path interpolation in genetics_etl steps.
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+
+### Refactoring
+
+- Rename Transform -> PysparkTask and discriminator transform: -> pyspark:
+  ([`44469c6`](https://github.com/opentargets/gentroutils/commit/44469c6ba49f70f265d94e355c998704456dbd8b))
+
+Aligns task naming with the pts pyspark: convention. Class renamed from Transform/TransformSpec to
+  PysparkTask/PysparkTaskSpec; discriminator field and all config.yaml entries updated from
+  transform: to pyspark:.
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+
+### Testing
+
+- Add unit tests for PysparkTask and PysparkTaskSpec
+  ([`4be646c`](https://github.com/opentargets/gentroutils/commit/4be646c2ce96e2e3ad999c06c807dd8afe8fc877))
+
+Covers spec field defaults, Session construction (spark/hail/session properties),
+  source/destination/settings forwarding, module dispatch, and unknown-step validation. Accesses
+  run.__wrapped__ to bypass the @report exception swallowing when testing the ValueError path.
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+
+
 ## v4.0.0 (2026-02-03)
 
 

@@ -4,7 +4,7 @@
 ![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
 [![release](https://github.com/opentargets/gentroutils/actions/workflows/release.yaml/badge.svg)](https://github.com/opentargets/gentroutils/actions/workflows/release.yaml)
 
-Set of Command Line Interface tools to process Open Targets Genetics GWAS data.
+Set of Command Line Interface tools to process Open Targets Genetics GWAS data, including GWAS Catalog ingestion and [gentropy](https://github.com/opentargets/gentropy)-powered genetics ETL steps.
 
 ## Installation
 
@@ -195,6 +195,67 @@ This task is used to build the GWAS Catalog curation file that is later used as 
 > - The `destination_template` is where the curation file will be saved, and it uses the `{release_date}` placeholder to specify the release date dynamically. The release date is fetched from the `stats_uri` endpoint.
 > - The `promote` field is set to `true`, which means the output will be promoted to the latest release. Meaning that the file will be saved under `gs://gwas_catalog_inputs/curation/latest/raw/gwas_catalog_study_curation.tsv` after the task is completed. If the `promote` field is set to `false`, the file will not be promoted and will be saved under the specified path with the release date.
 > The `summary_statistics_glob` field is used to specify the glob pattern to list all synced summary statistics files from GCS. This is used to identify which studies have summary statistics available.
+
+---
+
+---
+
+## Gentropy ETL steps (`genetics_etl`)
+
+The `genetics_etl` step group runs [gentropy](https://github.com/opentargets/gentropy) pipeline steps via the `PysparkTask` task type. Each step creates a managed gentropy `Session` (backed by PySpark) and delegates execution to the corresponding gentropy class.
+
+The discriminator field `pyspark:` identifies the step to run, mirroring the `pyspark:` convention used in [pts](https://github.com/opentargets/pts).
+
+### Supported steps
+
+| `pyspark:` value | gentropy class | description |
+|---|---|---|
+| `biosample_index` | `BiosampleIndexStep` | Builds a biosample index from Cell Ontology, Uberon and EFO |
+| `study_validation` | `StudyValidationStep` | Validates study index; splits into valid and invalid outputs |
+| `credible_set_validation` | `StudyLocusValidationStep` | Validates credible sets against study and target indices |
+| `colocalisation` | `ColocalisationStep` | Computes colocalisation between credible sets |
+| `variant_to_vcf` | `ConvertToVcfStep` | Converts variant sources to VCF-like TSV for VEP annotation |
+| `variant_index` | `VariantIndexStep` | Builds a variant index from VEP JSON output |
+| `enhancer_to_gene` | `IntervalE2GStep` | Validates enhancer-to-gene interval data |
+| `locus_to_gene` | `LocusToGeneStep` | Trains or runs the locus-to-gene model |
+
+### Configuration schema
+
+```yaml
+- name: pyspark <step_name>
+  pyspark: <step_name>          # one of the values in the table above
+  source:                        # input paths forwarded to the step by parameter name
+    <param_name>: <gcs_path>
+  destination:                   # output paths forwarded to the step by parameter name
+    <param_name>: <gcs_path>
+  settings:                      # non-path step parameters (thresholds, flags, etc.)
+    <param_name>: <value>
+  session_properties:            # gentropy Session flags (spark_uri, write_mode, …)
+    write_mode: overwrite
+    output_partitions: 200
+  spark_properties:              # forwarded as extended_spark_conf to Session
+    spark.executor.memory: 22g
+  hail_properties:               # forwarded as extended_hail_conf to Session
+    {}
+```
+
+### Top-level config variables
+
+The `genetics_etl` steps depend on two top-level config variables that must be set before running:
+
+| variable | description |
+|---|---|
+| `release_uri` | Base GCS URI for the release (e.g. `gs://open-targets-pipeline-runs/<run_name>`) |
+| `l2g_training_version` | Release name used to tag the L2G model (e.g. `26.03-ppp`) |
+
+Both are also mirrored in `scratchpad` so they can be interpolated via `${release_uri}` and `${l2g_training_version}` in step path strings.
+
+### Running a single genetics ETL step
+
+```bash
+uv run gentroutils -s genetics_etl/pyspark biosample_index
+gentroutils -s genetics_etl/pyspark biosample_index -c config.yaml  # when installed via pip
+```
 
 ---
 
