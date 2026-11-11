@@ -1,10 +1,16 @@
 version = 1
 revision = 3
-requires-python = ">3.11, <=3.13"
+requires-python = ">3.11, <3.14"
 resolution-markers = [
-    "python_full_version >= '3.13'",
-    "python_full_version == '3.12.*'",
-    "python_full_version < '3.12'",
+    "(python_full_version >= '3.13' and platform_machine == 'aarch64') or (python_full_version >= '3.13' and platform_machine == 'arm64')",
+    "(python_full_version == '3.12.*' and platform_machine == 'aarch64') or (python_full_version == '3.12.*' and platform_machine == 'arm64')",
+    "(python_full_version < '3.12' and platform_machine == 'aarch64') or (python_full_version < '3.12' and platform_machine == 'arm64')",
+    "python_full_version >= '3.13' and platform_machine == 'x86_64' and sys_platform == 'darwin'",
+    "python_full_version == '3.12.*' and platform_machine == 'x86_64' and sys_platform == 'darwin'",
+    "python_full_version < '3.12' and platform_machine == 'x86_64' and sys_platform == 'darwin'",
+    "(python_full_version >= '3.13' and platform_machine != 'aarch64' and platform_machine != 'arm64' and platform_machine != 'x86_64') or (python_full_version >= '3.13' and platform_machine != 'aarch64' and platform_machine != 'arm64' and sys_platform != 'darwin')",
+    "(python_full_version == '3.12.*' and platform_machine != 'aarch64' and platform_machine != 'arm64' and platform_machine != 'x86_64') or (python_full_version == '3.12.*' and platform_machine != 'aarch64' and platform_machine != 'arm64' and sys_platform != 'darwin')",
+    "(python_full_version < '3.12' and platform_machine != 'aarch64' and platform_machine != 'arm64' and platform_machine != 'x86_64') or (python_full_version < '3.12' and platform_machine != 'aarch64' and platform_machine != 'arm64' and sys_platform != 'darwin')",
 ]
 
 [[package]]
@@ -394,11 +400,11 @@ wheels = [
 
 [[package]]
 name = "decorator"
-version = "5.2.1"
+version = "4.4.2"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/43/fa/6d96a0978d19e17b68d634497769987b16c8f4cd0a7a05048bec693caa6b/decorator-5.2.1.tar.gz", hash = "sha256:65f266143752f734b0a7cc83c46f4618af75b8c5911b00ccb61d0ac9b6da0360", size = 56711, upload-time = "2025-02-24T04:41:34.073Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/da/93/84fa12f2dc341f8cf5f022ee09e109961055749df2d0c75c5f98746cfe6c/decorator-4.4.2.tar.gz", hash = "sha256:e3a62f0520172440ca0dcc823749319382e377f37f140a0b99ef45fecb84bfe7", size = 33629, upload-time = "2020-02-29T05:24:43.312Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4e/8c/f3147f5c4b73e7550fe5f9352eaa956ae838d5c51eb58e7a25b9f3e2643b/decorator-5.2.1-py3-none-any.whl", hash = "sha256:d316bb415a2d9e2d2b3abcc4084c6502fc09240e292cd76a76afc106a1c8e04a", size = 9190, upload-time = "2025-02-24T04:41:32.565Z" },
+    { url = "https://files.pythonhosted.org/packages/ed/1b/72a1821152d07cf1d8b6fce298aeb06a7eb90f4d6d41acec9861e7cc6df0/decorator-4.4.2-py2.py3-none-any.whl", hash = "sha256:41fa54c2a0cc4ba648be4fd43cff00aedf5b9465c9bf18d64325bc225f08f760", size = 9239, upload-time = "2020-02-29T05:24:45.993Z" },
 ]
 
 [[package]]
@@ -606,7 +612,7 @@ wheels = [
 
 [[package]]
 name = "gentroutils"
-version = "3.2.0"
+version = "4.1.0.dev1"
 source = { editable = "." }
 dependencies = [
     { name = "aioftp" },
@@ -662,7 +668,7 @@ requires-dist = [
     { name = "gcsfs", specifier = ">=2025.7.0" },
     { name = "google-cloud-storage", specifier = ">=3.1.1" },
     { name = "loguru", specifier = ">=0.7.3" },
-    { name = "opentargets-otter", specifier = ">=25.0.15" },
+    { name = "opentargets-otter", specifier = ">=25.0.16" },
     { name = "polars", extras = ["fsspec"], specifier = ">=1.31.0" },
     { name = "pydantic", specifier = ">=2.10.6" },
     { name = "tqdm", specifier = ">=4.67.1" },
@@ -741,15 +747,15 @@ wheels = [
 
 [[package]]
 name = "google-auth-oauthlib"
-version = "1.2.4"
+version = "0.8.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "google-auth" },
     { name = "requests-oauthlib" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/90/dd/211f27c1e927e2292c2a71d5df1a2aaf261ce50ba7d50848c6ee24e20970/google_auth_oauthlib-1.2.4.tar.gz", hash = "sha256:3ca93859c6cc9003c8e12b2a0868915209d7953f05a70f4880ab57d57e56ee3e", size = 21185, upload-time = "2026-01-15T22:03:10.027Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/06/98/52a79d64ca8fd2e37eff8da6c78c26b2209f19d8ace8cafd1634453c4393/google-auth-oauthlib-0.8.0.tar.gz", hash = "sha256:81056a310fb1c4a3e5a7e1a443e1eb96593c6bbc55b26c0261e4d3295d3e6593", size = 21351, upload-time = "2022-12-12T21:57:54.622Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/84/21/fb96db432d187b07756e62971c4d89bdef70259e4cfa76ee32bcc0ac97d1/google_auth_oauthlib-1.2.4-py3-none-any.whl", hash = "sha256:0e922eea5f2baacaf8867febb782e46e7b153236c21592ed76ab3ddb77ffd772", size = 19193, upload-time = "2026-01-15T22:03:09.046Z" },
+    { url = "https://files.pythonhosted.org/packages/98/0e/bfc3d7de5d1788871d1be3e6862fe3e56d92b446909b7b032c373fc4ecab/google_auth_oauthlib-0.8.0-py2.py3-none-any.whl", hash = "sha256:40cc612a13c3336d5433e94e2adb42a0c88f6feb6c55769e44500fc70043a576", size = 19588, upload-time = "2022-12-12T21:57:52.762Z" },
 ]
 
 [[package]]
