@@ -1,6 +1,26 @@
 # CHANGELOG
 
 
+## v5.0.0-dev.1 (2026-11-11)
+
+### Chores
+
+- Remove genetics_etl steps and PysparkTask
+  ([`fecc5b1`](https://github.com/opentargets/gentroutils/commit/fecc5b1578add9b394cf6046d18b768679c947ae))
+
+Keep gentroutils focused on the gwas_catalog_release step. Removes the genetics_etl step group, the
+  PysparkTask (gentropy transform) task and its tests, the release_uri/l2g_training_version config
+  variables, the README section and the gentropy dependency.
+
+BREAKING CHANGE: the genetics_etl steps and the pyspark task type are no longer available.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+### Breaking Changes
+
+- The genetics_etl steps and the pyspark task type are no longer available.
+
+
 ## v4.1.0-dev.1 (2026-05-26)
 
 ### Bug Fixes
@@ -12,6 +32,14 @@
   requires >=3.11,<3.14.
 
 Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+
+- **config**: Use .tsv extension for GWAS Catalog studies and ancestries
+  ([`edb1f79`](https://github.com/opentargets/gentroutils/commit/edb1f7907f793e181c00bd9eae8ea6b65fff44f7))
+
+EBI renamed the release files from .txt to .tsv, causing fetch studies to fail with FTP 550 and
+  abort the gwas_catalog_release step.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
 
 ### Build System
 
